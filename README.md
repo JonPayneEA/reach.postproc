@@ -1,66 +1,73 @@
 # reach.postproc
 
-`reach.postproc` implements the mathematics in *ARMA for flood forecasting, Part 1* as a compact R package. It uses S7 for domain objects and dispatch, `data.table` for every tabular result, and `ggplot2` for plots.
+`reach.postproc` provides S7 classes, data.table outputs and ggplot2 plots for AR and ARMA flood-forecast post-processing.
 
-## Design
-
-The package has five public object types:
-
-- `ARParameterSet`: AR coefficients and their order.
-- `CharacteristicRoots`: roots and interpretable decay and oscillation times.
-- `ARForecast`: recurrence output from a supplied input-error sequence.
-- `ARAssessment`: the EA quality tests and the roots on which they depend.
-- `ARMAResponse`: a full ARMA unit response.
-
-The main workflow is:
+## Main workflow
 
 ```r
+library(reach.postproc)
 parameters <- default_ar_parameters()
-root_information <- roots(parameters)
-quality <- assess(parameters)
-forecast <- forecast_ar(
-  parameters,
-  initial_errors = c(0.20, 0.15, 0.10),
-  steps = 480L
+roots(parameters)@table
+assess(parameters)@tests
+forecast <- forecast_ar(parameters, initial_errors = c(0.20, 0.15, 0.10))
+plot_ar(forecast)
+```
+
+## Added from the original assessment tool
+
+- Deltares and standard sign conventions.
+- Automatic effective-order detection.
+- Effective decay times.
+- Configurable assessment using effective or exponential decay.
+- Configurable permitted model orders.
+- Mixed root and coefficient solving.
+- Time-aligned complete-series updates.
+- AR, MA and ARMA response components.
+- Optional `afcolours` use in the walkthrough.
+
+The complete walkthrough is in `inst/examples/01_arma_walkthrough.R`.
+
+
+## Package boundaries
+
+`reach.postproc` does not import source data or evaluate ratings. Use `reach.io` to ingest and standardise observed and simulated data. Use `reach.rate` to convert between level and flow. Pass the resulting aligned-domain series to `reach.postproc`.
+
+## Fixed lead-time analysis
+
+```r
+event <- align_forecast_series(observed, simulated, interval_minutes = 15)
+results <- fixed_lead_ar(
+  parameters = default_ar_parameters(),
+  data = event,
+  lead_times_minutes = c(30, 60, 90),
+  time_step_minutes = 15,
+  site_name = "Parkend",
+  measure = "level"
+)
+score_lead_times(results)
+plot_lead_times(results)
+```
+
+The recurrence is the production method. `method = "roots"` exists as an independently formulated verification route. Tests require both methods to agree.
+
+
+## Walkthrough structure
+
+The installed walkthrough now contains two complete routes:
+
+1. A reproducible mathematical example using synthetic data.
+2. An operational event workflow showing the `reach.io` to optional `reach.rate` to `reach.postproc` boundary.
+
+The operational route includes alignment diagnostics, fixed lead-time calculations, MAE, RMSE and bias scoring, threshold plotting, recurrence-versus-root diagnostics and optional output export.
+
+Run it with:
+
+```r
+source(
+  system.file(
+    "examples",
+    "01_arma_walkthrough.R",
+    package = "reach.postproc"
+  )
 )
 ```
-
-All tables are `data.table` objects:
-
-```r
-root_information@table
-quality@tests
-forecast@series
-```
-
-## Install from the source directory
-
-```r
-install.packages(c("S7", "data.table", "ggplot2", "testthat"))
-install.packages("path/to/reach.postproc", repos = NULL, type = "source")
-```
-
-For active development:
-
-```r
-install.packages("devtools")
-devtools::load_all("path/to/reach.postproc")
-```
-
-## Complete walkthrough
-
-Run:
-
-```r
-source(system.file("examples", "01_arma_walkthrough.R", package = "reach.postproc"))
-```
-
-The source version is also available at `inst/examples/01_arma_walkthrough.R`.
-
-## Important conventions
-
-- Initial errors are ordered newest first: `c(x[t-1], x[t-2], x[t-3])`.
-- Decay times and oscillation periods are expressed in model steps unless a column states otherwise.
-- The cut-off applied by `apply_ar_update()` does not feed back into the AR recurrence.
-- Full ARMA residuals are supplied explicitly. Random simulation is deliberately separate from the deterministic model calculation.
-- Coefficients are never rounded internally.

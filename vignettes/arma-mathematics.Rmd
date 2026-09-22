@@ -1,36 +1,10 @@
 ---
-title: "AR mathematics in reach.postproc"
+title: "AR and ARMA mathematics in reach.postproc"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{AR mathematics in reach.postproc}
+  %\VignetteIndexEntry{AR and ARMA mathematics}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup}
-library(reach.postproc)
-library(data.table)
-```
-
-The package represents AR coefficients as an `ARParameterSet`. It then derives characteristic roots, forecasts and quality assessments through S7 dispatch.
-
-```{r}
-parameters <- default_ar_parameters()
-root_information <- roots(parameters)
-assessment <- assess(parameters)
-forecast <- forecast_ar(
-  parameters,
-  initial_errors = c(0.20, 0.15, 0.10),
-  steps = 480L
-)
-```
-
-Every tabular result is a `data.table`.
-
-```{r}
-root_information@table
-assessment@tests
-forecast@series
-```
-
-The complete executable walkthrough is installed at `inst/examples/01_arma_walkthrough.R`.
+See `inst/examples/01_arma_walkthrough.R` for the complete executable walkthrough.

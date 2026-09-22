@@ -1,22 +1,15 @@
 Package: reach.postproc
-Title: Autoregressive Error Updating for Flood Forecasting
-Version: 0.1.0
+Title: Post-Processing for Flood Forecasts
+Version: 0.4.1
 Authors@R: person("Jonathan", "Payne", role = c("aut", "cre"), email = "jonathan.payne@example.org")
-Description: S7 classes and data.table-based functions for inspecting,
-    constructing, assessing and applying autoregressive and autoregressive
-    moving-average error models used in operational flood forecasting.
+Description: S7 classes and data.table-based tools for autoregressive and
+    autoregressive moving-average flood forecast post-processing.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Depends: R (>= 4.2.0)
-Imports:
-    S7 (>= 0.2.0),
-    data.table (>= 1.15.0),
-    ggplot2 (>= 3.5.0)
-Suggests:
-    testthat (>= 3.2.0),
-    knitr,
-    rmarkdown
+Imports: S7 (>= 0.2.0), data.table (>= 1.15.0), ggplot2 (>= 3.5.0)
+Suggests: testthat (>= 3.2.0), knitr, rmarkdown, afcolours
 Config/testthat/edition: 3
 VignetteBuilder: knitr
