@@ -1,0 +1,22 @@
+Package: reach.postproc
+Title: Autoregressive Error Updating for Flood Forecasting
+Version: 0.1.0
+Authors@R: person("Jonathan", "Payne", role = c("aut", "cre"), email = "jonathan.payne@example.org")
+Description: S7 classes and data.table-based functions for inspecting,
+    constructing, assessing and applying autoregressive and autoregressive
+    moving-average error models used in operational flood forecasting.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 4.2.0)
+Imports:
+    S7 (>= 0.2.0),
+    data.table (>= 1.15.0),
+    ggplot2 (>= 3.5.0)
+Suggests:
+    testthat (>= 3.2.0),
+    knitr,
+    rmarkdown
+Config/testthat/edition: 3
+VignetteBuilder: knitr
