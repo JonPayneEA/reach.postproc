@@ -1,3 +1,15 @@
+# reach.postproc 0.4.3
+
+- Replaced all remaining calls to the removed prototype helper `.dt()` with `as_data_table_copy()`.
+- Copied stored lead-time tables before scoring so scoring cannot modify the S7 object by reference.
+- Audited the package source, tests and walkthrough for further `.dt()` references.
+
+# reach.postproc 0.4.2
+
+- Replaced bare data.table column lookup in `assess()` with explicit vector indexing.
+- Replaced data.table non-standard evaluation in the assessment summary with explicit column access.
+- This allows assessment methods to work reliably under `devtools::load_all()` and sourced development workflows.
+
 # reach.postproc 0.4.1
 
 - Added a package-level `@import data.table` directive and `.datatable.aware` flag.

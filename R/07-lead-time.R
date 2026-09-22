@@ -53,8 +53,8 @@ align_forecast_series <- function(observed, simulated,
                                   timezone = "UTC") {
   join <- match.arg(join)
   duplicate_action <- match.arg(duplicate_action)
-  obs <- .dt(observed)
-  sim <- .dt(simulated)
+  obs <- as_data_table_copy(observed)
+  sim <- as_data_table_copy(simulated)
   required_obs <- c(observed_time_column, observed_value_column)
   required_sim <- c(simulated_time_column, simulated_value_column)
   if (any(!required_obs %in% names(obs))) .stop_bad("Observed data lack required columns.")
@@ -180,7 +180,7 @@ fixed_lead_ar <- function(parameters, data,
                           site_name = NA_character_) {
   if (!S7::S7_inherits(parameters, ARParameterSet)) .stop_bad("`parameters` must be an ARParameterSet.")
   method <- match.arg(method)
-  d <- .dt(data)
+  d <- as_data_table_copy(data)
   needed <- c(time_column, observed_column, simulated_column)
   if (any(!needed %in% names(d))) .stop_bad("Lead-time input lacks required columns.")
   if (any(!is.finite(lead_times_minutes)) || any(lead_times_minutes <= 0) ||
@@ -221,7 +221,11 @@ fixed_lead_ar <- function(parameters, data,
 #'
 #' @export
 score_lead_times <- function(x) {
-  series <- if (S7::S7_inherits(x, ARLeadTimeResult)) x@series else .dt(x)
+  series <- if (S7::S7_inherits(x, ARLeadTimeResult)) {
+    data.table::copy(x@series)
+  } else {
+    as_data_table_copy(x)
+  }
   required <- c("lead_time_minutes", "observed", "simulated", "updated")
   if (any(!required %in% names(series))) .stop_bad("Lead-time result lacks scoring columns.")
   series[stats::complete.cases(observed, simulated, updated), .(
@@ -297,7 +301,7 @@ plot_lead_times <- function(x, thresholds = NULL, common_period_only = TRUE,
     ggplot2::labs(title = title, x = "Date", y = y_label, colour = NULL) +
     ggplot2::theme(legend.position = "bottom")
   if (!is.null(thresholds)) {
-    th <- .dt(thresholds)
+    th <- as_data_table_copy(thresholds)
     if (any(!c("value", "name") %in% names(th))) .stop_bad("Thresholds require `value` and `name` columns.")
     p <- p + ggplot2::geom_hline(data = th, ggplot2::aes(yintercept = value),
                                  colour = "darkred", linetype = "dashed", linewidth = 0.5)

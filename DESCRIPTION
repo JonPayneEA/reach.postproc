@@ -1,6 +1,6 @@
 Package: reach.postproc
 Title: Post-Processing for Flood Forecasts
-Version: 0.4.1
+Version: 0.4.3
 Authors@R: person("Jonathan", "Payne", role = c("aut", "cre"), email = "jonathan.payne@example.org")
 Description: S7 classes and data.table-based tools for autoregressive and
     autoregressive moving-average flood forecast post-processing.
