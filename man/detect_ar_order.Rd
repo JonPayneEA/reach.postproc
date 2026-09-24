@@ -2,24 +2,18 @@
 % Please edit documentation in R/03-parameters.R
 \name{detect_ar_order}
 \alias{detect_ar_order}
-\title{Detect the effective order of an autoregressive model}
+\title{Detect effective AR order}
 \usage{
 detect_ar_order(coefficients, tolerance = 1e-08)
 }
 \arguments{
-\item{coefficients}{Numeric AR coefficients ordered from \code{a_1} to \code{a_p}.}
+\item{coefficients}{Coefficients.}
 
-\item{tolerance}{Non-negative tolerance used to identify inactive terms.}
+\item{tolerance}{Activity tolerance.}
 }
 \value{
-A single integer. Returns zero when no coefficient is active.
+Integer order.
 }
 \description{
-Finds the final coefficient whose absolute value exceeds \code{tolerance}.
-Trailing inactive coefficients are removed, but internal zeros are retained.
-}
-\examples{
-detect_ar_order(c(1.85, -0.85, 0))
-detect_ar_order(c(1.2, 0, -0.2))
-
+Detect effective AR order
 }

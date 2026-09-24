@@ -2,7 +2,7 @@
 % Please edit documentation in R/06-arma.R
 \name{forecast_arma}
 \alias{forecast_arma}
-\title{Forecast a deterministic ARMA error series}
+\title{Evaluate a deterministic ARMA recurrence}
 \usage{
 forecast_arma(
   parameters,
@@ -13,19 +13,19 @@ forecast_arma(
 )
 }
 \arguments{
-\item{parameters}{AR component as an \code{ARParameterSet}.}
+\item{parameters}{AR parameters.}
 
-\item{initial_errors}{Initial AR state ordered newest first.}
+\item{initial_errors}{Initial state.}
 
-\item{residuals}{Residual innovation at each forecast step.}
+\item{residuals}{Innovations.}
 
-\item{ma_parameters}{MA coefficients ordered from \code{b_1} to \code{b_q}.}
+\item{ma_parameters}{MA parameters.}
 
-\item{previous_residuals}{Initial MA state ordered newest first.}
+\item{previous_residuals}{MA state.}
 }
 \value{
-A \code{data.table} containing AR, residual, MA and total contributions.
+Data table.
 }
 \description{
-Forecast a deterministic ARMA error series
+Evaluate a deterministic ARMA recurrence
 }

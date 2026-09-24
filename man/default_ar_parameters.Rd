@@ -2,13 +2,13 @@
 % Please edit documentation in R/03-parameters.R
 \name{default_ar_parameters}
 \alias{default_ar_parameters}
-\title{Return the 2024 EA default AR parameters}
+\title{2024 EA default AR parameters}
 \usage{
 default_ar_parameters()
 }
 \value{
-An AR(3) \code{ARParameterSet}.
+An internal parameter object.
 }
 \description{
-Return the 2024 EA default AR parameters
+2024 EA default AR parameters
 }

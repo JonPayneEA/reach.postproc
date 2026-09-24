@@ -4,15 +4,9 @@
 \name{reach.postproc-package}
 \alias{reach.postproc}
 \alias{reach.postproc-package}
-\title{reach.postproc: post-processing for flood forecasts}
+\title{reach.postproc: flood forecast error post-processing}
 \description{
-Provides S7 classes and data.table-based functions for autoregressive and
-autoregressive moving-average flood-forecast post-processing.
-}
-\details{
-Data import belongs to \code{reach.io}. Rating conversion belongs to
-\code{reach.rate}. This package aligns prepared series, applies post-processing,
-assesses parameter behaviour and scores fixed lead-time performance.
+Transparent autoregressive and autoregressive moving-average post-processing for flood forecasts. Provides characteristic-root analysis, Environment Agency parameter assessment, fixed lead-time evaluation, diagnostics, scoring, and presentation-ready plots.
 }
 \author{
 \strong{Maintainer}: Jonathan Payne \email{jonathan.payne@example.org}

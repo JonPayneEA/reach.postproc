@@ -2,24 +2,24 @@
 % Please edit documentation in R/02-generics.R
 \name{forecast_ar}
 \alias{forecast_ar}
-\title{Forecast an autoregressive error series}
+\title{Forecast an AR error series}
 \usage{
 forecast_ar(x, ..., initial_errors, steps = 480L, time_step_minutes = 15)
 }
 \arguments{
-\item{x}{Object defining the AR model.}
+\item{x}{AR parameters.}
 
-\item{...}{Additional arguments passed to a method.}
+\item{...}{Method arguments.}
 
-\item{initial_errors}{Numeric input errors ordered newest first.}
+\item{initial_errors}{Errors ordered newest first.}
 
-\item{steps}{Number of future model steps to calculate.}
+\item{steps}{Projected steps.}
 
-\item{time_step_minutes}{Duration represented by one model step.}
+\item{time_step_minutes}{Minutes per step.}
 }
 \value{
-An \code{ARForecast} object.
+An AR forecast result.
 }
 \description{
-Forecast an autoregressive error series
+Forecast an AR error series
 }

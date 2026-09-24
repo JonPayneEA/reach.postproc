@@ -1,0 +1,25 @@
+---
+title: "Mathematical and Developer Validation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Mathematical and Developer Validation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+library(reach.postproc)
+render_mermaid <- function(diagram) {
+  if (requireNamespace("DiagrammeR", quietly = TRUE)) return(DiagrammeR::mermaid(diagram))
+  knitr::asis_output(paste0("```mermaid\n", diagram, "\n```"))
+}
+```
+
+# Round trip
+
+```{r roundtrip}
+p1<-default_ar_parameters();z1<-roots(p1)@values;p2<-roots_to_parameters(z1)
+p1@coefficients;p2@coefficients
+```
+
+Modal time zero is forecast step one in `decompose_ar()`.

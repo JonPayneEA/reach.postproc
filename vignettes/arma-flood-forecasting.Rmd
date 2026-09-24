@@ -1,0 +1,26 @@
+---
+title: "AR and ARMA for Flood Forecasting"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{AR and ARMA for Flood Forecasting}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+library(reach.postproc)
+render_mermaid <- function(diagram) {
+  if (requireNamespace("DiagrammeR", quietly = TRUE)) return(DiagrammeR::mermaid(diagram))
+  knitr::asis_output(paste0("```mermaid\n", diagram, "\n```"))
+}
+```
+
+# Theory
+
+$$x_t=y_{obs,t}-y_{sim,t}$$
+
+```{r example}
+p<-default_ar_parameters();assessment_table(assess(p));plot_ar(roots(p))
+```
+
+AR cannot reliably correct future timing errors. Check gaps, ratings and cut-offs before changing parameters.

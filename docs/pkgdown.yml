@@ -1,0 +1,9 @@
+pandoc: 3.6.3
+pkgdown: 2.2.0
+pkgdown_sha: ~
+articles:
+  arma-flood-forecasting: arma-flood-forecasting.html
+  arma-for-novices: arma-for-novices.html
+  developer-mathematics: developer-mathematics.html
+  using-reach-postproc: using-reach-postproc.html
+last_built: 2026-09-24T10:05Z

@@ -2,18 +2,18 @@
 % Please edit documentation in R/03-parameters.R
 \name{calculate_model_error}
 \alias{calculate_model_error}
-\title{Calculate observed-minus-simulated model errors}
+\title{Calculate observed-minus-simulated error}
 \usage{
 calculate_model_error(observed, simulated)
 }
 \arguments{
-\item{observed}{Numeric observed values.}
+\item{observed}{Observations.}
 
-\item{simulated}{Numeric simulated values of equal length.}
+\item{simulated}{Simulations.}
 }
 \value{
-Numeric error values using \code{observed - simulated}.
+Errors.
 }
 \description{
-Calculate observed-minus-simulated model errors
+Calculate observed-minus-simulated error
 }

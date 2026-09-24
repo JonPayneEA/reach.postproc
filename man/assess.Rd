@@ -2,18 +2,18 @@
 % Please edit documentation in R/02-generics.R
 \name{assess}
 \alias{assess}
-\title{Assess AR parameter quality}
+\title{Assess AR parameters}
 \usage{
 assess(x, ...)
 }
 \arguments{
 \item{x}{Object to assess.}
 
-\item{...}{Additional arguments passed to a method.}
+\item{...}{Method arguments.}
 }
 \value{
-An \code{ARAssessment} object.
+An assessment result.
 }
 \description{
-Assess AR parameter quality
+Assess AR parameters
 }

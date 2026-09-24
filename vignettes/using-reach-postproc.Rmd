@@ -1,0 +1,22 @@
+---
+title: "Using reach.postproc"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using reach.postproc}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+library(reach.postproc)
+render_mermaid <- function(diagram) {
+  if (requireNamespace("DiagrammeR", quietly = TRUE)) return(DiagrammeR::mermaid(diagram))
+  knitr::asis_output(paste0("```mermaid\n", diagram, "\n```"))
+}
+```
+
+# Workflow
+
+```{r workflow}
+p<-default_ar_parameters();assess(p)@summary;root_table(roots(p))
+```

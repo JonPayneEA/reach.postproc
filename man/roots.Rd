@@ -7,12 +7,12 @@
 roots(x, ...)
 }
 \arguments{
-\item{x}{Object for which characteristic roots are required.}
+\item{x}{Object to analyse.}
 
-\item{...}{Additional arguments passed to a method.}
+\item{...}{Method arguments.}
 }
 \value{
-A \code{CharacteristicRoots} object.
+A characteristic-root result.
 }
 \description{
 Calculate characteristic roots

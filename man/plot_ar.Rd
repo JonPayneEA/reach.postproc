@@ -2,18 +2,18 @@
 % Please edit documentation in R/02-generics.R
 \name{plot_ar}
 \alias{plot_ar}
-\title{Plot a reach.postproc object}
+\title{Plot a reach.postproc result}
 \usage{
 plot_ar(x, ...)
 }
 \arguments{
 \item{x}{Object to plot.}
 
-\item{...}{Additional arguments passed to a method.}
+\item{...}{Method arguments.}
 }
 \value{
-A \code{ggplot} object.
+A ggplot.
 }
 \description{
-Plot a reach.postproc object
+Plot a reach.postproc result
 }

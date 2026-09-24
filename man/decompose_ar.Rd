@@ -2,25 +2,24 @@
 % Please edit documentation in R/02-generics.R
 \name{decompose_ar}
 \alias{decompose_ar}
-\title{Decompose an AR forecast into root contributions}
+\title{Decompose AR behaviour by root}
 \usage{
 decompose_ar(x, ..., initial_errors, steps = 480L, time_step_minutes = 15)
 }
 \arguments{
-\item{x}{Object defining the AR model.}
+\item{x}{AR parameters.}
 
-\item{...}{Additional arguments passed to a method.}
+\item{...}{Method arguments.}
 
-\item{initial_errors}{Numeric input errors ordered newest first.}
+\item{initial_errors}{Errors ordered newest first.}
 
-\item{steps}{Number of future model steps to calculate.}
+\item{steps}{Projected steps.}
 
-\item{time_step_minutes}{Duration represented by one model step.}
+\item{time_step_minutes}{Minutes per step.}
 }
 \value{
-A long-format \code{data.table} containing one contribution per root and
-model step.
+A long data table.
 }
 \description{
-Decompose an AR forecast into root contributions
+Decompose AR behaviour by root
 }

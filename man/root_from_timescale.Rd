@@ -2,20 +2,18 @@
 % Please edit documentation in R/03-parameters.R
 \name{root_from_timescale}
 \alias{root_from_timescale}
-\title{Construct a characteristic root from time scales}
+\title{Construct a modal root from timescales}
 \usage{
 root_from_timescale(decay_time, oscillation_period = Inf)
 }
 \arguments{
-\item{decay_time}{Decay time in model steps. Negative values represent
-exponential growth.}
+\item{decay_time}{Decay time.}
 
-\item{oscillation_period}{Oscillation period in model steps. Use \code{Inf} for
-a positive real root and \code{2} for a negative real root.}
+\item{oscillation_period}{Period.}
 }
 \value{
-One complex characteristic root.
+Complex root.
 }
 \description{
-Implements \code{z = exp(-1 / tau) * exp(2 * pi * i / T)}.
+Construct a modal root from timescales
 }

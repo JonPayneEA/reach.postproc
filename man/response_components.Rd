@@ -2,27 +2,20 @@
 % Please edit documentation in R/06-arma.R
 \name{response_components}
 \alias{response_components}
-\title{Compare AR, MA and ARMA response components}
+\title{Compare response components}
 \usage{
-response_components(
-  parameters,
-  ma_parameters = numeric(),
-  steps = 480L,
-  order_tolerance = 1e-08
-)
+response_components(parameters, ma_parameters = numeric(), steps = 480L)
 }
 \arguments{
-\item{parameters}{AR component as an \code{ARParameterSet}.}
+\item{parameters}{AR parameters.}
 
-\item{ma_parameters}{Numeric MA coefficients.}
+\item{ma_parameters}{MA parameters.}
 
-\item{steps}{Number of response steps.}
-
-\item{order_tolerance}{Tolerance used to trim trailing MA terms.}
+\item{steps}{Steps.}
 }
 \value{
-Long-format \code{data.table} with \code{AR}, \code{MA} and \code{ARMA} components.
+Long data table.
 }
 \description{
-Compare AR, MA and ARMA response components
+Compare response components
 }

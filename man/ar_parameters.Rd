@@ -2,7 +2,7 @@
 % Please edit documentation in R/03-parameters.R
 \name{ar_parameters}
 \alias{ar_parameters}
-\title{Construct an autoregressive parameter set}
+\title{Construct AR parameters}
 \usage{
 ar_parameters(
   coefficients = NULL,
@@ -13,33 +13,19 @@ ar_parameters(
 )
 }
 \arguments{
-\item{coefficients}{Numeric AR coefficients ordered from first to highest
-order. Alternatively, supply coefficients through \code{...}.}
+\item{coefficients}{Coefficients from first to highest order.}
 
-\item{label}{Single character description.}
+\item{label}{Label.}
 
-\item{sign_convention}{Convention used by supplied coefficients.}
+\item{sign_convention}{Input convention.}
 
-\item{order_tolerance}{Tolerance used to remove inactive trailing terms.}
+\item{order_tolerance}{Tolerance.}
 
-\item{...}{Alternative coefficient input. Do not combine with
-\code{coefficients}.}
+\item{...}{Alternative coefficient input.}
 }
 \value{
-An \code{ARParameterSet} in the Deltares convention.
+An internal parameter object.
 }
 \description{
-Converts coefficients to the Deltares convention, detects effective model
-order and returns a validated \code{ARParameterSet}.
-}
-\examples{
-ar_parameters(
-  coefficients = c(1.765, -0.72625, -0.040656)
-)
-
-ar_parameters(
-  coefficients = c(-1.765, 0.72625, 0.040656),
-  sign_convention = "Standard"
-)
-
+Construct AR parameters
 }

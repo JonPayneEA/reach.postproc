@@ -2,7 +2,7 @@
 % Please edit documentation in R/03-parameters.R
 \name{convert_sign_convention}
 \alias{convert_sign_convention}
-\title{Convert AR coefficient sign convention}
+\title{Convert coefficient sign convention}
 \usage{
 convert_sign_convention(
   coefficients,
@@ -11,15 +11,15 @@ convert_sign_convention(
 )
 }
 \arguments{
-\item{coefficients}{Numeric AR coefficients.}
+\item{coefficients}{Coefficients.}
 
-\item{from}{Sign convention currently used by \code{coefficients}.}
+\item{from}{Current convention.}
 
-\item{to}{Required sign convention.}
+\item{to}{Required convention.}
 }
 \value{
-Numeric coefficients in the requested convention.
+Converted values.
 }
 \description{
-Convert AR coefficient sign convention
+Convert coefficient sign convention
 }

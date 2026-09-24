@@ -1,0 +1,47 @@
+---
+title: "ARMA for Novice Flood Forecast Modellers"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{ARMA for Novice Flood Forecast Modellers}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+library(reach.postproc)
+render_mermaid <- function(diagram) {
+  if (requireNamespace("DiagrammeR", quietly = TRUE)) return(DiagrammeR::mermaid(diagram))
+  knitr::asis_output(paste0("```mermaid\n", diagram, "\n```"))
+}
+```
+
+# What ARMA does
+
+```{r flow, echo=FALSE}
+render_mermaid("flowchart LR; A[Observation] --> C[Error]; B[Simulation] --> C; C --> D[AR model]; D --> E[Updated forecast]; B --> E")
+```
+
+AR projects the recent difference between observation and simulation. Positive error means the simulation is too low.
+
+# Glossary
+
+## AR
+Autoregressive: predicts the next error from previous errors.
+
+## MA
+Moving average: represents new residual innovations.
+
+## Characteristic root
+A number describing decay, growth or oscillation.
+
+## Decay time
+How long a root remains important.
+
+## Modal root
+The EA convention. Stable modal roots lie inside the unit circle.
+
+## Reciprocal lag root
+The reciprocal convention. Stable roots lie outside the unit circle.
+
+## Updated forecast
+Simulation plus projected error.

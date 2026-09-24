@@ -2,18 +2,18 @@
 % Please edit documentation in R/03-parameters.R
 \name{detect_ma_order}
 \alias{detect_ma_order}
-\title{Detect the effective order of a moving-average model}
+\title{Detect effective MA order}
 \usage{
 detect_ma_order(coefficients, tolerance = 1e-08)
 }
 \arguments{
-\item{coefficients}{Numeric AR coefficients ordered from \code{a_1} to \code{a_p}.}
+\item{coefficients}{Coefficients.}
 
-\item{tolerance}{Non-negative tolerance used to identify inactive terms.}
+\item{tolerance}{Activity tolerance.}
 }
 \value{
-A single integer. Returns zero for an empty or inactive vector.
+Integer order.
 }
 \description{
-Detect the effective order of a moving-average model
+Detect effective MA order
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/03-parameters.R
 \name{roots_to_parameters}
 \alias{roots_to_parameters}
-\title{Convert characteristic roots to AR parameters}
+\title{Convert modal roots to parameters}
 \usage{
 roots_to_parameters(
   root_values,
@@ -11,16 +11,15 @@ roots_to_parameters(
 )
 }
 \arguments{
-\item{root_values}{Numeric or complex characteristic roots.}
+\item{root_values}{Modal roots.}
 
-\item{label}{Description assigned to the result.}
+\item{label}{Label.}
 
-\item{tolerance}{Maximum accepted residual imaginary component.}
+\item{tolerance}{Tolerance.}
 }
 \value{
-An \code{ARParameterSet}.
+Parameter object.
 }
 \description{
-Expands the polynomial whose roots are supplied and converts its
-coefficients to the Deltares AR convention.
+Convert modal roots to parameters
 }

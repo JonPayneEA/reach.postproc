@@ -7,16 +7,16 @@
 response(x, ..., ma_parameters = numeric(), steps = 480L)
 }
 \arguments{
-\item{x}{Object defining the AR component.}
+\item{x}{AR parameters.}
 
-\item{...}{Additional arguments passed to a method.}
+\item{...}{Method arguments.}
 
-\item{ma_parameters}{Numeric MA coefficients ordered from \code{b_1} to \code{b_q}.}
+\item{ma_parameters}{MA parameters.}
 
-\item{steps}{Number of response steps, including the impulse step.}
+\item{steps}{Response steps.}
 }
 \value{
-An \code{ARMAResponse} object.
+An ARMA response.
 }
 \description{
 Calculate an ARMA unit response

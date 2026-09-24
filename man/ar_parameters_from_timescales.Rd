@@ -2,7 +2,7 @@
 % Please edit documentation in R/03-parameters.R
 \name{ar_parameters_from_timescales}
 \alias{ar_parameters_from_timescales}
-\title{Construct AR parameters from root time scales}
+\title{Construct parameters from root timescales}
 \usage{
 ar_parameters_from_timescales(
   decay_times,
@@ -12,18 +12,17 @@ ar_parameters_from_timescales(
 )
 }
 \arguments{
-\item{decay_times}{Numeric decay times in model steps.}
+\item{decay_times}{Decay times.}
 
-\item{oscillation_periods}{Numeric periods corresponding to
-\code{decay_times}.}
+\item{oscillation_periods}{Periods.}
 
-\item{label}{Description assigned to the result.}
+\item{label}{Label.}
 
-\item{tolerance}{Numerical tolerance passed to \code{roots_to_parameters()}.}
+\item{tolerance}{Tolerance.}
 }
 \value{
-An \code{ARParameterSet}.
+Parameter object.
 }
 \description{
-Construct AR parameters from root time scales
+Construct parameters from root timescales
 }

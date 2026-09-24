@@ -2,7 +2,7 @@
 % Please edit documentation in R/05-forecast.R
 \name{apply_ar_update}
 \alias{apply_ar_update}
-\title{Apply AR errors to a simulated series}
+\title{Apply projected errors}
 \usage{
 apply_ar_update(
   simulated,
@@ -12,17 +12,17 @@ apply_ar_update(
 )
 }
 \arguments{
-\item{simulated}{Numeric simulated values.}
+\item{simulated}{Simulations.}
 
-\item{ar_error}{Numeric projected errors of equal length.}
+\item{ar_error}{Error projections.}
 
-\item{lower_limit}{Optional lower bound applied to the updated series.}
+\item{lower_limit}{Optional bound.}
 
-\item{time}{Optional time or lead vector.}
+\item{time}{Time values.}
 }
 \value{
-A \code{data.table} containing constrained and unconstrained updates.
+Data table.
 }
 \description{
-Apply AR errors to a simulated series
+Apply projected errors
 }
