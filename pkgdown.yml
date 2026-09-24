@@ -1,0 +1,12 @@
+pandoc: 3.8.3
+pkgdown: 2.2.1
+pkgdown_sha: ~
+articles:
+  arma-flood-forecasting: arma-flood-forecasting.html
+  arma-for-novices: arma-for-novices.html
+  developer-mathematics: developer-mathematics.html
+  using-reach-postproc: using-reach-postproc.html
+last_built: 2026-09-24T13:06Z
+urls:
+  reference: https://jonpayneea.github.io/reach.postproc/reference
+  article: https://jonpayneea.github.io/reach.postproc/articles
