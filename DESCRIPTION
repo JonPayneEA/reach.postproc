@@ -1,6 +1,6 @@
 Package: reach.postproc
 Title: Flood Forecast Error Post-Processing
-Version: 0.7.5
+Version: 0.7.6
 Authors@R: person("Jonathan", "Payne", role = c("aut", "cre"), email = "jonathan.payne@example.org")
 Description: Transparent autoregressive and autoregressive moving-average
     post-processing for flood forecasts. Provides characteristic-root analysis,
@@ -24,3 +24,6 @@ Suggests:
     DiagrammeR
 Config/testthat/edition: 3
 VignetteBuilder: knitr
+URL: https://jonpayneea.github.io/reach.postproc/,
+    https://github.com/JonPayneEA/reach.postproc
+BugReports: https://github.com/JonPayneEA/reach.postproc/issues

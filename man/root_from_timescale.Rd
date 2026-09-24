@@ -2,18 +2,27 @@
 % Please edit documentation in R/03-parameters.R
 \name{root_from_timescale}
 \alias{root_from_timescale}
-\title{Construct a modal root from timescales}
+\title{Construct one modal root from decay and oscillation timescales}
 \usage{
 root_from_timescale(decay_time, oscillation_period = Inf)
 }
 \arguments{
-\item{decay_time}{Decay time.}
+\item{decay_time}{Non-zero numeric decay time in model steps. Positive values
+create decaying roots. Negative values represent growth and should normally
+be used only for testing assessment behaviour.}
 
-\item{oscillation_period}{Period.}
+\item{oscillation_period}{Numeric period in model steps. Use \code{Inf} for a
+positive real, non-oscillating root. Use \code{2} for a negative real root that
+changes sign every timestep.}
 }
 \value{
-Complex root.
+One complex modal root.
 }
 \description{
-Construct a modal root from timescales
+Convert an interpretable decay time and oscillation period into a complex
+modal root. Times are expressed in model timesteps, not hours.
+}
+\examples{
+root_from_timescale(decay_time = 96, oscillation_period = Inf)
+root_from_timescale(decay_time = 0.3333, oscillation_period = 2)
 }

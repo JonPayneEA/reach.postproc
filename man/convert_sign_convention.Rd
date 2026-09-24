@@ -2,7 +2,7 @@
 % Please edit documentation in R/03-parameters.R
 \name{convert_sign_convention}
 \alias{convert_sign_convention}
-\title{Convert coefficient sign convention}
+\title{Convert AR coefficient signs between supported conventions}
 \usage{
 convert_sign_convention(
   coefficients,
@@ -11,15 +11,24 @@ convert_sign_convention(
 )
 }
 \arguments{
-\item{coefficients}{Coefficients.}
+\item{coefficients}{Numeric vector ordered from first to highest lag.}
 
-\item{from}{Current convention.}
+\item{from}{Convention currently used by \code{coefficients}.}
 
-\item{to}{Required convention.}
+\item{to}{Convention required in the returned vector.}
 }
 \value{
-Converted values.
+A numeric vector in the requested convention. Coefficient order and
+names are preserved.
 }
 \description{
-Convert coefficient sign convention
+Change the signs of a coefficient vector when moving between the Deltares
+recurrence and the alternative signed equation convention.
+}
+\examples{
+convert_sign_convention(
+  coefficients = c(1.765, -0.72625, -0.040656),
+  from = "Deltares",
+  to = "Standard"
+)
 }

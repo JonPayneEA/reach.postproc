@@ -2,16 +2,20 @@
 % Please edit documentation in R/08-accessors-plots.R
 \name{aligned_series}
 \alias{aligned_series}
-\title{Extract aligned series}
+\title{Aligned series}
 \usage{
 aligned_series(x)
 }
 \arguments{
-\item{x}{Aligned result.}
+\item{x}{an aligned-series result returned by \code{align_forecast_series()}.}
 }
 \value{
-Data table.
+a copied \code{data.table} containing timestamps, observations, simulations and errors. The returned table is a copy and may be modified safely.
 }
 \description{
-Extract aligned series
+Extract the tabular data from a structured package result without exposing
+callers to its internal S7 property layout.
+}
+\examples{
+aligned_series(align_forecast_series(data.frame(date_time = as.POSIXct('2024-01-01', tz='UTC'), value = 1), data.frame(date_time = as.POSIXct('2024-01-01', tz='UTC'), value = 0.9)))
 }

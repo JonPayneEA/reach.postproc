@@ -1,21 +1,19 @@
-#' Effective decay time
+#' Calculate effective decay time for an oscillating root
 #'
-#' @param decay_time Decay time.
-#' @param oscillation_period Period.
+#' Find the first time at which exponential decay combined with oscillation
+#' reaches `exp(-1)` of its starting value.
 #'
-#' @returns Effective decay.
+#' @param decay_time Positive exponential decay time in model steps.
+#' @param oscillation_period Oscillation period in model steps. Use `Inf` for a
+#'   non-oscillating root, in which case effective and exponential decay are the
+#'   same.
+#'
+#' @returns One numeric effective decay time in model steps.
+#'
+#' @examples
+#' effective_decay_time(8, Inf)
+#' effective_decay_time(8, 12)
 #' @export
 effective_decay_time <- function(decay_time,oscillation_period){if(is.infinite(oscillation_period))return(decay_time);f<-function(t)exp(-t/decay_time)*cos(2*pi*t/oscillation_period)-exp(-1);stats::uniroot(f,c(0,min(decay_time,oscillation_period/4)))$root}
-S7::method(roots,ARParameterSet)<-function(x,...,time_step_minutes=15,tolerance=sqrt(.Machine$double.eps)){
- z<-polyroot(c(-rev(x@coefficients),1));m<-Mod(z);lag<-1/z;grow<-m>1+tolerance;persist<-abs(m-1)<=tolerance;raw<--1/log(m);real<-abs(Im(z))<=tolerance
- period<-rep(NA_real_,length(z));period[real&Re(z)>=0]<-Inf;period[real&Re(z)<0]<-2;period[!real]<-2*pi/abs(Arg(z[!real]))
- effective<-mapply(function(t,T,g,p)if(g||p)Inf else effective_decay_time(t,T),raw,period,grow,persist);display<-raw;display[grow|persist]<-Inf
- d<-data.table::data.table(root_id=seq_along(z),root_real=Re(z),root_imaginary=Im(z),root_modulus=m,lag_root_real=Re(lag),lag_root_imaginary=Im(lag),lag_root_modulus=Mod(lag),raw_decay_time_steps=raw,decay_time_steps=display,effective_decay_time_steps=effective,decay_time_hours=format_hours(display,time_step_minutes),effective_decay_time_hours=format_hours(effective,time_step_minutes),oscillation_period_steps=period,oscillation_period_hours=format_hours(period,time_step_minutes),is_growing=grow,is_persistent=persist,is_oscillating=is.finite(period),modal_stability=factor(ifelse(grow,"Unstable",ifelse(persist,"Marginal","Stable")),levels=c("Stable","Marginal","Unstable")),lag_stability=factor(ifelse(Mod(lag)<1-tolerance,"Unstable",ifelse(abs(Mod(lag)-1)<=tolerance,"Marginal","Stable")),levels=c("Stable","Marginal","Unstable")))
- data.table::setorder(d,-decay_time_steps,root_real,root_imaginary);data.table::set(d,j="display_order",value=seq_len(nrow(d)));CharacteristicRoots(parameters=x,values=as.complex(z),table=d,time_step_minutes=as.numeric(time_step_minutes))}
-S7::method(assess,ARParameterSet)<-function(x,...,maximum_decay_time=240,minimum_useful_decay_time=8,rapid_decay_exception=1,oscillation_ratio=-2*log(.1),decay_measure=c("effective","exponential"),permitted_orders=c(2L,3L),time_step_minutes=15){
- decay_measure<-match.arg(decay_measure);rr<-roots(x,time_step_minutes=time_step_minutes);d<-rr@table;v<-d[[if(decay_measure=="effective")"effective_decay_time_steps" else "decay_time_steps"]]
- grow<-d$display_order[d$is_growing];slow<-d$display_order[!d$is_growing&v>=maximum_decay_time];fast<-all(!d$is_growing&v<minimum_useful_decay_time);osc<-d$display_order[d$is_oscillating&d$decay_time_steps>=rapid_decay_exception&d$oscillation_period_steps<oscillation_ratio*d$decay_time_steps]
- failed<-c(!(x@order%in%permitted_orders),length(grow)>0,length(slow)>0,fast,length(osc)>0)
- tests<-data.table::data.table(test_id=c("order","a","b","c","d"),test=c("Permitted AR order","Exponential growth","Excessive decay time","All roots decay too quickly","Unacceptable oscillation"),failed=failed,affected_roots=list(integer(),grow,slow,if(fast)d$display_order else integer(),osc),criterion=c("permitted order","no growing root","maximum decay","minimum useful decay","oscillation ratio"))
- summary<-if(any(failed))paste("Fail:",paste(tests$test[tests$failed],collapse="; ")) else "Pass. All roots meet the accepted criteria."
- ARAssessment(parameters=x,passed=!any(failed),result=if(any(failed))"Fail" else "Pass",summary=summary,tests=tests,roots=rr)}
+S7::method(roots,ARParameterSet)<-function(x,...,time_step_minutes=15,tolerance=sqrt(.Machine$double.eps)){z<-polyroot(c(-rev(x@coefficients),1));m<-Mod(z);lag<-1/z;grow<-m>1+tolerance;persist<-abs(m-1)<=tolerance;raw<--1/log(m);real<-abs(Im(z))<=tolerance;period<-rep(NA_real_,length(z));period[real&Re(z)>=0]<-Inf;period[real&Re(z)<0]<-2;period[!real]<-2*pi/abs(Arg(z[!real]));effective<-mapply(function(t,T,g,p)if(g||p)Inf else effective_decay_time(t,T),raw,period,grow,persist);display<-raw;display[grow|persist]<-Inf;d<-data.table::data.table(root_id=seq_along(z),root_real=Re(z),root_imaginary=Im(z),root_modulus=m,lag_root_real=Re(lag),lag_root_imaginary=Im(lag),lag_root_modulus=Mod(lag),raw_decay_time_steps=raw,decay_time_steps=display,effective_decay_time_steps=effective,decay_time_hours=format_hours(display,time_step_minutes),effective_decay_time_hours=format_hours(effective,time_step_minutes),oscillation_period_steps=period,oscillation_period_hours=format_hours(period,time_step_minutes),is_growing=grow,is_persistent=persist,is_oscillating=is.finite(period),modal_stability=factor(ifelse(grow,"Unstable",ifelse(persist,"Marginal","Stable")),levels=c("Stable","Marginal","Unstable")),lag_stability=factor(ifelse(Mod(lag)<1-tolerance,"Unstable",ifelse(abs(Mod(lag)-1)<=tolerance,"Marginal","Stable")),levels=c("Stable","Marginal","Unstable")));data.table::setorder(d,-decay_time_steps,root_real,root_imaginary);data.table::set(d,j="display_order",value=seq_len(nrow(d)));CharacteristicRoots(parameters=x,values=as.complex(z),table=d,time_step_minutes=as.numeric(time_step_minutes))}
+S7::method(assess,ARParameterSet)<-function(x,...,maximum_decay_time=240,minimum_useful_decay_time=8,rapid_decay_exception=1,oscillation_ratio=-2*log(.1),decay_measure=c("effective","exponential"),permitted_orders=c(2L,3L),time_step_minutes=15){decay_measure<-match.arg(decay_measure);rr<-roots(x,time_step_minutes=time_step_minutes);d<-rr@table;v<-d[[if(decay_measure=="effective")"effective_decay_time_steps" else "decay_time_steps"]];grow<-d$display_order[d$is_growing];slow<-d$display_order[!d$is_growing&v>=maximum_decay_time];fast<-all(!d$is_growing&v<minimum_useful_decay_time);osc<-d$display_order[d$is_oscillating&d$decay_time_steps>=rapid_decay_exception&d$oscillation_period_steps<oscillation_ratio*d$decay_time_steps];failed<-c(!(x@order%in%permitted_orders),length(grow)>0,length(slow)>0,fast,length(osc)>0);tests<-data.table::data.table(test_id=c("order","a","b","c","d"),test=c("Permitted AR order","Exponential growth","Excessive decay time","All roots decay too quickly","Unacceptable oscillation"),failed=failed,affected_roots=list(integer(),grow,slow,if(fast)d$display_order else integer(),osc),criterion=c("permitted order","no growing root","maximum decay","minimum useful decay","oscillation ratio"));summary<-if(any(failed))paste("Fail:",paste(tests$test[tests$failed],collapse="; "))else"Pass. All roots meet the accepted criteria.";ARAssessment(parameters=x,passed=!any(failed),result=if(any(failed))"Fail"else"Pass",summary=summary,tests=tests,roots=rr)}

@@ -2,13 +2,20 @@
 % Please edit documentation in R/03-parameters.R
 \name{default_ar_parameters}
 \alias{default_ar_parameters}
-\title{2024 EA default AR parameters}
+\title{Return the Environment Agency 2024 default AR parameters}
 \usage{
 default_ar_parameters()
 }
 \value{
-An internal parameter object.
+An AR(3) parameter object with Deltares coefficients \code{1.765},
+\code{-0.72625} and \code{-0.040656}.
 }
 \description{
-2024 EA default AR parameters
+Create the approved third-order default parameter set used throughout the
+package examples. The coefficients are retained at their stated precision.
+}
+\examples{
+parameters <- default_ar_parameters()
+parameters@coefficients
+assessment_table(assess(parameters))
 }

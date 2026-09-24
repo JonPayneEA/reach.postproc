@@ -2,24 +2,42 @@
 % Please edit documentation in R/02-generics.R
 \name{forecast_ar}
 \alias{forecast_ar}
-\title{Forecast an AR error series}
+\title{Forecast an autoregressive model-error series}
 \usage{
 forecast_ar(x, ..., initial_errors, steps = 480L, time_step_minutes = 15)
 }
 \arguments{
-\item{x}{AR parameters.}
+\item{x}{An AR parameter object.}
 
-\item{...}{Method arguments.}
+\item{...}{Additional method arguments. The current AR-parameter method does
+not use additional unnamed arguments.}
 
-\item{initial_errors}{Errors ordered newest first.}
+\item{initial_errors}{Numeric recent errors supplied newest first. The vector
+length must equal the AR order. For AR(3), supply errors at times \code{t-1},
+\code{t-2} and \code{t-3} in that order.}
 
-\item{steps}{Projected steps.}
+\item{steps}{Positive whole number of future timesteps to calculate.}
 
-\item{time_step_minutes}{Minutes per step.}
+\item{time_step_minutes}{Positive number of minutes represented by one model
+timestep. It controls reported lead times but not the recurrence itself.}
 }
 \value{
-An AR forecast result.
+An AR forecast result. Use \code{\link[=forecast_series]{forecast_series()}} to obtain its table.
 }
 \description{
-Forecast an AR error series
+Project future model error one timestep at a time from a supplied recent
+error history and AR parameter set.
+}
+\examples{
+parameters <- default_ar_parameters()
+
+forecast <- forecast_ar(
+  parameters,
+  initial_errors = c(0.15, 0.12, 0.10),
+  steps = 24L,
+  time_step_minutes = 15
+)
+
+head(forecast_series(forecast))
+plot_ar(forecast)
 }

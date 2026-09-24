@@ -8,6 +8,15 @@
 \description{
 Transparent autoregressive and autoregressive moving-average post-processing for flood forecasts. Provides characteristic-root analysis, Environment Agency parameter assessment, fixed lead-time evaluation, diagnostics, scoring, and presentation-ready plots.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://jonpayneea.github.io/reach.postproc/}
+  \item \url{https://github.com/JonPayneEA/reach.postproc}
+  \item Report bugs at \url{https://github.com/JonPayneEA/reach.postproc/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Jonathan Payne \email{jonathan.payne@example.org}
 

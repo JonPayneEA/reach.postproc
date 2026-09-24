@@ -2,18 +2,24 @@
 % Please edit documentation in R/03-parameters.R
 \name{detect_ar_order}
 \alias{detect_ar_order}
-\title{Detect effective AR order}
+\title{Detect effective autoregressive order}
 \usage{
 detect_ar_order(coefficients, tolerance = 1e-08)
 }
 \arguments{
-\item{coefficients}{Coefficients.}
+\item{coefficients}{Numeric coefficients ordered from first to highest lag.}
 
-\item{tolerance}{Activity tolerance.}
+\item{tolerance}{Non-negative activity threshold. A coefficient is active
+when its absolute value exceeds this value.}
 }
 \value{
-Integer order.
+A single integer. Zero means no coefficient exceeds \code{tolerance}.
 }
 \description{
-Detect effective AR order
+Identify the highest active AR lag after allowing for small numerical values
+in trailing coefficients.
+}
+\examples{
+detect_ar_order(c(0.8, -0.2, 0))
+detect_ar_order(c(0.8, -0.2, 1e-12), tolerance = 1e-8)
 }

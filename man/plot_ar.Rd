@@ -2,18 +2,32 @@
 % Please edit documentation in R/02-generics.R
 \name{plot_ar}
 \alias{plot_ar}
-\title{Plot a reach.postproc result}
+\title{Plot AR and ARMA diagnostic objects}
 \usage{
 plot_ar(x, ...)
 }
 \arguments{
-\item{x}{Object to plot.}
+\item{x}{A supported \code{reach.postproc} result.}
 
-\item{...}{Method arguments.}
+\item{...}{Method options. Root plots accept \code{root_definition} (\code{"modal"} or
+\code{"lag"}), \code{show_labels} and \code{maximum_plot_limit}. Other methods use options
+documented with their result type.}
 }
 \value{
-A ggplot.
+A \code{ggplot} object.
 }
 \description{
-Plot a reach.postproc result
+S7 generic for plotting roots, error forecasts, assessments and response
+objects with \code{ggplot2}.
+}
+\examples{
+parameters <- default_ar_parameters()
+plot_ar(roots(parameters), root_definition = "modal")
+
+forecast <- forecast_ar(
+  parameters,
+  initial_errors = c(0.15, 0.12, 0.10),
+  steps = 24L
+)
+plot_ar(forecast)
 }

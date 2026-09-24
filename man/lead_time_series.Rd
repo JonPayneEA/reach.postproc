@@ -2,16 +2,21 @@
 % Please edit documentation in R/08-accessors-plots.R
 \name{lead_time_series}
 \alias{lead_time_series}
-\title{Extract lead-time series}
+\title{Lead time series}
 \usage{
 lead_time_series(x)
 }
 \arguments{
-\item{x}{Lead result.}
+\item{x}{a fixed lead-time result returned by \code{fixed_lead_ar()}.}
 }
 \value{
-Data table.
+a copied long \code{data.table} containing observations, simulations, projected errors and updates by lead. The returned table is a copy and may be modified safely.
 }
 \description{
-Extract lead-time series
+Extract the tabular data from a structured package result without exposing
+callers to its internal S7 property layout.
+}
+\examples{
+# See fixed_lead_ar() for a complete construction example.
+# lead_time_series(result)
 }

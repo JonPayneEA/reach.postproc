@@ -2,18 +2,23 @@
 % Please edit documentation in R/03-parameters.R
 \name{detect_ma_order}
 \alias{detect_ma_order}
-\title{Detect effective MA order}
+\title{Detect effective moving-average order}
 \usage{
 detect_ma_order(coefficients, tolerance = 1e-08)
 }
 \arguments{
-\item{coefficients}{Coefficients.}
+\item{coefficients}{Numeric MA coefficients ordered from the most recent
+innovation to the oldest.}
 
-\item{tolerance}{Activity tolerance.}
+\item{tolerance}{Non-negative activity threshold.}
 }
 \value{
-Integer order.
+A single integer. An empty coefficient vector has order zero.
 }
 \description{
-Detect effective MA order
+Identify the highest active MA lag after allowing for small trailing values.
+}
+\examples{
+detect_ma_order(c(-0.5, -0.25, 0))
+detect_ma_order(numeric())
 }

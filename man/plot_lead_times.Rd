@@ -2,20 +2,39 @@
 % Please edit documentation in R/08-accessors-plots.R
 \name{plot_lead_times}
 \alias{plot_lead_times}
-\title{Plot fixed lead-time results}
+\title{Plot fixed lead-time observations, simulations and updates}
 \usage{
 plot_lead_times(x, thresholds = NULL, common_period_only = TRUE)
 }
 \arguments{
-\item{x}{Lead result.}
+\item{x}{A fixed lead-time result from \code{\link[=fixed_lead_ar]{fixed_lead_ar()}}.}
 
-\item{thresholds}{Optional thresholds.}
+\item{thresholds}{Optional data frame or \code{data.table} containing threshold
+values and, where supported, display names. Values must use the same units
+as the forecast series.}
 
-\item{common_period_only}{Common period flag.}
+\item{common_period_only}{Logical. When \code{TRUE}, trim the display to the period
+where every requested lead has a calculated update. This supports fair
+visual comparison across leads.}
 }
 \value{
-Plot.
+A \code{ggplot} object that can be printed, modified or saved with
+\code{ggplot2::ggsave()}.
 }
 \description{
-Plot fixed lead-time results
+Create a \code{ggplot2} time-series comparison for all evaluated lead times.
+}
+\examples{
+time <- as.POSIXct("2024-01-01", tz = "UTC") + 0:80 * 900
+simulation <- 0.8 + sin(0:80 / 12)
+observation <- simulation + 0.1
+aligned <- align_forecast_series(
+  data.frame(date_time = time, value = observation),
+  data.frame(date_time = time, value = simulation),
+  interval_minutes = 15
+)
+result <- fixed_lead_ar(
+  default_ar_parameters(), aligned, c(30, 60)
+)
+plot_lead_times(result)
 }

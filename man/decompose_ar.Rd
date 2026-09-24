@@ -2,24 +2,44 @@
 % Please edit documentation in R/02-generics.R
 \name{decompose_ar}
 \alias{decompose_ar}
-\title{Decompose AR behaviour by root}
+\title{Decompose an AR forecast into characteristic-root contributions}
 \usage{
 decompose_ar(x, ..., initial_errors, steps = 480L, time_step_minutes = 15)
 }
 \arguments{
-\item{x}{AR parameters.}
+\item{x}{An AR parameter object.}
 
-\item{...}{Method arguments.}
+\item{...}{Additional method arguments; currently unused.}
 
-\item{initial_errors}{Errors ordered newest first.}
+\item{initial_errors}{Numeric recent errors supplied newest first. Length must
+equal AR order.}
 
-\item{steps}{Projected steps.}
+\item{steps}{Positive whole number of forecast steps to return.}
 
-\item{time_step_minutes}{Minutes per step.}
+\item{time_step_minutes}{Minutes represented by one step.}
 }
 \value{
-A long data table.
+A long \code{data.table} with one row per root and forecast step. Summing
+\code{contribution_real} by \code{step} reconstructs \code{\link[=forecast_ar]{forecast_ar()}}. Modal time zero
+corresponds to forecast step one.
 }
 \description{
-Decompose AR behaviour by root
+Express the projected AR error as the sum of the modal contributions implied
+by the characteristic roots. This supports mathematical interpretation and
+verification of the recurrence.
+}
+\examples{
+parameters <- default_ar_parameters()
+
+contributions <- decompose_ar(
+  parameters,
+  initial_errors = c(0.20, 0.15, 0.10),
+  steps = 24L
+)
+
+contributions[
+  ,
+  .(projected_error = sum(contribution_real)),
+  by = step
+]
 }

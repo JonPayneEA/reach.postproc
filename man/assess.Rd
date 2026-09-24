@@ -2,18 +2,34 @@
 % Please edit documentation in R/02-generics.R
 \name{assess}
 \alias{assess}
-\title{Assess AR parameters}
+\title{Assess AR parameters against operational root criteria}
 \usage{
 assess(x, ...)
 }
 \arguments{
-\item{x}{Object to assess.}
+\item{x}{An AR parameter object.}
 
-\item{...}{Method arguments.}
+\item{...}{Assessment controls passed to the AR-parameter method. These
+include \code{maximum_decay_time}, \code{minimum_useful_decay_time},
+\code{rapid_decay_exception}, \code{oscillation_ratio}, \code{decay_measure},
+\code{permitted_orders} and \code{time_step_minutes}.}
 }
 \value{
-An assessment result.
+An assessment result containing an overall pass flag, plain-English
+summary, individual test outcomes and root diagnostics.
 }
 \description{
-Assess AR parameters
+Test model order, growth, excessive persistence, universally rapid decay and
+unacceptable oscillation.
+}
+\examples{
+assessment <- assess(
+  default_ar_parameters(),
+  maximum_decay_time = 240,
+  minimum_useful_decay_time = 8,
+  permitted_orders = c(2L, 3L)
+)
+
+assessment@summary
+assessment_table(assessment)
 }

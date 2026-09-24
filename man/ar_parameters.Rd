@@ -2,7 +2,7 @@
 % Please edit documentation in R/03-parameters.R
 \name{ar_parameters}
 \alias{ar_parameters}
-\title{Construct AR parameters}
+\title{Construct an autoregressive parameter set}
 \usage{
 ar_parameters(
   coefficients = NULL,
@@ -13,19 +13,46 @@ ar_parameters(
 )
 }
 \arguments{
-\item{coefficients}{Coefficients from first to highest order.}
+\item{coefficients}{Numeric vector of AR coefficients ordered from the first
+lag to the highest lag. For AR(3), use \code{c(a_1, a_2, a_3)}. Names are
+optional. Supply either \code{coefficients} or values through \code{...}, not both.}
 
-\item{label}{Label.}
+\item{label}{Single character value describing the parameter set, site,
+calibration or source. The label is retained for printing and reporting.}
 
-\item{sign_convention}{Input convention.}
+\item{sign_convention}{Convention used by \code{coefficients}. Use \code{"Deltares"}
+for \verb{x_t = a_1 x_\{t-1\} + ... + a_p x_\{t-p\}}. Use \code{"Standard"} where the
+lag terms are written on the left-hand side and therefore have opposite
+signs.}
 
-\item{order_tolerance}{Tolerance.}
+\item{order_tolerance}{Non-negative numerical tolerance used to identify
+inactive trailing coefficients. A trailing coefficient whose absolute value
+is no greater than this tolerance is omitted when determining AR order.}
 
-\item{...}{Alternative coefficient input.}
+\item{...}{Alternative coefficient input. This supports calls such as
+\code{ar_parameters(a_1 = 0.8)}. Do not combine this form with \code{coefficients}.}
 }
 \value{
-An internal parameter object.
+An internal AR parameter object accepted by \code{\link[=roots]{roots()}}, \code{\link[=assess]{assess()}},
+\code{\link[=forecast_ar]{forecast_ar()}} and the fixed lead-time functions.
 }
 \description{
-Construct AR parameters
+Create and validate the coefficients used by the AR recurrence. The function
+accepts either the Deltares convention used by IMFS or the alternative signed
+equation convention. It converts the supplied values to Deltares convention
+once and stores that form internally.
+}
+\examples{
+deltares <- ar_parameters(
+  coefficients = c(1.765, -0.72625, -0.040656),
+  sign_convention = "Deltares",
+  label = "2024 defaults"
+)
+
+standard <- ar_parameters(
+  coefficients = c(-1.765, 0.72625, 0.040656),
+  sign_convention = "Standard"
+)
+
+all.equal(deltares@coefficients, standard@coefficients)
 }

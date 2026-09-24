@@ -2,18 +2,31 @@
 % Please edit documentation in R/02-generics.R
 \name{roots}
 \alias{roots}
-\title{Calculate characteristic roots}
+\title{Calculate characteristic roots and their timescales}
 \usage{
 roots(x, ...)
 }
 \arguments{
-\item{x}{Object to analyse.}
+\item{x}{An AR parameter object.}
 
-\item{...}{Method arguments.}
+\item{...}{Method arguments. For AR parameters, use \code{time_step_minutes} to
+convert step-based timescales to hours and \code{tolerance} to classify roots
+close to the unit circle.}
 }
 \value{
-A characteristic-root result.
+A characteristic-root result. Use \code{\link[=root_table]{root_table()}} to extract the
+diagnostic table and \code{\link[=plot_ar]{plot_ar()}} to display the roots.
 }
 \description{
-Calculate characteristic roots
+Convert an AR parameter set into modal roots, reciprocal lag roots, decay
+times, oscillation periods and stability classifications.
+}
+\examples{
+root_information <- roots(
+  default_ar_parameters(),
+  time_step_minutes = 15
+)
+
+root_table(root_information)
+plot_ar(root_information, root_definition = "modal")
 }

@@ -2,16 +2,20 @@
 % Please edit documentation in R/08-accessors-plots.R
 \name{forecast_series}
 \alias{forecast_series}
-\title{Extract forecast series}
+\title{Forecast series}
 \usage{
 forecast_series(x)
 }
 \arguments{
-\item{x}{Forecast.}
+\item{x}{an AR forecast result returned by \code{forecast_ar()}.}
 }
 \value{
-Data table.
+a copied \code{data.table} containing forecast step, lead time and projected error. The returned table is a copy and may be modified safely.
 }
 \description{
-Extract forecast series
+Extract the tabular data from a structured package result without exposing
+callers to its internal S7 property layout.
+}
+\examples{
+forecast_series(forecast_ar(default_ar_parameters(), initial_errors = c(0.15, 0.12, 0.10), steps = 4L))
 }

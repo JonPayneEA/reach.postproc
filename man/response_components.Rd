@@ -2,20 +2,32 @@
 % Please edit documentation in R/06-arma.R
 \name{response_components}
 \alias{response_components}
-\title{Compare response components}
+\title{Compare AR and ARMA response components}
 \usage{
 response_components(parameters, ma_parameters = numeric(), steps = 480L)
 }
 \arguments{
-\item{parameters}{AR parameters.}
+\item{parameters}{An AR parameter object.}
 
-\item{ma_parameters}{MA parameters.}
+\item{ma_parameters}{Numeric MA coefficients ordered from most recent to
+oldest residual. Use \code{numeric()} for an AR-only comparison.}
 
-\item{steps}{Steps.}
+\item{steps}{Positive whole number of response timesteps.}
 }
 \value{
-Long data table.
+A long \code{data.table} containing response step, value and component
+label.
 }
 \description{
-Compare response components
+Return long-format responses suitable for plotting the effect of adding MA
+terms to a supplied AR parameter set.
+}
+\examples{
+components <- response_components(
+  default_ar_parameters(),
+  ma_parameters = c(-0.5, -0.25),
+  steps = 48L
+)
+
+head(components)
 }

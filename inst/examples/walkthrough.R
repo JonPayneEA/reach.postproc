@@ -1,3 +1,5 @@
 library(reach.postproc)
-p<-default_ar_parameters()
-print(assess(p)@summary)
+parameters <- default_ar_parameters()
+assessment <- assess(parameters)
+print(assessment@summary)
+print(root_table(assessment))

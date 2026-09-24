@@ -2,16 +2,34 @@
 % Please edit documentation in R/07-alignment-lead.R
 \name{score_lead_times}
 \alias{score_lead_times}
-\title{Score lead-time results}
+\title{Score fixed lead-time AR forecasts}
 \usage{
-score_lead_times(x)
+score_lead_times(x, metrics = c("mae", "rmse", "bias"))
 }
 \arguments{
-\item{x}{Lead-time result.}
+\item{x}{A fixed lead-time result from \code{\link[=fixed_lead_ar]{fixed_lead_ar()}} or a compatible long
+table containing \code{lead_time_minutes}, \code{observed}, \code{simulated} and \code{updated}.}
+
+\item{metrics}{Character vector of requested metrics where supported. Common
+choices include \code{"mae"}, \code{"rmse"}, \code{"bias"},
+\code{"maximum_absolute_error"} and \code{"outperformance_rate"}.}
 }
 \value{
-Scores.
+One-row-per-lead \code{data.table} of performance metrics. Positive MAE
+or RMSE improvement means the update outperformed the simulation.
 }
 \description{
-Score lead-time results
+Compare simulated and updated values against observations separately for each
+forecast lead.
+}
+\examples{
+# See fixed_lead_ar() for construction of a full result.
+example_scores <- data.table::data.table(
+  lead_time_minutes = c(30, 30, 60, 60),
+  observed = c(1.0, 1.2, 1.0, 1.2),
+  simulated = c(0.8, 1.0, 0.8, 1.0),
+  updated = c(0.95, 1.15, 0.9, 1.1)
+)
+
+score_lead_times(example_scores)
 }

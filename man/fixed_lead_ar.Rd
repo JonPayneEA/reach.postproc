@@ -2,7 +2,7 @@
 % Please edit documentation in R/07-alignment-lead.R
 \name{fixed_lead_ar}
 \alias{fixed_lead_ar}
-\title{Fixed lead-time updates}
+\title{Calculate fixed lead-time AR updates}
 \usage{
 fixed_lead_ar(
   parameters,
@@ -15,23 +15,49 @@ fixed_lead_ar(
 )
 }
 \arguments{
-\item{parameters}{AR parameters.}
+\item{parameters}{An assessed AR parameter object.}
 
-\item{data}{Aligned data.}
+\item{data}{An aligned-series result from \code{\link[=align_forecast_series]{align_forecast_series()}} or a table
+with \code{date_time}, \code{observed} and \code{simulated} columns.}
 
-\item{lead_times_minutes}{Leads.}
+\item{lead_times_minutes}{Positive numeric lead times. Every value must be an
+exact multiple of \code{time_step_minutes}.}
 
-\item{time_step_minutes}{Timestep.}
+\item{time_step_minutes}{Minutes represented by one model timestep.}
 
-\item{lower_limit}{Lower bound.}
+\item{lower_limit}{Optional lower bound applied to the displayed update.}
 
-\item{method}{Method.}
+\item{method}{Calculation method. \code{"recurrence"} is the production route.
+\code{"roots"} provides an independent mathematical comparison where supported.}
 
-\item{metadata}{Metadata.}
+\item{metadata}{Named list of site, model and event identifiers attached to
+the result.}
 }
 \value{
-A lead-time result.
+A fixed lead-time result. Use \code{\link[=lead_time_series]{lead_time_series()}},
+\code{\link[=score_lead_times]{score_lead_times()}} and \code{\link[=plot_lead_times]{plot_lead_times()}} to inspect it.
 }
 \description{
-Fixed lead-time updates
+Reconstruct what the updated forecast would have said at each target time had
+it always started a fixed number of minutes earlier.
+}
+\examples{
+time <- as.POSIXct("2024-01-01", tz = "UTC") + 0:80 * 900
+simulation <- 0.8 + sin(0:80 / 12)
+observation <- simulation + 0.1
+
+aligned <- align_forecast_series(
+  data.frame(date_time = time, value = observation),
+  data.frame(date_time = time, value = simulation),
+  interval_minutes = 15
+)
+
+result <- fixed_lead_ar(
+  default_ar_parameters(),
+  aligned,
+  lead_times_minutes = c(30, 60),
+  time_step_minutes = 15
+)
+
+head(lead_time_series(result))
 }

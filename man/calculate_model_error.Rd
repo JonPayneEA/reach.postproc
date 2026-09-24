@@ -2,18 +2,27 @@
 % Please edit documentation in R/03-parameters.R
 \name{calculate_model_error}
 \alias{calculate_model_error}
-\title{Calculate observed-minus-simulated error}
+\title{Calculate observed-minus-simulated model error}
 \usage{
 calculate_model_error(observed, simulated)
 }
 \arguments{
-\item{observed}{Observations.}
+\item{observed}{Numeric vector of observed level or flow values.}
 
-\item{simulated}{Simulations.}
+\item{simulated}{Numeric vector of model values in the same domain, units,
+timestamps and order as \code{observed}.}
 }
 \value{
-Errors.
+Numeric vector calculated as \code{observed - simulated}. Positive values
+mean the simulation is too low.
 }
 \description{
-Calculate observed-minus-simulated error
+Apply the package-wide error convention used to initialise and evaluate AR
+forecasts.
+}
+\examples{
+calculate_model_error(
+  observed = c(1.20, 1.30),
+  simulated = c(1.00, 1.35)
+)
 }

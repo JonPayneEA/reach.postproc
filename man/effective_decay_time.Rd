@@ -2,18 +2,25 @@
 % Please edit documentation in R/04-roots-assessment.R
 \name{effective_decay_time}
 \alias{effective_decay_time}
-\title{Effective decay time}
+\title{Calculate effective decay time for an oscillating root}
 \usage{
 effective_decay_time(decay_time, oscillation_period)
 }
 \arguments{
-\item{decay_time}{Decay time.}
+\item{decay_time}{Positive exponential decay time in model steps.}
 
-\item{oscillation_period}{Period.}
+\item{oscillation_period}{Oscillation period in model steps. Use \code{Inf} for a
+non-oscillating root, in which case effective and exponential decay are the
+same.}
 }
 \value{
-Effective decay.
+One numeric effective decay time in model steps.
 }
 \description{
-Effective decay time
+Find the first time at which exponential decay combined with oscillation
+reaches \code{exp(-1)} of its starting value.
+}
+\examples{
+effective_decay_time(8, Inf)
+effective_decay_time(8, 12)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/07-alignment-lead.R
 \name{align_forecast_series}
 \alias{align_forecast_series}
-\title{Align observed and simulated series}
+\title{Align observed and simulated forecast series}
 \usage{
 align_forecast_series(
   observed,
@@ -19,25 +19,52 @@ align_forecast_series(
 )
 }
 \arguments{
-\item{observed, simulated}{Input tables.}
+\item{observed}{Data frame or \code{data.table} containing observation timestamps
+and values.}
 
-\item{observed_time_column, simulated_time_column}{Time columns.}
+\item{simulated}{Data frame or \code{data.table} containing simulation timestamps
+and values.}
 
-\item{observed_value_column, simulated_value_column}{Value columns.}
+\item{observed_time_column, simulated_time_column}{Names of timestamp columns.
+Values must be convertible to \code{POSIXct}.}
 
-\item{join}{Join type.}
+\item{observed_value_column, simulated_value_column}{Names of numeric value
+columns. Both series must represent the same physical quantity and units.}
 
-\item{duplicate_action}{Duplicate handling.}
+\item{join}{Join type. \code{"inner"} retains matched timestamps. \code{"full"} also
+retains unmatched values so missing data remain visible in diagnostics.}
 
-\item{interval_minutes}{Expected interval.}
+\item{duplicate_action}{How duplicate timestamps are handled. \code{"error"}
+stops; \code{"mean"} averages duplicate values; \code{"first"} retains the first.}
 
-\item{timezone}{Timezone.}
+\item{interval_minutes}{Optional expected interval. When supplied, the result
+reports whether the aligned sequence has a regular timestep.}
 
-\item{metadata}{Metadata.}
+\item{timezone}{Timezone used when converting timestamps, normally \code{"UTC"}.}
+
+\item{metadata}{Named list of identifiers such as site, event, measure, units,
+model version or rating version.}
 }
 \value{
-An aligned-series result.
+An aligned-series result. Use \code{\link[=aligned_series]{aligned_series()}} for data and
+\code{\link[=alignment_diagnostics]{alignment_diagnostics()}} for checks.
 }
 \description{
-Align observed and simulated series
+Join observations and simulations by timestamp, calculate model error and
+report diagnostics before fixed lead-time analysis.
+}
+\examples{
+time <- as.POSIXct("2024-01-01", tz = "UTC") + 0:12 * 900
+
+observed <- data.frame(date_time = time, value = 1 + sin(0:12 / 4))
+simulated <- data.frame(date_time = time, value = 0.9 + sin(0:12 / 4))
+
+aligned <- align_forecast_series(
+  observed,
+  simulated,
+  interval_minutes = 15,
+  metadata = list(site_id = "example", units = "m")
+)
+
+alignment_diagnostics(aligned)
 }

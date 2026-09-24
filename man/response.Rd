@@ -2,22 +2,36 @@
 % Please edit documentation in R/02-generics.R
 \name{response}
 \alias{response}
-\title{Calculate an ARMA unit response}
+\title{Calculate an ARMA unit-innovation response}
 \usage{
 response(x, ..., ma_parameters = numeric(), steps = 480L)
 }
 \arguments{
-\item{x}{AR parameters.}
+\item{x}{An AR parameter object.}
 
-\item{...}{Method arguments.}
+\item{...}{Additional method arguments; currently unused.}
 
-\item{ma_parameters}{MA parameters.}
+\item{ma_parameters}{Numeric MA coefficients ordered from most recent to
+oldest residual. Use \code{numeric()} for an AR-only response.}
 
-\item{steps}{Response steps.}
+\item{steps}{Positive whole number of response timesteps.}
 }
 \value{
-An ARMA response.
+An ARMA response result containing component contributions and total
+error through time.
 }
 \description{
-Calculate an ARMA unit response
+Evaluate how a unit residual innovation is propagated by the supplied AR and
+optional MA coefficients.
+}
+\examples{
+parameters <- default_ar_parameters()
+
+unit_response <- response(
+  parameters,
+  ma_parameters = c(-0.5, -0.25),
+  steps = 48L
+)
+
+head(unit_response@series)
 }

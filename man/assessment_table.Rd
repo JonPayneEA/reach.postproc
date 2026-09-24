@@ -2,16 +2,20 @@
 % Please edit documentation in R/08-accessors-plots.R
 \name{assessment_table}
 \alias{assessment_table}
-\title{Extract assessment table}
+\title{Assessment table}
 \usage{
 assessment_table(x)
 }
 \arguments{
-\item{x}{Assessment.}
+\item{x}{an assessment result returned by \code{assess()}.}
 }
 \value{
-Data table.
+a copied \code{data.table} containing each criterion, pass or fail status and affected roots. The returned table is a copy and may be modified safely.
 }
 \description{
-Extract assessment table
+Extract the tabular data from a structured package result without exposing
+callers to its internal S7 property layout.
+}
+\examples{
+assessment_table(assess(default_ar_parameters()))
 }

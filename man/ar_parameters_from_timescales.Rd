@@ -2,7 +2,7 @@
 % Please edit documentation in R/03-parameters.R
 \name{ar_parameters_from_timescales}
 \alias{ar_parameters_from_timescales}
-\title{Construct parameters from root timescales}
+\title{Construct AR parameters from root timescales}
 \usage{
 ar_parameters_from_timescales(
   decay_times,
@@ -12,17 +12,32 @@ ar_parameters_from_timescales(
 )
 }
 \arguments{
-\item{decay_times}{Decay times.}
+\item{decay_times}{Numeric vector of decay times in model steps, one value per
+required root.}
 
-\item{oscillation_periods}{Periods.}
+\item{oscillation_periods}{Numeric vector of matching periods in model steps.
+Use \code{Inf} for non-oscillating positive roots and \code{2} for negative real roots.}
 
-\item{label}{Label.}
+\item{label}{Description attached to the result.}
 
-\item{tolerance}{Tolerance.}
+\item{tolerance}{Numerical tolerance used during root-to-coefficient
+conversion.}
 }
 \value{
-Parameter object.
+An AR parameter object whose order equals the number of supplied
+roots after numerical trimming.
 }
 \description{
-Construct parameters from root timescales
+Build interpretable modal roots from decay times and oscillation periods, then
+convert those roots to Deltares AR coefficients.
+}
+\examples{
+parameters <- ar_parameters_from_timescales(
+  decay_times = c(96, 5.203171, 1 / 3),
+  oscillation_periods = c(Inf, Inf, 2),
+  label = "Example AR(3)"
+)
+
+parameters@coefficients
+root_table(roots(parameters))
 }

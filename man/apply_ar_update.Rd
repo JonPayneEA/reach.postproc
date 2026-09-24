@@ -2,7 +2,7 @@
 % Please edit documentation in R/05-forecast.R
 \name{apply_ar_update}
 \alias{apply_ar_update}
-\title{Apply projected errors}
+\title{Add projected AR error to a simulated forecast}
 \usage{
 apply_ar_update(
   simulated,
@@ -12,17 +12,31 @@ apply_ar_update(
 )
 }
 \arguments{
-\item{simulated}{Simulations.}
+\item{simulated}{Numeric simulated level or flow values.}
 
-\item{ar_error}{Error projections.}
+\item{ar_error}{Numeric projected errors with the same length and units as
+\code{simulated}.}
 
-\item{lower_limit}{Optional bound.}
+\item{lower_limit}{Optional scalar lower bound, commonly zero. Use \code{NULL} to
+return the unconstrained update unchanged.}
 
-\item{time}{Time values.}
+\item{time}{Optional vector identifying each row. It may contain numeric lead
+times or date-times and must match the series length.}
 }
 \value{
-Data table.
+A \code{data.table} containing simulation, projected error,
+unconstrained update, displayed update and a flag showing where the lower
+limit was applied.
 }
 \description{
-Apply projected errors
+Combine a simulation and projected error series, retaining both the
+unconstrained update and any lower-limited displayed value.
+}
+\examples{
+apply_ar_update(
+  simulated = c(0.10, 0.08, 0.05),
+  ar_error = c(-0.05, -0.10, -0.04),
+  lower_limit = 0,
+  time = c(15, 30, 45)
+)
 }

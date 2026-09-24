@@ -2,16 +2,20 @@
 % Please edit documentation in R/08-accessors-plots.R
 \name{root_table}
 \alias{root_table}
-\title{Extract root table}
+\title{Root table}
 \usage{
 root_table(x)
 }
 \arguments{
-\item{x}{Root or assessment result.}
+\item{x}{a characteristic-root result from \code{roots()} or an assessment result from \code{assess()}.}
 }
 \value{
-Data table.
+a copied \code{data.table} containing modal roots, reciprocal roots, decay times, periods and stability classifications. The returned table is a copy and may be modified safely.
 }
 \description{
-Extract root table
+Extract the tabular data from a structured package result without exposing
+callers to its internal S7 property layout.
+}
+\examples{
+root_table(roots(default_ar_parameters()))
 }

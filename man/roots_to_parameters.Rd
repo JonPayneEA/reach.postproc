@@ -2,7 +2,7 @@
 % Please edit documentation in R/03-parameters.R
 \name{roots_to_parameters}
 \alias{roots_to_parameters}
-\title{Convert modal roots to parameters}
+\title{Convert modal roots to AR coefficients}
 \usage{
 roots_to_parameters(
   root_values,
@@ -11,15 +11,30 @@ roots_to_parameters(
 )
 }
 \arguments{
-\item{root_values}{Modal roots.}
+\item{root_values}{Numeric or complex vector of modal roots. These are the
+roots used by the Environment Agency guidance, for which stable roots lie
+inside the unit circle. Do not supply reciprocal lag-polynomial roots.}
 
-\item{label}{Label.}
+\item{label}{Description attached to the returned parameter set.}
 
-\item{tolerance}{Tolerance.}
+\item{tolerance}{Maximum permitted imaginary remainder in the calculated
+coefficients and the activity tolerance used to identify AR order.}
 }
 \value{
-Parameter object.
+An AR parameter object in Deltares convention.
 }
 \description{
-Convert modal roots to parameters
+Construct the Deltares AR polynomial from supplied modal roots. Complex roots
+must occur as conjugate pairs so the resulting coefficients are real.
+}
+\examples{
+original <- default_ar_parameters()
+modal_roots <- roots(original)@values
+reconstructed <- roots_to_parameters(modal_roots)
+
+all.equal(
+  original@coefficients,
+  reconstructed@coefficients,
+  tolerance = 1e-9
+)
 }
