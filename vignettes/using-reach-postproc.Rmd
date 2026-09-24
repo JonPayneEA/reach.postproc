@@ -22,13 +22,17 @@ library(data.table)
 library(ggplot2)
 
 render_mermaid <- function(diagram) {
-  if (requireNamespace("DiagrammeR", quietly = TRUE)) {
-    return(DiagrammeR::mermaid(diagram))
+  if (!requireNamespace("DiagrammeR", quietly = TRUE)) {
+    stop(
+      paste0(
+        "DiagrammeR is required to render Mermaid diagrams. ",
+        "Install it with install.packages('DiagrammeR')."
+      ),
+      call. = FALSE
+    )
   }
 
-  knitr::asis_output(
-    paste0("```mermaid\n", diagram, "\n```")
-  )
+  DiagrammeR::mermaid(diagram)
 }
 ```
 

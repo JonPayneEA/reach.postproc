@@ -30,7 +30,15 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="active nav-item"><a class="nav-link" href="../articles/index.html">Articles</a></li>
+<li class="active nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/arma-flood-forecasting.html">AR and ARMA for Flood Forecasting</a></li>
+    <li><a class="dropdown-item" href="../articles/arma-for-novices.html">ARMA for Novice Flood Forecast Modellers</a></li>
+    <li><a class="dropdown-item" href="../articles/developer-mathematics.html">Mathematical and Developer Validation</a></li>
+    <li><a class="dropdown-item" href="../articles/using-reach-postproc.html">Using reach.postproc</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -47,8 +55,10 @@
 
 
 
-
-<div class="row">
+<link href="using-reach-postproc_files/htmltools-fill-0.5.9/fill.css" rel="stylesheet">
+<script src="using-reach-postproc_files/htmlwidgets-1.6.4/htmlwidgets.js"></script><script src="using-reach-postproc_files/d3-3.3.8/d3.min.js"></script><script src="using-reach-postproc_files/dagre-0.4.0/dagre-d3.min.js"></script><link href="using-reach-postproc_files/mermaid-0.3.0/dist/mermaid.css" rel="stylesheet">
+<script src="using-reach-postproc_files/mermaid-0.3.0/dist/mermaid.slim.min.js"></script><link href="using-reach-postproc_files/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
+<script src="using-reach-postproc_files/chromatography-0.1/chromatography.js"></script><script src="using-reach-postproc_files/DiagrammeR-binding-1.0.12/DiagrammeR.js"></script><div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Using reach.postproc</h1>
@@ -72,33 +82,19 @@ domain and units.</p>
 <div class="section level2">
 <h2 id="choose-a-workflow">Choose a workflow<a class="anchor" aria-label="anchor" href="#choose-a-workflow"></a>
 </h2>
-<pre class="mermaid"><code>
-flowchart TD
-    A{What do you need to do?}
-    B[Assess parameters]
-    C[Project one error series]
-    D[Evaluate an event archive]
-    E[assess and roots]
-    F[forecast_ar and apply_ar_update]
-    G[align_forecast_series]
-    H[fixed_lead_ar]
-    I[score_lead_times and plot_lead_times]
-
-    A --&gt; B --&gt; E
-    A --&gt; C --&gt; F
-    A --&gt; D --&gt; G --&gt; H --&gt; I
-</code></pre>
+<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-ac96cb3ee4656e2e9ec3" style="width:864px;height:528px;"></div>
+<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"diagram":"\nflowchart TD\n    A{What do you need to do?}\n    B[Assess parameters]\n    C[Project one error series]\n    D[Evaluate an event archive]\n    E[assess and roots]\n    F[forecast_ar and apply_ar_update]\n    G[align_forecast_series]\n    H[fixed_lead_ar]\n    I[score_lead_times and plot_lead_times]\n\n    A --> B --> E\n    A --> C --> F\n    A --> D --> G --> H --> I\n"},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="section level2">
 <h2 id="construct-parameters">Construct parameters<a class="anchor" aria-label="anchor" href="#construct-parameters"></a>
 </h2>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/default_ar_parameters.html">default_ar_parameters</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">parameters</span><span class="op">@</span><span class="va">coefficients</span></span>
 <span><span class="co">#&gt;       a_1       a_2       a_3 </span></span>
 <span><span class="co">#&gt;  1.765000 -0.726250 -0.040656</span></span></code></pre></div>
 <p>Explicit Deltares parameters:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">deltares</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ar_parameters.html">ar_parameters</a></span><span class="op">(</span></span>
 <span>  coefficients <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>    a_1 <span class="op">=</span> <span class="fl">1.765</span>,</span>
@@ -109,7 +105,7 @@ flowchart TD
 <span>  label <span class="op">=</span> <span class="st">"2024 defaults"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Equivalent standard signed-equation parameters:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">standard</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ar_parameters.html">ar_parameters</a></span><span class="op">(</span></span>
 <span>  coefficients <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>    phi_1 <span class="op">=</span> <span class="op">-</span><span class="fl">1.765</span>,</span>
@@ -125,7 +121,7 @@ flowchart TD
 <div class="section level2">
 <h2 id="inspect-and-assess-roots">Inspect and assess roots<a class="anchor" aria-label="anchor" href="#inspect-and-assess-roots"></a>
 </h2>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">root_information</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/roots.html">roots</a></span><span class="op">(</span><span class="va">parameters</span>, time_step_minutes <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/root_table.html">root_table</a></span><span class="op">(</span><span class="va">root_information</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    root_id   root_real root_imaginary root_modulus lag_root_real</span></span>
@@ -155,7 +151,7 @@ flowchart TD
 <span><span class="co">#&gt; 3:           TRUE          Stable        Stable             3</span></span>
 <span><span class="fu"><a href="../reference/plot_ar.html">plot_ar</a></span><span class="op">(</span><span class="va">root_information</span>, root_definition <span class="op">=</span> <span class="st">"modal"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="using-reach-postproc_files/figure-html/workflow-roots-1.png" class="r-plt" alt="" width="864"></p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">assessment</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/assess.html">assess</a></span><span class="op">(</span><span class="va">parameters</span><span class="op">)</span></span>
 <span><span class="va">assessment</span><span class="op">@</span><span class="va">summary</span></span>
 <span><span class="co">#&gt; [1] "Pass. All roots meet the accepted criteria."</span></span>
@@ -182,7 +178,7 @@ justified for the site.</p>
 <h2 id="forecast-one-error-series">Forecast one error series<a class="anchor" aria-label="anchor" href="#forecast-one-error-series"></a>
 </h2>
 <p>Initial errors are newest first.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">error_forecast</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/forecast_ar.html">forecast_ar</a></span><span class="op">(</span></span>
 <span>  <span class="va">parameters</span>,</span>
 <span>  initial_errors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.15</span>, <span class="fl">0.12</span>, <span class="fl">0.10</span><span class="op">)</span>,</span>
@@ -294,7 +290,7 @@ justified for the site.</p>
 <span><span class="fu"><a href="../reference/plot_ar.html">plot_ar</a></span><span class="op">(</span><span class="va">error_forecast</span><span class="op">)</span></span></code></pre></div>
 <p><img src="using-reach-postproc_files/figure-html/workflow-forecast-1.png" class="r-plt" alt="" width="864"></p>
 <p>Apply the errors to a simulated series:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">simulated</span> <span class="op">&lt;-</span> <span class="fl">0.8</span> <span class="op">+</span> <span class="fl">1.2</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span></span>
 <span>  <span class="op">-</span><span class="op">(</span><span class="op">(</span><span class="fu"><a href="../reference/forecast_series.html">forecast_series</a></span><span class="op">(</span><span class="va">error_forecast</span><span class="op">)</span><span class="op">$</span><span class="va">lead_time_hours</span> <span class="op">-</span> <span class="fl">12</span><span class="op">)</span> <span class="op">/</span> <span class="fl">4</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span></span>
 <span><span class="op">)</span></span>
@@ -411,7 +407,7 @@ justified for the site.</p>
 <div class="section level2">
 <h2 id="inspect-root-contributions">Inspect root contributions<a class="anchor" aria-label="anchor" href="#inspect-root-contributions"></a>
 </h2>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">components</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/decompose_ar.html">decompose_ar</a></span><span class="op">(</span></span>
 <span>  <span class="va">parameters</span>,</span>
 <span>  initial_errors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.15</span>, <span class="fl">0.12</span>, <span class="fl">0.10</span><span class="op">)</span>,</span>
@@ -430,7 +426,7 @@ justified for the site.</p>
 <div class="section level2">
 <h2 id="prepare-reproducible-event-data">Prepare reproducible event data<a class="anchor" aria-label="anchor" href="#prepare-reproducible-event-data"></a>
 </h2>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">event_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="st">"2024-11-23 00:00:00"</span>, tz <span class="op">=</span> <span class="st">"UTC"</span><span class="op">)</span>,</span>
 <span>  by <span class="op">=</span> <span class="st">"15 min"</span>,</span>
@@ -458,7 +454,7 @@ justified for the site.</p>
 <div class="section level2">
 <h2 id="align-the-event">Align the event<a class="anchor" aria-label="anchor" href="#align-the-event"></a>
 </h2>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">aligned</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/align_forecast_series.html">align_forecast_series</a></span><span class="op">(</span></span>
 <span>  observed <span class="op">=</span> <span class="va">observed</span>,</span>
 <span>  simulated <span class="op">=</span> <span class="va">simulated</span>,</span>
@@ -500,7 +496,7 @@ timesteps.</p>
 <div class="section level2">
 <h2 id="calculate-fixed-lead-time-updates">Calculate fixed lead-time updates<a class="anchor" aria-label="anchor" href="#calculate-fixed-lead-time-updates"></a>
 </h2>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lead_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fixed_lead_ar.html">fixed_lead_ar</a></span><span class="op">(</span></span>
 <span>  parameters <span class="op">=</span> <span class="va">parameters</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">aligned</span>,</span>
@@ -545,7 +541,7 @@ timesteps.</p>
 <div class="section level2">
 <h2 id="score-performance">Score performance<a class="anchor" aria-label="anchor" href="#score-performance"></a>
 </h2>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">scores</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/score_lead_times.html">score_lead_times</a></span><span class="op">(</span><span class="va">lead_results</span><span class="op">)</span></span>
 <span><span class="va">scores</span></span>
 <span><span class="co">#&gt;    lead_time_minutes     n mae_simulated mae_updated rmse_simulated</span></span>
@@ -565,7 +561,7 @@ zero as well as sign.</p>
 <div class="section level2">
 <h2 id="plot-results">Plot results<a class="anchor" aria-label="anchor" href="#plot-results"></a>
 </h2>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_lead_times.html">plot_lead_times</a></span><span class="op">(</span><span class="va">lead_results</span><span class="op">)</span></span></code></pre></div>
 <p><img src="using-reach-postproc_files/figure-html/workflow-plot-1.png" class="r-plt" alt="" width="864"></p>
 </div>
@@ -574,7 +570,7 @@ zero as well as sign.</p>
 </h2>
 <p>During package development, root projection should agree with
 recurrence projection within numerical tolerance.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">recurrence_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fixed_lead_ar.html">fixed_lead_ar</a></span><span class="op">(</span></span>
 <span>  <span class="va">parameters</span>,</span>
 <span>  <span class="va">aligned</span>,</span>
@@ -592,7 +588,7 @@ recurrence projection within numerical tolerance.</p>
 <div class="section level2">
 <h2 id="arma-response-analysis">ARMA response analysis<a class="anchor" aria-label="anchor" href="#arma-response-analysis"></a>
 </h2>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">response_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/response_components.html">response_components</a></span><span class="op">(</span></span>
 <span>  <span class="va">parameters</span>,</span>
 <span>  ma_parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.5</span>, <span class="op">-</span><span class="fl">0.25</span>, <span class="op">-</span><span class="fl">0.125</span><span class="op">)</span>,</span>
@@ -610,7 +606,7 @@ recurrence projection within numerical tolerance.</p>
 </h2>
 <p>Calculation functions do not write files. Save only where the calling
 workflow requests it.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/fwrite.html" class="external-link">fwrite</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/lead_time_series.html">lead_time_series</a></span><span class="op">(</span><span class="va">lead_results</span><span class="op">)</span>,</span>
 <span>  <span class="st">"lead-time-series.csv"</span></span>

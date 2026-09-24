@@ -30,7 +30,15 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="active nav-item"><a class="nav-link" href="../articles/index.html">Articles</a></li>
+<li class="active nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/arma-flood-forecasting.html">AR and ARMA for Flood Forecasting</a></li>
+    <li><a class="dropdown-item" href="../articles/arma-for-novices.html">ARMA for Novice Flood Forecast Modellers</a></li>
+    <li><a class="dropdown-item" href="../articles/developer-mathematics.html">Mathematical and Developer Validation</a></li>
+    <li><a class="dropdown-item" href="../articles/using-reach-postproc.html">Using reach.postproc</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -47,8 +55,10 @@
 
 
 
-
-<div class="row">
+<link href="developer-mathematics_files/htmltools-fill-0.5.9/fill.css" rel="stylesheet">
+<script src="developer-mathematics_files/htmlwidgets-1.6.4/htmlwidgets.js"></script><script src="developer-mathematics_files/d3-3.3.8/d3.min.js"></script><script src="developer-mathematics_files/dagre-0.4.0/dagre-d3.min.js"></script><link href="developer-mathematics_files/mermaid-0.3.0/dist/mermaid.css" rel="stylesheet">
+<script src="developer-mathematics_files/mermaid-0.3.0/dist/mermaid.slim.min.js"></script><link href="developer-mathematics_files/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
+<script src="developer-mathematics_files/chromatography-0.1/chromatography.js"></script><script src="developer-mathematics_files/DiagrammeR-binding-1.0.12/DiagrammeR.js"></script><div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Mathematical and Developer Validation</h1>
@@ -66,13 +76,8 @@
 <p>This article records the mathematical contracts and numerical
 equivalences that protect the package from subtle sign, root and
 indexing errors.</p>
-<pre class="mermaid"><code>
-flowchart LR
-    A[Parameters] --&gt; B[Modal roots] --&gt; C[Reconstructed parameters]
-    D[AR recurrence] --&gt; E[Modal decomposition]
-    F[Fixed-lead recurrence] --&gt; G[Fixed-lead root projection]
-    H[ARMA recurrence] --&gt; I[Impulse response]
-</code></pre>
+<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-ac96cb3ee4656e2e9ec3" style="width:864px;height:528px;"></div>
+<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"diagram":"\nflowchart LR\n    A[Parameters] --> B[Modal roots] --> C[Reconstructed parameters]\n    D[AR recurrence] --> E[Modal decomposition]\n    F[Fixed-lead recurrence] --> G[Fixed-lead root projection]\n    H[ARMA recurrence] --> I[Impulse response]\n"},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="section level2">
 <h2 id="characteristic-polynomial">Characteristic polynomial<a class="anchor" aria-label="anchor" href="#characteristic-polynomial"></a>
@@ -97,12 +102,12 @@ z-r.
 </annotation></semantics></math></p>
 <p>When polynomial coefficients are stored in ascending order, the
 factor is</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="va">r</span>, <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p>Using <code>c(1, -r)</code> would create
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>−</mo><mi>r</mi><mi>z</mi></mrow><annotation encoding="application/x-tex">1-rz</annotation></semantics></math>
 and therefore introduce reciprocal roots.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/default_ar_parameters.html">default_ar_parameters</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">z1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/roots.html">roots</a></span><span class="op">(</span><span class="va">p1</span><span class="op">)</span><span class="op">@</span><span class="va">values</span></span>
 <span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/roots_to_parameters.html">roots_to_parameters</a></span><span class="op">(</span><span class="va">z1</span><span class="op">)</span></span>
@@ -142,7 +147,7 @@ indexing is:</p>
 <pre class="text"><code>modal time 0 = forecast step 1
 modal time 1 = forecast step 2
 modal time 2 = forecast step 3</code></pre>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/default_ar_parameters.html">default_ar_parameters</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">forecast</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/forecast_ar.html">forecast_ar</a></span><span class="op">(</span></span>
 <span>  <span class="va">parameters</span>,</span>
@@ -258,7 +263,7 @@ produce identical internal coefficients, roots and forecasts.</p>
 <div class="section level2">
 <h2 id="minimum-developer-checks">Minimum developer checks<a class="anchor" aria-label="anchor" href="#minimum-developer-checks"></a>
 </h2>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Not run in the vignette build.</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/document.html" class="external-link">document</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/load_all.html" class="external-link">load_all</a></span><span class="op">(</span><span class="op">)</span></span>

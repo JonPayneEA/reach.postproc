@@ -30,7 +30,15 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="active nav-item"><a class="nav-link" href="../articles/index.html">Articles</a></li>
+<li class="active nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/arma-flood-forecasting.html">AR and ARMA for Flood Forecasting</a></li>
+    <li><a class="dropdown-item" href="../articles/arma-for-novices.html">ARMA for Novice Flood Forecast Modellers</a></li>
+    <li><a class="dropdown-item" href="../articles/developer-mathematics.html">Mathematical and Developer Validation</a></li>
+    <li><a class="dropdown-item" href="../articles/using-reach-postproc.html">Using reach.postproc</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -47,8 +55,10 @@
 
 
 
-
-<div class="row">
+<link href="arma-flood-forecasting_files/htmltools-fill-0.5.9/fill.css" rel="stylesheet">
+<script src="arma-flood-forecasting_files/htmlwidgets-1.6.4/htmlwidgets.js"></script><script src="arma-flood-forecasting_files/d3-3.3.8/d3.min.js"></script><script src="arma-flood-forecasting_files/dagre-0.4.0/dagre-d3.min.js"></script><link href="arma-flood-forecasting_files/mermaid-0.3.0/dist/mermaid.css" rel="stylesheet">
+<script src="arma-flood-forecasting_files/mermaid-0.3.0/dist/mermaid.slim.min.js"></script><link href="arma-flood-forecasting_files/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
+<script src="arma-flood-forecasting_files/chromatography-0.1/chromatography.js"></script><script src="arma-flood-forecasting_files/DiagrammeR-binding-1.0.12/DiagrammeR.js"></script><div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>AR and ARMA for Flood Forecasting</h1>
@@ -551,22 +561,8 @@ remaining suitable for flood events and the forecast horizon.</p>
 <div class="section level2">
 <h2 id="maintenance-workflow">Maintenance workflow<a class="anchor" aria-label="anchor" href="#maintenance-workflow"></a>
 </h2>
-<pre class="mermaid"><code>
-flowchart TD
-    A[Updated forecast issue reported]
-    B[Obtain operational parameters]
-    C[Assess roots and timescales]
-    D{Parameters fail?}
-    E[Recalibrate or replace]
-    F[Check input errors]
-    G[Check gaps and ratings]
-    H[Check cut-off and model dependencies]
-    I[Implement through model maintenance]
-
-    A --&gt; B --&gt; C --&gt; D
-    D -- Yes --&gt; E --&gt; I
-    D -- No --&gt; F --&gt; G --&gt; H --&gt; I
-</code></pre>
+<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-ac96cb3ee4656e2e9ec3" style="width:864px;height:528px;"></div>
+<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"diagram":"\nflowchart TD\n    A[Updated forecast issue reported]\n    B[Obtain operational parameters]\n    C[Assess roots and timescales]\n    D{Parameters fail?}\n    E[Recalibrate or replace]\n    F[Check input errors]\n    G[Check gaps and ratings]\n    H[Check cut-off and model dependencies]\n    I[Implement through model maintenance]\n\n    A --> B --> C --> D\n    D -- Yes --> E --> I\n    D -- No --> F --> G --> H --> I\n"},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="section level2">
 <h2 id="full-arma-equation">Full ARMA equation<a class="anchor" aria-label="anchor" href="#full-arma-equation"></a>
@@ -593,7 +589,7 @@ G_t^{AR}=\sum_{n=1}^{p}g_n^{AR}z_n^t.
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>G</mi><mrow><mi>A</mi><mi>R</mi><mi>M</mi><mi>A</mi></mrow></msup><mo>=</mo><msup><mi>G</mi><mrow><mi>M</mi><mi>A</mi></mrow></msup><mo>*</mo><msup><mi>G</mi><mrow><mi>A</mi><mi>R</mi></mrow></msup><mi>.</mi></mrow><annotation encoding="application/x-tex">
 G^{ARMA}=G^{MA}*G^{AR}.
 </annotation></semantics></math></p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">response_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/response_components.html">response_components</a></span><span class="op">(</span></span>
 <span>  <span class="va">parameters</span>,</span>
 <span>  ma_parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.5</span>, <span class="op">-</span><span class="fl">0.25</span>, <span class="op">-</span><span class="fl">0.125</span><span class="op">)</span>,</span>

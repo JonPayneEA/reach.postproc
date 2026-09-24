@@ -30,7 +30,15 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="active nav-item"><a class="nav-link" href="../articles/index.html">Articles</a></li>
+<li class="active nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/arma-flood-forecasting.html">AR and ARMA for Flood Forecasting</a></li>
+    <li><a class="dropdown-item" href="../articles/arma-for-novices.html">ARMA for Novice Flood Forecast Modellers</a></li>
+    <li><a class="dropdown-item" href="../articles/developer-mathematics.html">Mathematical and Developer Validation</a></li>
+    <li><a class="dropdown-item" href="../articles/using-reach-postproc.html">Using reach.postproc</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -47,8 +55,10 @@
 
 
 
-
-<div class="row">
+<link href="arma-for-novices_files/htmltools-fill-0.5.9/fill.css" rel="stylesheet">
+<script src="arma-for-novices_files/htmlwidgets-1.6.4/htmlwidgets.js"></script><script src="arma-for-novices_files/d3-3.3.8/d3.min.js"></script><script src="arma-for-novices_files/dagre-0.4.0/dagre-d3.min.js"></script><link href="arma-for-novices_files/mermaid-0.3.0/dist/mermaid.css" rel="stylesheet">
+<script src="arma-for-novices_files/mermaid-0.3.0/dist/mermaid.slim.min.js"></script><link href="arma-for-novices_files/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
+<script src="arma-for-novices_files/chromatography-0.1/chromatography.js"></script><script src="arma-for-novices_files/DiagrammeR-binding-1.0.12/DiagrammeR.js"></script><div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>ARMA for Novice Flood Forecast Modellers</h1>
@@ -80,21 +90,8 @@ Delft-FEWS module.</p>
 flow. The simulation will rarely match the latest observation exactly.
 AR uses the recent difference between those two series to estimate how
 the difference may develop after the forecast starts.</p>
-<pre class="mermaid"><code>
-flowchart LR
-    A[Observation]
-    B[Model simulation]
-    C[Recent model error]
-    D[AR model]
-    E[Projected error]
-    F[Updated forecast]
-
-    A --&gt; C
-    B --&gt; C
-    C --&gt; D --&gt; E --&gt; F
-    B --&gt; F
-</code></pre>
-<p>AR does not replace the forecasting model. It updates the model
+<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-ac96cb3ee4656e2e9ec3" style="width:864px;height:528px;"></div>
+<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"diagram":"\nflowchart LR\n    A[Observation]\n    B[Model simulation]\n    C[Recent model error]\n    D[AR model]\n    E[Projected error]\n    F[Updated forecast]\n\n    A --> C\n    B --> C\n    C --> D --> E --> F\n    B --> F\n"},"evals":[],"jsHooks":[]}</script><p>AR does not replace the forecasting model. It updates the model
 output.</p>
 </div>
 <div class="section level2">
@@ -108,7 +105,7 @@ output.</p>
 <pre class="text"><code>error = 1.20 - 1.00 = +0.20 m</code></pre>
 <p>A positive error means the simulation is too low. A negative error
 means the simulation is too high.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/calculate_model_error.html">calculate_model_error</a></span><span class="op">(</span></span>
 <span>  observed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.20</span>, <span class="fl">0.95</span><span class="op">)</span>,</span>
 <span>  simulated <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.00</span>, <span class="fl">1.10</span><span class="op">)</span></span>
@@ -130,7 +127,7 @@ value.</p>
 30 minutes       0.128 m
 45 minutes       0.102 m</code></pre>
 <p>The error fades because the coefficient is smaller than one.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">simple_parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ar_parameters.html">ar_parameters</a></span><span class="op">(</span></span>
 <span>  coefficients <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>a_1 <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span>,</span>
 <span>  label <span class="op">=</span> <span class="st">"Simple AR(1) example"</span></span>
@@ -183,21 +180,8 @@ negative, the projected error would change sign every timestep.</p>
 <p>One value tells us the current mismatch. Several values indicate
 whether the mismatch is steady, increasing, decreasing or changing
 sign.</p>
-<pre class="mermaid"><code>
-flowchart LR
-    A[Oldest recent error]
-    B[Middle recent error]
-    C[Newest recent error]
-    D[Weighted AR calculation]
-    E[Next projected error]
-    F[Repeat]
-
-    A --&gt; D
-    B --&gt; D
-    C --&gt; D
-    D --&gt; E --&gt; F
-</code></pre>
-<p>A third-order model uses three recent errors. It can represent richer
+<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-e5c8c404fe174e4c81bd" style="width:864px;height:528px;"></div>
+<script type="application/json" data-for="htmlwidget-e5c8c404fe174e4c81bd">{"x":{"diagram":"\nflowchart LR\n    A[Oldest recent error]\n    B[Middle recent error]\n    C[Newest recent error]\n    D[Weighted AR calculation]\n    E[Next projected error]\n    F[Repeat]\n\n    A --> D\n    B --> D\n    C --> D\n    D --> E --> F\n"},"evals":[],"jsHooks":[]}</script><p>A third-order model uses three recent errors. It can represent richer
 short-term behaviour than AR(1), but the raw coefficients are much
 harder to interpret.</p>
 </div>
@@ -218,7 +202,7 @@ together.</p>
 <li>changes sign;</li>
 <li>oscillates.</li>
 </ul>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/default_ar_parameters.html">default_ar_parameters</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">root_information</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/roots.html">roots</a></span><span class="op">(</span><span class="va">parameters</span><span class="op">)</span></span>
 <span></span>
@@ -264,17 +248,8 @@ Agency guidance.</p>
 <p>Some statistics books plot reciprocal lag roots. Their stable region
 is outside the circle. The two plots describe the same model from
 opposite root conventions.</p>
-<pre class="mermaid"><code>
-flowchart TD
-    A{Which root definition?}
-    B[EA modal roots]
-    C[Reciprocal lag roots]
-    D[Stable inside the circle]
-    E[Stable outside the circle]
-
-    A --&gt; B --&gt; D
-    A --&gt; C --&gt; E
-</code></pre>
+<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-36aa3d2a04d42bbc2145" style="width:864px;height:528px;"></div>
+<script type="application/json" data-for="htmlwidget-36aa3d2a04d42bbc2145">{"x":{"diagram":"\nflowchart TD\n    A{Which root definition?}\n    B[EA modal roots]\n    C[Reciprocal lag roots]\n    D[Stable inside the circle]\n    E[Stable outside the circle]\n\n    A --> B --> D\n    A --> C --> E\n"},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="section level2">
 <h2 id="decay-time">Decay time<a class="anchor" aria-label="anchor" href="#decay-time"></a>
@@ -303,27 +278,8 @@ the model accommodate sharp changes in the recent error sequence.</p>
 </h2>
 <p>A model passes only when it avoids the main forms of unacceptable
 mathematical behaviour.</p>
-<pre class="mermaid"><code>
-flowchart TD
-    A[Start assessment]
-    B{Any growing root?}
-    C{Any root decays too slowly?}
-    D{Do all roots decay too quickly?}
-    E{Any unacceptable oscillation?}
-    F[FAIL]
-    G[PASS]
-
-    A --&gt; B
-    B -- Yes --&gt; F
-    B -- No --&gt; C
-    C -- Yes --&gt; F
-    C -- No --&gt; D
-    D -- Yes --&gt; F
-    D -- No --&gt; E
-    E -- Yes --&gt; F
-    E -- No --&gt; G
-</code></pre>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-febe03efa1a2d8d52a86" style="width:864px;height:528px;"></div>
+<script type="application/json" data-for="htmlwidget-febe03efa1a2d8d52a86">{"x":{"diagram":"\nflowchart TD\n    A[Start assessment]\n    B{Any growing root?}\n    C{Any root decays too slowly?}\n    D{Do all roots decay too quickly?}\n    E{Any unacceptable oscillation?}\n    F[FAIL]\n    G[PASS]\n\n    A --> B\n    B -- Yes --> F\n    B -- No --> C\n    C -- Yes --> F\n    C -- No --> D\n    D -- Yes --> F\n    D -- No --> E\n    E -- Yes --> F\n    E -- No --> G\n"},"evals":[],"jsHooks":[]}</script><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">assessment</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/assess.html">assess</a></span><span class="op">(</span><span class="va">parameters</span><span class="op">)</span></span>
 <span><span class="va">assessment</span><span class="op">@</span><span class="va">summary</span></span>
 <span><span class="co">#&gt; [1] "Pass. All roots meet the accepted criteria."</span></span>
@@ -369,23 +325,8 @@ the simulation, but this is not a dependable timing correction.</p>
 </h2>
 <p>A sufficiently negative projected error can make the unconstrained
 update negative. IMFS may replace the displayed value with zero.</p>
-<pre class="mermaid"><code>
-flowchart LR
-    A[Simulation]
-    B[Projected error]
-    C[Add values]
-    D{Below zero?}
-    E[Display zero]
-    F[Display calculated value]
-    G[Underlying AR series continues]
-
-    A --&gt; C
-    B --&gt; C
-    C --&gt; D
-    D -- Yes --&gt; E --&gt; G
-    D -- No --&gt; F
-</code></pre>
-<p>The cut-off changes the displayed update. It does not change the
+<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-1fb4450895fe099f74a1" style="width:864px;height:528px;"></div>
+<script type="application/json" data-for="htmlwidget-1fb4450895fe099f74a1">{"x":{"diagram":"\nflowchart LR\n    A[Simulation]\n    B[Projected error]\n    C[Add values]\n    D{Below zero?}\n    E[Display zero]\n    F[Display calculated value]\n    G[Underlying AR series continues]\n\n    A --> C\n    B --> C\n    C --> D\n    D -- Yes --> E --> G\n    D -- No --> F\n"},"evals":[],"jsHooks":[]}</script><p>The cut-off changes the displayed update. It does not change the
 underlying AR recurrence.</p>
 </div>
 <div class="section level2">
@@ -419,43 +360,14 @@ artefacts can therefore be transmitted through a model network.</p>
 <p>A fixed lead-time series asks what the update would have said at
 every target time if it had always started the same number of minutes
 earlier.</p>
-<pre class="mermaid"><code>
-flowchart LR
-    A[Choose target time]
-    B[Move back by fixed lead]
-    C[Read errors available then]
-    D[Project through the lead]
-    E[Update target simulation]
-    F[Repeat for every target]
-
-    A --&gt; B --&gt; C --&gt; D --&gt; E --&gt; F
-</code></pre>
-<p>This allows fair comparison at 30, 60 or 90 minutes ahead.</p>
+<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-10b3b7155e8045a1b2ad" style="width:864px;height:528px;"></div>
+<script type="application/json" data-for="htmlwidget-10b3b7155e8045a1b2ad">{"x":{"diagram":"\nflowchart LR\n    A[Choose target time]\n    B[Move back by fixed lead]\n    C[Read errors available then]\n    D[Project through the lead]\n    E[Update target simulation]\n    F[Repeat for every target]\n\n    A --> B --> C --> D --> E --> F\n"},"evals":[],"jsHooks":[]}</script><p>This allows fair comparison at 30, 60 or 90 minutes ahead.</p>
 </div>
 <div class="section level2">
 <h2 id="complete-novice-workflow">Complete novice workflow<a class="anchor" aria-label="anchor" href="#complete-novice-workflow"></a>
 </h2>
-<pre class="mermaid"><code>
-flowchart TD
-    A([Start]) --&gt; B[Load approved parameters]
-    B --&gt; C[Assess parameters]
-    C --&gt; D{Pass?}
-    D -- No --&gt; E[Review or replace parameters]
-    D -- Yes --&gt; F[Import observation and simulation]
-    F --&gt; G{Same domain and units?}
-    G -- No --&gt; H[Convert with reach.rate]
-    G -- Yes --&gt; I[Align series]
-    H --&gt; I
-    I --&gt; J{Diagnostics acceptable?}
-    J -- No --&gt; K[Fix gaps, timestamps or duplicates]
-    K --&gt; I
-    J -- Yes --&gt; L[Calculate fixed lead-time updates]
-    L --&gt; M[Score performance]
-    M --&gt; N[Plot and interpret]
-    N --&gt; O{Improves representative events?}
-    O -- Yes --&gt; P[Document evidence and use with judgement]
-    O -- No --&gt; Q[Review data, parameters and model structure]
-</code></pre>
+<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-4018eef1a407a0df6b52" style="width:864px;height:528px;"></div>
+<script type="application/json" data-for="htmlwidget-4018eef1a407a0df6b52">{"x":{"diagram":"\nflowchart TD\n    A([Start]) --> B[Load approved parameters]\n    B --> C[Assess parameters]\n    C --> D{Pass?}\n    D -- No --> E[Review or replace parameters]\n    D -- Yes --> F[Import observation and simulation]\n    F --> G{Same domain and units?}\n    G -- No --> H[Convert with reach.rate]\n    G -- Yes --> I[Align series]\n    H --> I\n    I --> J{Diagnostics acceptable?}\n    J -- No --> K[Fix gaps, timestamps or duplicates]\n    K --> I\n    J -- Yes --> L[Calculate fixed lead-time updates]\n    L --> M[Score performance]\n    M --> N[Plot and interpret]\n    N --> O{Improves representative events?}\n    O -- Yes --> P[Document evidence and use with judgement]\n    O -- No --> Q[Review data, parameters and model structure]\n"},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="section level2">
 <h2 id="glossary">Glossary<a class="anchor" aria-label="anchor" href="#glossary"></a>

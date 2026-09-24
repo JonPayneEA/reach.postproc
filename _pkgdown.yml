@@ -1,12 +1,4 @@
 url: https://jonpayneea.github.io/reach.postproc/
 template:
   bootstrap: 5
-articles:
-- title: Getting started
-  contents:
-  - arma-for-novices
-  - using-reach-postproc
-- title: Theory and assurance
-  contents:
-  - arma-flood-forecasting
-  - developer-mathematics
+

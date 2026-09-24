@@ -9,23 +9,6 @@ series in the same domain and units.
 
 ## Choose a workflow
 
-``` mermaid
-flowchart TD
-    A{What do you need to do?}
-    B[Assess parameters]
-    C[Project one error series]
-    D[Evaluate an event archive]
-    E[assess and roots]
-    F[forecast_ar and apply_ar_update]
-    G[align_forecast_series]
-    H[fixed_lead_ar]
-    I[score_lead_times and plot_lead_times]
-
-    A --> B --> E
-    A --> C --> F
-    A --> D --> G --> H --> I
-```
-
 ## Construct parameters
 
 ``` r
