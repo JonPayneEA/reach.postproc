@@ -22,17 +22,17 @@ library(data.table)
 library(ggplot2)
 
 render_mermaid <- function(diagram) {
-  if (!requireNamespace("DiagrammeR", quietly = TRUE)) {
-    stop(
-      paste0(
-        "DiagrammeR is required to render Mermaid diagrams. ",
-        "Install it with install.packages('DiagrammeR')."
-      ),
-      call. = FALSE
-    )
-  }
+  escaped_diagram <- htmltools::htmlEscape(
+    diagram
+  )
 
-  DiagrammeR::mermaid(diagram)
+  knitr::asis_output(
+    paste0(
+      '<pre class="mermaid">',
+      escaped_diagram,
+      '</pre>'
+    )
+  )
 }
 ```
 

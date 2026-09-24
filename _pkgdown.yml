@@ -1,4 +1,55 @@
 url: https://jonpayneea.github.io/reach.postproc/
+
 template:
   bootstrap: 5
+  includes:
+    in_header: |
+      <script type="module">
+        import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
 
+        const renderMermaid = async () => {
+          const fencedBlocks = document.querySelectorAll(
+            "pre code.language-mermaid"
+          );
+
+          fencedBlocks.forEach((code) => {
+            const pre = code.parentElement;
+            pre.className = "mermaid";
+            pre.textContent = code.textContent;
+          });
+
+          mermaid.initialize({
+            startOnLoad: false,
+            securityLevel: "loose",
+            theme: "default",
+            flowchart: {
+              htmlLabels: true,
+              useMaxWidth: true
+            }
+          });
+
+          await mermaid.run({
+            querySelector: ".mermaid"
+          });
+        };
+
+        if (document.readyState === "loading") {
+          document.addEventListener(
+            "DOMContentLoaded",
+            renderMermaid
+          );
+        } else {
+          renderMermaid();
+        }
+      </script>
+
+articles:
+  - title: Getting started
+    contents:
+      - arma-for-novices
+      - using-reach-postproc
+
+  - title: Theory and assurance
+    contents:
+      - arma-flood-forecasting
+      - developer-mathematics

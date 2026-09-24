@@ -6,6 +6,14 @@ This article records the mathematical contracts and numerical
 equivalences that protect the package from subtle sign, root and
 indexing errors.
 
+``` mermaid
+flowchart LR
+    A[Parameters] --> B[Modal roots] --> C[Reconstructed parameters]
+    D[AR recurrence] --> E[Modal decomposition]
+    F[Fixed-lead recurrence] --> G[Fixed-lead root projection]
+    H[ARMA recurrence] --> I[Impulse response]
+```
+
 ## Characteristic polynomial
 
 For Deltares coefficients,

@@ -475,6 +475,23 @@ remaining suitable for flood events and the forecast horizon.
 
 ## Maintenance workflow
 
+``` mermaid
+flowchart TD
+    A[Updated forecast issue reported]
+    B[Obtain operational parameters]
+    C[Assess roots and timescales]
+    D{Parameters fail?}
+    E[Recalibrate or replace]
+    F[Check input errors]
+    G[Check gaps and ratings]
+    H[Check cut-off and model dependencies]
+    I[Implement through model maintenance]
+
+    A --> B --> C --> D
+    D -- Yes --> E --> I
+    D -- No --> F --> G --> H --> I
+```
+
 ## Full ARMA equation
 
 A full ARMA$`(p,q)`$ model is
