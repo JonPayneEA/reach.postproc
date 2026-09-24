@@ -20,6 +20,22 @@ flow. The simulation will rarely match the latest observation exactly.
 AR uses the recent difference between those two series to estimate how
 the difference may develop after the forecast starts.
 
+``` mermaid
+
+flowchart LR
+    A[Observation]
+    B[Model simulation]
+    C[Recent model error]
+    D[AR model]
+    E[Projected error]
+    F[Updated forecast]
+
+    A --> C
+    B --> C
+    C --> D --> E --> F
+    B --> F
+```
+
 AR does not replace the forecasting model. It updates the model output.
 
 ## The sign of the error
@@ -124,6 +140,22 @@ negative, the projected error would change sign every timestep.
 One value tells us the current mismatch. Several values indicate whether
 the mismatch is steady, increasing, decreasing or changing sign.
 
+``` mermaid
+
+flowchart LR
+    A[Oldest recent error]
+    B[Middle recent error]
+    C[Newest recent error]
+    D[Weighted AR calculation]
+    E[Next projected error]
+    F[Repeat]
+
+    A --> D
+    B --> D
+    C --> D
+    D --> E --> F
+```
+
 A third-order model uses three recent errors. It can represent richer
 short-term behaviour than AR(1), but the raw coefficients are much
 harder to interpret.
@@ -195,6 +227,19 @@ Some statistics books plot reciprocal lag roots. Their stable region is
 outside the circle. The two plots describe the same model from opposite
 root conventions.
 
+``` mermaid
+
+flowchart TD
+    A{Which root definition?}
+    B[EA modal roots]
+    C[Reciprocal lag roots]
+    D[Stable inside the circle]
+    E[Stable outside the circle]
+
+    A --> B --> D
+    A --> C --> E
+```
+
 ## Decay time
 
 Decay time describes how long a root remains important. After one decay
@@ -221,6 +266,28 @@ the model accommodate sharp changes in the recent error sequence.
 
 A model passes only when it avoids the main forms of unacceptable
 mathematical behaviour.
+
+``` mermaid
+
+flowchart TD
+    A[Start assessment]
+    B{Any growing root?}
+    C{Any root decays too slowly?}
+    D{Do all roots decay too quickly?}
+    E{Any unacceptable oscillation?}
+    F[FAIL]
+    G[PASS]
+
+    A --> B
+    B -- Yes --> F
+    B -- No --> C
+    C -- Yes --> F
+    C -- No --> D
+    D -- Yes --> F
+    D -- No --> E
+    E -- Yes --> F
+    E -- No --> G
+```
 
 ``` r
 
@@ -269,6 +336,24 @@ the simulation, but this is not a dependable timing correction.
 A sufficiently negative projected error can make the unconstrained
 update negative. IMFS may replace the displayed value with zero.
 
+``` mermaid
+
+flowchart LR
+    A[Simulation]
+    B[Projected error]
+    C[Add values]
+    D{Below zero?}
+    E[Display zero]
+    F[Display calculated value]
+    G[Underlying AR series continues]
+
+    A --> C
+    B --> C
+    C --> D
+    D -- Yes --> E --> G
+    D -- No --> F
+```
+
 The cut-off changes the displayed update. It does not change the
 underlying AR recurrence.
 
@@ -300,9 +385,45 @@ therefore be transmitted through a model network.
 A fixed lead-time series asks what the update would have said at every
 target time if it had always started the same number of minutes earlier.
 
+``` mermaid
+
+flowchart LR
+    A[Choose target time]
+    B[Move back by fixed lead]
+    C[Read errors available then]
+    D[Project through the lead]
+    E[Update target simulation]
+    F[Repeat for every target]
+
+    A --> B --> C --> D --> E --> F
+```
+
 This allows fair comparison at 30, 60 or 90 minutes ahead.
 
 ## Complete novice workflow
+
+``` mermaid
+
+flowchart TD
+    A([Start]) --> B[Load approved parameters]
+    B --> C[Assess parameters]
+    C --> D{Pass?}
+    D -- No --> E[Review or replace parameters]
+    D -- Yes --> F[Import observation and simulation]
+    F --> G{Same domain and units?}
+    G -- No --> H[Convert with reach.rate]
+    G -- Yes --> I[Align series]
+    H --> I
+    I --> J{Diagnostics acceptable?}
+    J -- No --> K[Fix gaps, timestamps or duplicates]
+    K --> I
+    J -- Yes --> L[Calculate fixed lead-time updates]
+    L --> M[Score performance]
+    M --> N[Plot and interpret]
+    N --> O{Improves representative events?}
+    O -- Yes --> P[Document evidence and use with judgement]
+    O -- No --> Q[Review data, parameters and model structure]
+```
 
 ## Glossary
 
