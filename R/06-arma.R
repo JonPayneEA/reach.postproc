@@ -44,7 +44,7 @@
 #' head(arma_forecast)
 #' @export
 forecast_arma<-function(parameters,initial_errors,residuals,ma_parameters=numeric(),previous_residuals=numeric()){if(length(initial_errors)!=parameters@order)stop_bad_argument("Initial errors must match AR order.");if(length(previous_residuals)!=length(ma_parameters))stop_bad_argument("Previous residuals must match MA order.");es<-initial_errors;rs<-previous_residuals;out<-vector("list",length(residuals));for(i in seq_along(residuals)){ar<-sum(parameters@coefficients*es);ma<-if(length(ma_parameters))sum(ma_parameters*rs)else 0;total<-ar+ma+residuals[i];out[[i]]<-data.table::data.table(step=i-1L,ar_contribution=ar,residual_contribution=residuals[i],ma_contribution=ma,arma_error=total);es<-if(parameters@order==1L)total else c(total,es[-parameters@order]);if(length(ma_parameters))rs<-if(length(ma_parameters)==1L)residuals[i]else c(residuals[i],rs[-length(rs)])};data.table::rbindlist(out)}
-S7::method(response,ARParameterSet)<-function(x,...,ma_parameters=numeric(),steps=480L){q<-detect_ma_order(ma_parameters);b<-if(q)ma_parameters[seq_len(q)]else numeric();res<-numeric(steps);res[1]<-1;ARMAResponse(parameters=x,ma_parameters=b,series=forecast_arma(x,numeric(x@order),res,b,numeric(length(b))))}
+S7::method(response,FlodeARParameterSet)<-function(x,...,ma_parameters=numeric(),steps=480L){q<-detect_ma_order(ma_parameters);b<-if(q)ma_parameters[seq_len(q)]else numeric();res<-numeric(steps);res[1]<-1;FlodeARMAResponse(parameters=x,ma_parameters=b,series=forecast_arma(x,numeric(x@order),res,b,numeric(length(b))))}
 #' Compare AR and ARMA response components
 #'
 #' Return long-format responses suitable for plotting the effect of adding MA
