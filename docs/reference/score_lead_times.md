@@ -41,5 +41,12 @@ example_scores <- data.table::data.table(
 )
 
 score_lead_times(example_scores)
-#> Error in x@series: no applicable method for `@` applied to an object of class "data.table"
+#>    lead_time_minutes     n mae_simulated mae_updated rmse_simulated
+#>                <num> <int>         <num>       <num>          <num>
+#> 1:                30     2           0.2        0.05            0.2
+#> 2:                60     2           0.2        0.10            0.2
+#>    rmse_updated bias_simulated bias_updated improvement_mae improvement_rmse
+#>           <num>          <num>        <num>           <num>            <num>
+#> 1:         0.05           -0.2        -0.05            0.15             0.15
+#> 2:         0.10           -0.2        -0.10            0.10             0.10
 ```

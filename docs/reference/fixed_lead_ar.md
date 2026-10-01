@@ -90,12 +90,12 @@ head(lead_time_series(result))
 #> 4: 2024-01-01 00:45:00                30 1.1474040 1.0474040         NA
 #> 5: 2024-01-01 01:00:00                30 1.2271947 1.1271947 0.09947299
 #> 6: 2024-01-01 01:15:00                30 1.3047146 1.2047146 0.09947299
-#>     updated
-#>       <num>
-#> 1:       NA
-#> 2:       NA
-#> 3:       NA
-#> 4:       NA
-#> 5: 1.226668
-#> 6: 1.304188
+#>    updated_unconstrained  updated calculation_method
+#>                    <num>    <num>             <char>
+#> 1:                    NA       NA         recurrence
+#> 2:                    NA       NA         recurrence
+#> 3:                    NA       NA         recurrence
+#> 4:                    NA       NA         recurrence
+#> 5:              1.226668 1.226668         recurrence
+#> 6:              1.304188 1.304188         recurrence
 ```

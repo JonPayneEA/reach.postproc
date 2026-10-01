@@ -481,19 +481,19 @@ lead_time_series(lead_results)
 #> 865: 2024-11-25 23:30:00                90 0.5949806 0.5500000 0.03580188
 #> 866: 2024-11-25 23:45:00                90 0.5975538 0.5500000 0.03681422
 #> 867: 2024-11-26 00:00:00                90 0.6006297 0.5500000 0.03838014
-#>        updated
-#>          <num>
-#>   1:        NA
-#>   2:        NA
-#>   3:        NA
-#>   4:        NA
-#>   5: 0.6986215
-#>  ---          
-#> 863: 0.5854622
-#> 864: 0.5853502
-#> 865: 0.5858019
-#> 866: 0.5868142
-#> 867: 0.5883802
+#>      updated_unconstrained   updated calculation_method
+#>                      <num>     <num>             <char>
+#>   1:                    NA        NA         recurrence
+#>   2:                    NA        NA         recurrence
+#>   3:                    NA        NA         recurrence
+#>   4:                    NA        NA         recurrence
+#>   5:             0.6986215 0.6986215         recurrence
+#>  ---                                                   
+#> 863:             0.5854622 0.5854622         recurrence
+#> 864:             0.5853502 0.5853502         recurrence
+#> 865:             0.5858019 0.5858019         recurrence
+#> 866:             0.5868142 0.5868142         recurrence
+#> 867:             0.5883802 0.5883802         recurrence
 ```
 
 ## Score performance
@@ -506,11 +506,11 @@ scores
 #> 1:                30   285     0.1213368 0.002291136      0.1342672
 #> 2:                60   283     0.1210963 0.006631047      0.1341061
 #> 3:                90   281     0.1207712 0.012255708      0.1338448
-#>    rmse_updated bias_simulated  bias_updated
-#>           <num>          <num>         <num>
-#> 1:  0.002588442     -0.1213368 -0.0004370453
-#> 2:  0.007497978     -0.1210963 -0.0012167184
-#> 3:  0.013871801     -0.1207712 -0.0021711797
+#>    rmse_updated bias_simulated  bias_updated improvement_mae improvement_rmse
+#>           <num>          <num>         <num>           <num>            <num>
+#> 1:  0.002588442     -0.1213368 -0.0004370453       0.1190456        0.1316788
+#> 2:  0.007497978     -0.1210963 -0.0012167184       0.1144652        0.1266081
+#> 3:  0.013871801     -0.1207712 -0.0021711797       0.1085155        0.1199730
 ```
 
 Positive MAE or RMSE improvement means the updated series outperformed

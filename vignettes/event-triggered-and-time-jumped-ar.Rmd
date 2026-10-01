@@ -1,0 +1,130 @@
+---
+title: "Event Triggered and Time Jumped AR"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Event Triggered and Time Jumped AR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse=TRUE,comment="#>",fig.width=9,fig.height=5.5)
+library(reach.postproc)
+library(data.table)
+library(ggplot2)
+```
+
+# Status and scope
+
+Event Triggered AR (ET-AR) and Time Jumped AR (TJ-AR) were developed in 2025–2026 to address limitations of fixed-parameter AR updating without introducing a high-order model. The package marks trigger choice and CWI adjustment as experimental because site-independent trigger-selection procedures have not yet been established.
+
+# Event Triggered AR
+
+ET-AR maintains two parameter sets. The steady set has a long principal decay time. The event set has a principal decay time related to catchment response. Forecasts start in the steady state and switch once to the event state when a trigger is met.
+
+```{r et-parameters}
+steady <- default_et_ar_steady_parameters()
+event <- event_ar_parameters(response_time_steps = 48)
+root_table(roots(steady, time_step_minutes = 15))
+root_table(roots(event, time_step_minutes = 15))
+```
+
+The recurrence state is retained at the switch, so there is no discontinuous reset of the error amplitude.
+
+## Rainfall accumulation trigger
+
+```{r rainfall-trigger}
+rainfall <- c(rep(0,8),1,2,3,4,2,1,rep(0,34))
+trigger <- rainfall_accumulation_trigger(rainfall,window_steps=8L,threshold=10)
+config <- et_ar_configuration(steady,event,trigger,metadata=list(response_time_source="site assessment"))
+simulation <- 0.7 + 1.2*exp(-((seq_along(rainfall)-25)/7)^2)
+result <- forecast_et_ar(config,c(.2,.19,.18),simulation,time_step_minutes=15)
+series <- et_ar_series(result)
+ggplot(series,aes(lead_time_minutes/60,updated,colour=parameter_state))+geom_line()+geom_vline(xintercept=series$lead_time_minutes[result$switch_step]/60,linetype="dashed")+theme_minimal()+labs(x="Lead time, hours",y="Updated value",colour="Parameters")
+```
+
+## Updated level or flow trigger
+
+```{r threshold-trigger}
+threshold_config <- et_ar_configuration(
+  steady,event,
+  updated_threshold_trigger(threshold=1.0,initial_value=.8,quantity="level")
+)
+threshold_result <- forecast_et_ar(threshold_config,c(.2,.19,.18),simulation)
+et_ar_series(threshold_result)
+```
+
+The threshold is evaluated against the previous updated value, not the simulation alone.
+
+## CWI-adjusted rainfall trigger
+
+The experimental factor is one at or below CWI 125, declines linearly to zero at CWI 165 and is zero thereafter.
+
+```{r cwi-trigger}
+cwi_rainfall_factor(c(120,125,145,165,170))
+cwi_trigger <- cwi_adjusted_rainfall_trigger(rainfall,cwi=145,dry_threshold=20,window_steps=8L)
+```
+
+# Time Jumped AR
+
+TJ-AR selects `p` historic errors separated by jump `J` rather than using consecutive points. This can reduce sensitivity to short-period noise where `J` is greater than the noise decorrelation time.
+
+```{r tj-example}
+set.seed(42)
+history <- seq(.25,.08,length.out=40)+rnorm(40,0,.015)
+tj <- forecast_tj_ar(default_ar_parameters(),history,jump=5L,steps=96L)
+tj$selected_inputs
+tj_ar_series(tj)
+```
+
+`jump = 1` reproduces conventional AR.
+
+```{r jump-comparison}
+jump_plot <- plot_jump_sensitivity(
+  default_ar_parameters(),
+  history,
+  jumps = c(
+    1L,
+    3L,
+    5L
+  ),
+  steps = 96L
+)
+
+jump_plot
+
+attr(
+  jump_plot,
+  "failed_jumps"
+)
+assess_jump_size(default_ar_parameters(),jump=5L,noise_decorrelation_steps=3)
+```
+
+A large jump can suppress the fast root and eventually the middle root. The method can then resemble AR(2) or AR(1). The diagnostic reports this risk without imposing a universal threshold.
+
+# Combined ET-TJ-AR
+
+TJ-AR first reconstructs the recent consecutive state. ET-AR then advances the normal recurrence and switches parameters when required.
+
+```{r combined}
+combined <- forecast_et_tj_ar(config,history,jump=5L,simulated=simulation)
+combined$tj_initialisation$selected_inputs
+et_ar_series(combined)
+```
+
+# Operational assurance
+
+Before operational use, document:
+
+- steady and event parameter provenance;
+- catchment response-time source;
+- trigger type, window and threshold;
+- jump-size evidence;
+- input domain and units;
+- rating and threshold versions;
+- behaviour over several events, start times and antecedent conditions;
+- effects on downstream model boundaries.
+
+# Terminology
+
+**ET-AR** switches once from steady to event parameters. **TJ-AR** uses non-consecutive errors to estimate modal weights. **Jump** is the timestep separation between selected errors. **CWI** is Catchment Wetness Index. **DMCA** is Detrending Moving-average Cross-correlation Analysis.

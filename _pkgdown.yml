@@ -53,3 +53,7 @@ articles:
     contents:
       - arma-flood-forecasting
       - developer-mathematics
+
+  - title: Advanced methods
+    contents:
+      - event-triggered-and-time-jumped-ar
