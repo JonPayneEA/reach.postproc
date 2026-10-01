@@ -13,3 +13,8 @@
   Forecasting](https://jonpayneea.github.io/reach.postproc/articles/arma-flood-forecasting.md):
 - [Mathematical and Developer
   Validation](https://jonpayneea.github.io/reach.postproc/articles/developer-mathematics.md):
+
+### Advanced methods
+
+- [Event Triggered and Time Jumped
+  AR](https://jonpayneea.github.io/reach.postproc/articles/event-triggered-and-time-jumped-ar.md):
