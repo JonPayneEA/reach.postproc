@@ -1,0 +1,19 @@
+# Runs the shared reach.* CI defined in JonPayneEA/flode_code_styles.
+# `tier` is this package's governance tier: at Tier 3 the 70% coverage
+# floor and lintr block merge; below it they report only.
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: JonPayneEA/flode_code_styles/.github/workflows/r-package-ci.yaml@main
+    with:
+      tier: 1
