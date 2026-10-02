@@ -75,7 +75,7 @@
 
     <a class="navbar-brand me-2" href="index.html">reach.postproc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -422,6 +422,12 @@ flowchart TD
 <code><a href="reference/ar_parameters_from_timescales.html">ar_parameters_from_timescales()</a></code> constructs parameters from root timescales.</li>
 <li>
 <code><a href="reference/roots_to_parameters.html">roots_to_parameters()</a></code> converts modal roots to AR coefficients.</li>
+<li>
+<code>default_family_ar_parameters()</code> constructs a continuous default-family parameter set from one principal decay timescale.</li>
+<li>
+<code>standard_family_ar_parameters()</code> returns a published standard point on that family.</li>
+<li>
+<code>standard_family_ar_table()</code> lists the full published standard catalogue.</li>
 </ul>
 </div>
 <div class="section level3">
@@ -476,7 +482,7 @@ flowchart TD
 <div class="section level2">
 <h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
 </h2>
-<p>The package contains six vignettes:</p>
+<p>The package contains seven vignettes:</p>
 <ul>
 <li>
 <strong>ARMA for Novice Flood Forecast Modellers</strong> provides a plain-English introduction and glossary.</li>
@@ -488,6 +494,8 @@ flowchart TD
 <strong>Using reach.postproc</strong> provides a practical package workflow.</li>
 <li>
 <strong>Mathematical and Developer Validation</strong> explains numerical equivalence tests and indexing conventions.</li>
+<li>
+<strong>Selecting a Default-Family Parameter Set</strong> explains the continuous analytical family the published default parameter sets are drawn from.</li>
 <li>
 <strong>Event Triggered and Time Jumped AR</strong> covers the experimental ET-AR and TJ-AR methods.</li>
 </ul>

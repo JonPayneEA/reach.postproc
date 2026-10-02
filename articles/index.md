@@ -15,6 +15,8 @@
   Forecasting](https://jonpayneea.github.io/reach.postproc/articles/arma-flood-forecasting.md):
 - [Mathematical and Developer
   Validation](https://jonpayneea.github.io/reach.postproc/articles/developer-mathematics.md):
+- [Selecting a Default-Family Parameter
+  Set](https://jonpayneea.github.io/reach.postproc/articles/default-parameter-family-section.md):
 
 ### Advanced methods
 
