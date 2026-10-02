@@ -62,6 +62,7 @@ articles:
   - title: Getting started
     contents:
       - arma-for-novices
+      - roots-for-novices
       - using-reach-postproc
 
   - title: Theory and assurance

@@ -1,3 +1,19 @@
+# reach.postproc 0.9.3
+
+## Documentation
+- Added a new vignette, "Characteristic Roots for Novice Flood Forecast
+  Modellers" (`roots-for-novices.Rmd`): a plain-English deep dive on what a
+  characteristic root is, how modulus and the unit circle determine
+  stability, what decay time and oscillation mean in practice, how complex
+  conjugate pairs work, and how `roots()`, `root_table()`, `plot_ar()`,
+  `assess()` and `decompose_ar()` fit together. Includes the hand-checkable
+  worked examples from recent root-finding troubleshooting. Added to the
+  pkgdown "Getting started" article group, between "ARMA for Novice Flood
+  Forecast Modellers" and "Using reach.postproc".
+- README's vignette list was stale (said "four vignettes", missed "Event
+  Triggered and Time Jumped AR" as well as the new one); corrected to list
+  all six.
+
 # reach.postproc 0.9.2
 
 ## Bug fixes

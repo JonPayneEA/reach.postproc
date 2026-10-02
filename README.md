@@ -374,12 +374,14 @@ Keep these limitations in view:
 
 ## Documentation
 
-The package contains four vignettes:
+The package contains six vignettes:
 
 - **ARMA for Novice Flood Forecast Modellers** provides a plain-English introduction and glossary.
+- **Characteristic Roots for Novice Flood Forecast Modellers** is a plain-English deep dive on roots, what they mean and what stability requires.
 - **AR and ARMA for Flood Forecasting** explains the operational theory and IMFS context.
 - **Using reach.postproc** provides a practical package workflow.
 - **Mathematical and Developer Validation** explains numerical equivalence tests and indexing conventions.
+- **Event Triggered and Time Jumped AR** covers the experimental ET-AR and TJ-AR methods.
 
 Build and open the vignettes with:
 
