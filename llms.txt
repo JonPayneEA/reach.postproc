@@ -421,7 +421,7 @@ Keep these limitations in view:
 
 ## Documentation
 
-The package contains seven vignettes:
+The package contains eight vignettes:
 
 - **ARMA for Novice Flood Forecast Modellers** provides a plain-English
   introduction and glossary.
@@ -431,6 +431,9 @@ The package contains seven vignettes:
 - **AR and ARMA for Flood Forecasting** explains the operational theory
   and IMFS context.
 - **Using reach.postproc** provides a practical package workflow.
+- **Setting AR Parameters for a New Model** is a decision guide for
+  choosing between PT-fitted coefficients, the default-family
+  constructions and ET-AR when a model has no existing calibration.
 - **Mathematical and Developer Validation** explains numerical
   equivalence tests and indexing conventions.
 - **Selecting a Default-Family Parameter Set** explains the continuous
@@ -591,6 +594,8 @@ details.
   Modellers](https://jonpayneea.github.io/reach.postproc/articles/roots-for-novices.md):
 - [Using
   reach.postproc](https://jonpayneea.github.io/reach.postproc/articles/using-reach-postproc.md):
+- [Setting AR Parameters for a New
+  Model](https://jonpayneea.github.io/reach.postproc/articles/setting-parameters-for-a-new-model.md):
 
 ### Theory and assurance
 

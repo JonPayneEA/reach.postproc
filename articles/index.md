@@ -8,6 +8,8 @@
   Modellers](https://jonpayneea.github.io/reach.postproc/articles/roots-for-novices.md):
 - [Using
   reach.postproc](https://jonpayneea.github.io/reach.postproc/articles/using-reach-postproc.md):
+- [Setting AR Parameters for a New
+  Model](https://jonpayneea.github.io/reach.postproc/articles/setting-parameters-for-a-new-model.md):
 
 ### Theory and assurance
 
