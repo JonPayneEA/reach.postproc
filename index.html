@@ -75,7 +75,7 @@
 
     <a class="navbar-brand me-2" href="index.html">reach.postproc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -428,6 +428,8 @@ flowchart TD
 <code><a href="reference/standard_family_ar_parameters.html">standard_family_ar_parameters()</a></code> returns a published standard point on that family.</li>
 <li>
 <code><a href="reference/standard_family_ar_table.html">standard_family_ar_table()</a></code> lists the full published standard catalogue.</li>
+<li>
+<code>fit_ar_from_events()</code> fits AR coefficients by pooled weighted least squares across event windows only.</li>
 </ul>
 </div>
 <div class="section level3">
@@ -482,7 +484,7 @@ flowchart TD
 <div class="section level2">
 <h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
 </h2>
-<p>The package contains eight vignettes:</p>
+<p>The package contains ten vignettes:</p>
 <ul>
 <li>
 <strong>ARMA for Novice Flood Forecast Modellers</strong> provides a plain-English introduction and glossary.</li>
@@ -495,9 +497,13 @@ flowchart TD
 <li>
 <strong>Setting AR Parameters for a New Model</strong> is a decision guide for choosing between PT-fitted coefficients, the default-family constructions and ET-AR when a model has no existing calibration.</li>
 <li>
+<strong>Event-Pooled AR Fitting for Novice Flood Forecast Modellers</strong> is a plain-English explanation of fitting AR coefficients from flood events alone, rather than a model’s whole history.</li>
+<li>
 <strong>Mathematical and Developer Validation</strong> explains numerical equivalence tests and indexing conventions.</li>
 <li>
 <strong>Selecting a Default-Family Parameter Set</strong> explains the continuous analytical family the published default parameter sets are drawn from.</li>
+<li>
+<strong>Event-Pooled AR Fitting: Mathematics and Validation</strong> covers the weighted least squares construction behind <code>fit_ar_from_events()</code> and the numerical evidence behind its default weighting scheme.</li>
 <li>
 <strong>Event Triggered and Time Jumped AR</strong> covers the experimental ET-AR and TJ-AR methods.</li>
 </ul>

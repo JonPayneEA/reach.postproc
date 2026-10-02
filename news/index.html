@@ -59,7 +59,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">reach.postproc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,6 +85,18 @@
       <small>Source: <a href="https://github.com/JonPayneEA/reach.postproc/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.11.0" id="reachpostproc-0110">reach.postproc 0.11.0<a class="anchor" aria-label="anchor" href="#reachpostproc-0110"></a></h2>
+<div class="section level3">
+<h3 id="new-functions-0-11-0">New functions<a class="anchor" aria-label="anchor" href="#new-functions-0-11-0"></a></h3>
+<ul><li>
+<code>fit_ar_from_events()</code>: fits AR coefficients directly from a set of event windows, by weighted least squares across all of them at once, with event boundaries respected by construction (each event builds its own lagged design matrix in isolation; no regression row is ever formed across an event boundary, unlike naively concatenating events into one series first). This is a deliberate, narrow exception to <code>reach.postproc</code> otherwise having no AR estimator of its own: everywhere else, coefficients come from published defaults, a default-family construction, or Performance Testing (PT), which fits across a model’s whole residual record with no way to restrict to events. Defaults to <code>weighting = "variance"</code> (each event’s rows weighted by <code>1 / (n_rows * variance)</code>) rather than the more obvious-looking <code>weighting = "equal_event"</code> (<code>1 / n_rows</code>), because a stress test run before this function was written showed row-count weighting alone barely protects a pooled fit from being dominated by one atypical, much-larger-magnitude event, while variance weighting does. Returns an ordinary <code>ARParameterSet</code> with per-event fit diagnostics attached (<code>fit_weighting</code>, <code>fit_total_rows</code>, <code>fit_n_events</code>, <code>fit_residual_se</code>, <code>fit_per_event</code>), so a fit dominated by one event is visible rather than silently trusted.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-0-11-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-11-0"></a></h3>
+<ul><li>Two new vignettes: “Event-Pooled AR Fitting: Mathematics and Validation” (the weighted least squares derivation and the executable stress test behind the default weighting scheme) and “Event-Pooled AR Fitting for Novice Flood Forecast Modellers” (the same material in plain English).</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.10.2" id="reachpostproc-0102">reach.postproc 0.10.2<a class="anchor" aria-label="anchor" href="#reachpostproc-0102"></a></h2>
 <div class="section level3">

@@ -10,6 +10,8 @@
   reach.postproc](https://jonpayneea.github.io/reach.postproc/articles/using-reach-postproc.md):
 - [Setting AR Parameters for a New
   Model](https://jonpayneea.github.io/reach.postproc/articles/setting-parameters-for-a-new-model.md):
+- [Event-Pooled AR Fitting for Novice Flood Forecast
+  Modellers](https://jonpayneea.github.io/reach.postproc/articles/event-pooled-ar-fitting-for-novices.md):
 
 ### Theory and assurance
 
@@ -19,6 +21,8 @@
   Validation](https://jonpayneea.github.io/reach.postproc/articles/developer-mathematics.md):
 - [Selecting a Default-Family Parameter
   Set](https://jonpayneea.github.io/reach.postproc/articles/default-parameter-family-section.md):
+- [Event-Pooled AR Fitting: Mathematics and
+  Validation](https://jonpayneea.github.io/reach.postproc/articles/event-pooled-ar-fitting.md):
 
 ### Advanced methods
 
