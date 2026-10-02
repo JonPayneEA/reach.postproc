@@ -5,3 +5,8 @@
 /doc/
 /Meta/
 docs
+
+# Vignette build intermediates and failure logs: these should never be
+# committed. A broken render belongs in a fix, not a leftover artefact.
+*.knit.md
+*-error.log

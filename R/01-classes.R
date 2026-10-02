@@ -1,3 +1,19 @@
+# ============================================================ #
+# Tool:         S7 Class Definitions
+# Description:  Defines the S7 classes (ARParameterSet, CharacteristicRoots,
+#               ARForecast, ARAssessment, ARMAResponse, AlignedForecastSeries,
+#               ARLeadTimeResult) that back every package result object.
+# Flode Module: reach.hydro (pre-promotion; standalone package)
+# Author:       Jonathan Payne, jonathan.payne@example.org
+# Created:      2026-09-22
+# Modified:     2026-10-02 - JP: added mandatory governance header block
+# Tier:         2
+# Inputs:       None (class definitions only).
+# Outputs:      S7 class generators used by constructors elsewhere in the
+#               package.
+# Dependencies: S7, data.table.
+# ============================================================ #
+
 class_data_table <- S7::new_S3_class("data.table")
 #' @noRd
 ARParameterSet <- S7::new_class("ARParameterSet",properties=list(coefficients=S7::class_numeric,order=S7::class_integer,sign_convention=S7::class_character,order_tolerance=S7::class_numeric,label=S7::class_character))

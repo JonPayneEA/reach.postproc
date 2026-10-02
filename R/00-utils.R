@@ -1,3 +1,18 @@
+# ============================================================ #
+# Tool:         Internal Validation and Utility Helpers
+# Description:  Shared argument validation, polynomial multiplication and
+#               data.table coercion helpers used throughout the package.
+# Flode Module: reach.hydro (pre-promotion; standalone package)
+# Author:       Jonathan Payne, jonathan.payne@example.org
+# Created:      2026-09-22
+# Modified:     2026-10-02 - JP: added mandatory governance header block
+# Tier:         2
+# Inputs:       Varies by helper; see function documentation.
+# Outputs:      Validated values, converted data.table objects, or stopped
+#               execution on invalid input.
+# Dependencies: data.table.
+# ============================================================ #
+
 stop_bad_argument <- function(message) stop(message, call. = FALSE)
 validate_numeric <- function(x, name, n=1L, finite=TRUE) {
  if(!is.numeric(x)||length(x)<n||anyNA(x)||(finite&&any(!is.finite(x)))) stop_bad_argument(sprintf("`%s` must be a valid numeric vector.",name)); invisible(x)

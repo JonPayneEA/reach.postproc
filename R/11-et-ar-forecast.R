@@ -1,3 +1,21 @@
+# ============================================================ #
+# Tool:         Event Triggered AR Forecast
+# Description:  Run the ET-AR recurrence, switching once from steady to
+#               event parameters when the configured trigger is met, and
+#               retaining recurrence state across the switch.
+# Flode Module: reach.hydro (pre-promotion; standalone package)
+# Author:       Jonathan Payne, jonathan.payne@example.org
+# Created:      2026-10-01
+# Modified:     2026-10-02 - JP: added mandatory governance header block;
+#               series now built with rbindlist() instead of rbind().
+# Tier:         2
+# Inputs:       An et_ar_configuration, recent initial errors matching AR
+#               order, and a simulated projection horizon.
+# Outputs:      et_ar_forecast objects containing an auditable row-level
+#               data.table.
+# Dependencies: data.table.
+# ============================================================ #
+
 trigger_at_step <- function(trigger, step, previous_updated = NA_real_) {
   if (trigger$type %in% c("logical", "rainfall_accumulation", "cwi_adjusted_rainfall")) {
     if (step > nrow(trigger$data)) stop("Trigger series is shorter than the forecast.", call. = FALSE)
@@ -56,19 +74,18 @@ forecast_et_ar <- function(configuration, initial_errors, simulated, time = seq_
     error <- sum(parameters@coefficients * state)
     unconstrained <- simulated[i] + error
     updated <- if (is.null(lower_limit)) unconstrained else max(lower_limit, unconstrained)
-    output[[i]] <- data.frame(
+    output[[i]] <- data.table::data.table(
       step = i, time = time[i], lead_time_minutes = i * time_step_minutes,
       simulated = simulated[i], ar_error = error,
       updated_unconstrained = unconstrained, updated = updated,
       parameter_state = if (switched) "event" else "steady",
       trigger_type = configuration$trigger$type,
       trigger_evidence = trigger_evidence_at_step(configuration$trigger, i, previous_updated),
-      triggered_this_step = trigger_now, switch_step = switch_step,
-      stringsAsFactors = FALSE
+      triggered_this_step = trigger_now, switch_step = switch_step
     )
     state <- if (p == 1L) error else c(error, state[-p]); previous_updated <- updated
   }
-  structure(list(configuration = configuration, initial_errors = initial_errors, series = data.table::as.data.table(do.call(rbind, output)), switch_step = switch_step), class = "et_ar_forecast")
+  structure(list(configuration = configuration, initial_errors = initial_errors, series = data.table::rbindlist(output), switch_step = switch_step), class = "et_ar_forecast")
 }
 
 #' Extract an ET-AR forecast series

@@ -1,3 +1,23 @@
+# ============================================================ #
+# Tool:         Time Jumped AR Forecast and Jump-Size Diagnostics
+# Description:  Estimate modal weights from non-consecutive historic errors
+#               separated by a jump interval, project the characteristic-root
+#               solution forwards, and assess or compare candidate jump sizes
+#               against root timescales.
+# Flode Module: reach.hydro (pre-promotion; standalone package)
+# Author:       Jonathan Payne, jonathan.payne@example.org
+# Created:      2026-10-01
+# Modified:     2026-10-02 - JP: added mandatory governance header block;
+#               fixed assess_jump_size() root ranking when the principal
+#               root has infinite decay (see NEWS.md).
+# Tier:         2
+# Inputs:       An AR parameter set, an error history (newest first) and a
+#               jump interval in timesteps.
+# Outputs:      tj_ar_forecast objects, a one-row jump-assessment data.table
+#               and a ggplot sensitivity comparison across jumps.
+# Dependencies: data.table, ggplot2.
+# ============================================================ #
+
 #' Forecast a Time Jumped AR error series
 #'
 #' Estimate modal weights from non-consecutive historic errors separated by `jump`
@@ -198,7 +218,13 @@ assess_jump_size <- function(parameters,
                              noise_decorrelation_steps = NULL) {
   jump <- as.integer(jump)
   d <- root_table(roots(parameters))
-  decay <- sort(d$decay_time_steps[is.finite(d$decay_time_steps)], decreasing = TRUE)
+  # root_table() is already ranked principal-to-fast by display_order (roots()
+  # sorts on -decay_time_steps, with Inf-decay/persistent roots sorting first).
+  # Filtering to is.finite() before ranking, as an earlier version did, drops
+  # an infinite-decay principal root and silently relabels the remaining
+  # roots: exactly the steady-state ET-AR configuration this diagnostic
+  # exists to support. Rank by display_order instead and let Inf propagate.
+  decay <- d$decay_time_steps[order(d$display_order)]
   principal <- if (length(decay) >= 1L)
     decay[1]
   else
@@ -210,7 +236,7 @@ assess_jump_size <- function(parameters,
   fast <- if (length(decay) >= 3L)
     decay[3]
   else
-    tail(decay, 1)
+    NA_real_
   data.table::data.table(
     jump = jump,
     principal_decay_steps = principal,

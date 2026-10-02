@@ -14,6 +14,31 @@ test_that("combined forecast retains TJ audit information", {
  expect_equal(ans$tj_initialisation$jump,5L)
  expect_length(ans$tj_initialisation$reconstructed_consecutive_errors,3L)
 })
+test_that("assess_jump_size ranks roots correctly when the principal root has infinite decay", {
+  # default_et_ar_steady_parameters() is deliberately built with an infinite
+  # principal decay time. Filtering to finite decay values before ranking
+  # (the earlier implementation) drops that root and relabels the remaining
+  # two as principal/middle, with "fast" falling back to a duplicate of
+  # "middle". The fix must keep Inf as the top-ranked, genuine principal root.
+  result <- assess_jump_size(default_et_ar_steady_parameters(), jump = 5L)
+  expect_true(is.infinite(result$principal_decay_steps))
+  expect_true(is.finite(result$middle_decay_steps))
+  expect_true(is.finite(result$fast_decay_steps))
+  expect_false(isTRUE(result$middle_decay_steps == result$fast_decay_steps))
+  expect_equal(result$jump_to_middle_ratio, 5L / result$middle_decay_steps)
+})
+
+test_that("assess_jump_size reports NA fast decay when fewer than three roots are supplied", {
+  two_root <- ar_parameters_from_timescales(
+    decay_times = c(48, 5),
+    oscillation_periods = c(Inf, Inf)
+  )
+  result <- assess_jump_size(two_root, jump = 2L)
+  expect_true(is.finite(result$principal_decay_steps))
+  expect_true(is.finite(result$middle_decay_steps))
+  expect_true(is.na(result$fast_decay_steps))
+})
+
 test_that(
   "jump sensitivity omits numerically singular jumps",
   {

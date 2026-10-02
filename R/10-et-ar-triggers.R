@@ -1,3 +1,21 @@
+# ============================================================ #
+# Tool:         Event Triggered AR Trigger Constructors
+# Description:  Build logical, rainfall-accumulation, updated-threshold and
+#               CWI-adjusted trigger objects, and evaluate trigger state at a
+#               given forecast step.
+# Flode Module: reach.hydro (pre-promotion; standalone package)
+# Author:       Jonathan Payne, jonathan.payne@example.org
+# Created:      2026-10-01
+# Modified:     2026-10-02 - JP: added mandatory governance header block;
+#               trigger tables now built as data.table, not data.frame.
+# Tier:         2
+# Inputs:       Logical series, rainfall depths, accumulation windows and
+#               thresholds, or updated level/flow values.
+# Outputs:      et_ar_trigger objects carrying a data.table of per-step
+#               trigger evidence.
+# Dependencies: data.table, utils.
+# ============================================================ #
+
 new_et_trigger <- function(type, data, settings = list()) {
   structure(list(type = type, data = data, settings = settings), class = "et_ar_trigger")
 }
@@ -21,7 +39,14 @@ logical_et_trigger <- function(triggered, evidence = NULL, label = "Supplied tri
   if (!is.null(evidence) && length(evidence) != length(triggered)) {
     stop("`evidence` must have the same length as `triggered`.", call. = FALSE)
   }
-  new_et_trigger("logical", data.frame(triggered = triggered, evidence = I(if (is.null(evidence)) rep(NA, length(triggered)) else evidence)), list(label = label))
+  new_et_trigger(
+    "logical",
+    data.table::data.table(
+      triggered = triggered,
+      evidence = if (is.null(evidence)) rep(NA, length(triggered)) else evidence
+    ),
+    list(label = label)
+  )
 }
 
 rolling_sum_right <- function(x, window_steps, history = numeric()) {
@@ -61,9 +86,19 @@ rainfall_accumulation_trigger <- function(
   window_steps <- as.integer(window_steps)
   if (length(window_steps) != 1L || is.na(window_steps) || window_steps < 1L) stop("`window_steps` must be a positive whole number.", call. = FALSE)
   if (length(threshold) != 1L || !is.finite(threshold) || threshold < 0) stop("`threshold` must be non-negative.", call. = FALSE)
-  accumulation <- rolling_sum_right(rainfall, window_steps, tail(prior_rainfall, window_steps - 1L))
+  accumulation <- rolling_sum_right(rainfall, window_steps, utils::tail(prior_rainfall, window_steps - 1L))
   triggered <- if (inclusive) accumulation >= threshold else accumulation > threshold
-  new_et_trigger("rainfall_accumulation", data.frame(step = seq_along(rainfall), rainfall = rainfall, accumulated_rainfall = accumulation, threshold = threshold, triggered = triggered), list(window_steps = window_steps, inclusive = inclusive, time_step_minutes = time_step_minutes))
+  new_et_trigger(
+    "rainfall_accumulation",
+    data.table::data.table(
+      step = seq_along(rainfall),
+      rainfall = rainfall,
+      accumulated_rainfall = accumulation,
+      threshold = threshold,
+      triggered = triggered
+    ),
+    list(window_steps = window_steps, inclusive = inclusive, time_step_minutes = time_step_minutes)
+  )
 }
 
 #' Construct an updated-level or updated-flow ET-AR trigger
@@ -83,7 +118,7 @@ updated_threshold_trigger <- function(threshold, direction = c("above", "below")
   direction <- match.arg(direction)
   if (length(threshold) != 1L || !is.finite(threshold)) stop("`threshold` must be finite.", call. = FALSE)
   if (!is.null(initial_value) && (length(initial_value) != 1L || !is.finite(initial_value))) stop("`initial_value` must be NULL or finite.", call. = FALSE)
-  new_et_trigger("updated_threshold", data.frame(), list(threshold = threshold, direction = direction, initial_value = initial_value, quantity = quantity))
+  new_et_trigger("updated_threshold", data.table::data.table(), list(threshold = threshold, direction = direction, initial_value = initial_value, quantity = quantity))
 }
 
 #' Calculate the Part 2 CWI rainfall-threshold factor
@@ -118,10 +153,16 @@ cwi_adjusted_rainfall_trigger <- function(rainfall, cwi, dry_threshold, window_s
   if (length(cwi) == 1L) cwi <- rep(cwi, length(rainfall))
   if (length(cwi) != length(rainfall)) stop("`cwi` must have length one or match `rainfall`.", call. = FALSE)
   base <- rainfall_accumulation_trigger(rainfall, window_steps, dry_threshold, prior_rainfall, TRUE, time_step_minutes)
-  threshold <- dry_threshold * cwi_rainfall_factor(cwi)
+  cwi_threshold <- dry_threshold * cwi_rainfall_factor(cwi)
   base$type <- "cwi_adjusted_rainfall"
-  base$data$cwi <- cwi; base$data$threshold <- threshold
-  base$data$triggered <- base$data$accumulated_rainfall >= threshold
+  # `..` forces these to resolve as the local variables above, not as the
+  # pre-existing `threshold` column rainfall_accumulation_trigger() already
+  # wrote (the dry-condition threshold, which this call replaces).
+  base$data[, `:=`(
+    cwi = ..cwi,
+    threshold = ..cwi_threshold,
+    triggered = accumulated_rainfall >= ..cwi_threshold
+  )]
   base$settings$dry_threshold <- dry_threshold
   base
 }

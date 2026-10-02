@@ -1,3 +1,19 @@
+# ============================================================ #
+# Tool:         Result Accessors and Diagnostic Plots
+# Description:  Extract tabular data from package result objects without
+#               exposing their S7 property layout, and produce the root,
+#               forecast and lead-time ggplot2 diagnostic plots.
+# Flode Module: reach.hydro (pre-promotion; standalone package)
+# Author:       Jonathan Payne, jonathan.payne@example.org
+# Created:      2026-09-24
+# Modified:     2026-10-02 - JP: added mandatory governance header block
+# Tier:         2
+# Inputs:       Package result objects (CharacteristicRoots, ARForecast,
+#               ARLeadTimeResult, etc.).
+# Outputs:      Copied data.table extracts and ggplot objects.
+# Dependencies: data.table, ggplot2.
+# ============================================================ #
+
 #' Root table
 #'
 #' Extract the tabular data from a structured package result without exposing

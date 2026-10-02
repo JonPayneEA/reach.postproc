@@ -1,3 +1,21 @@
+# ============================================================ #
+# Tool:         Event Triggered AR Configuration
+# Description:  Pair steady- and event-condition AR parameter sets with a
+#               trigger definition, and construct the EA default steady and
+#               response-time-derived event parameter sets.
+# Flode Module: reach.hydro (pre-promotion; standalone package)
+# Author:       Jonathan Payne, jonathan.payne@example.org
+# Created:      2026-10-01
+# Modified:     2026-10-02 - JP: added mandatory governance header block
+# Tier:         2
+# Inputs:       Two AR parameter sets of equal order and an et_ar_trigger
+#               object.
+# Outputs:      An et_ar_configuration object consumed by forecast_et_ar()
+#               and forecast_et_tj_ar().
+# Dependencies: none beyond base R (uses ar_parameters_from_timescales()
+#               from 03-parameters.R).
+# ============================================================ #
+
 #' Construct an Event Triggered AR configuration
 #'
 #' Pair the steady-condition and event-condition AR parameter sets with one

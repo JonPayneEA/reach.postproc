@@ -1,3 +1,20 @@
+# ============================================================ #
+# Tool:         Series Alignment and Fixed Lead-Time Evaluation
+# Description:  Join observed and simulated series by timestamp, calculate
+#               fixed lead-time AR updates by recurrence, and score updated
+#               forecasts against observations.
+# Flode Module: reach.hydro (pre-promotion; standalone package)
+# Author:       Jonathan Payne, jonathan.payne@example.org
+# Created:      2026-09-24
+# Modified:     2026-10-02 - JP: added mandatory governance header block
+# Tier:         2
+# Inputs:       Observed and simulated data frames or data.tables, lead times
+#               in minutes, and an assessed AR parameter set.
+# Outputs:      AlignedForecastSeries and ARLeadTimeResult objects, plus
+#               scoring data.tables.
+# Dependencies: data.table, stats.
+# ============================================================ #
+
 #' Align observed and simulated forecast series
 #'
 #' Join observations and simulations by timestamp, calculate model error and

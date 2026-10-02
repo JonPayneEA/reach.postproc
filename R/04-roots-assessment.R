@@ -1,3 +1,19 @@
+# ============================================================ #
+# Tool:         Characteristic-Root Calculation and Assessment
+# Description:  Compute modal and reciprocal characteristic roots, decay
+#               times, oscillation periods and the EA root-acceptance
+#               assessment for an AR parameter set.
+# Flode Module: reach.hydro (pre-promotion; standalone package)
+# Author:       Jonathan Payne, jonathan.payne@example.org
+# Created:      2026-09-22
+# Modified:     2026-10-02 - JP: added mandatory governance header block
+# Tier:         2
+# Inputs:       An ARParameterSet and assessment control thresholds.
+# Outputs:      CharacteristicRoots and ARAssessment objects, including a
+#               data.table of per-root diagnostics.
+# Dependencies: data.table, stats.
+# ============================================================ #
+
 #' Calculate effective decay time for an oscillating root
 #'
 #' Find the first time at which exponential decay combined with oscillation

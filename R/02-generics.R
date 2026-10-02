@@ -1,3 +1,19 @@
+# ============================================================ #
+# Tool:         S7 Generic Definitions
+# Description:  Declares the roots(), assess(), forecast_ar(), decompose_ar(),
+#               response() and plot_ar() generics and their shared roxygen2
+#               documentation.
+# Flode Module: reach.hydro (pre-promotion; standalone package)
+# Author:       Jonathan Payne, jonathan.payne@example.org
+# Created:      2026-09-22
+# Modified:     2026-10-02 - JP: added mandatory governance header block
+# Tier:         2
+# Inputs:       None (generic declarations only).
+# Outputs:      S7 generics dispatched on ARParameterSet and other result
+#               classes.
+# Dependencies: S7.
+# ============================================================ #
+
 #' Calculate characteristic roots and their timescales
 #'
 #' Convert an AR parameter set into modal roots, reciprocal lag roots, decay

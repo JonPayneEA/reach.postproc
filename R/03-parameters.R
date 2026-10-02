@@ -1,3 +1,20 @@
+# ============================================================ #
+# Tool:         AR Parameter Construction
+# Description:  Construct, validate and convert autoregressive parameter sets
+#               between the Deltares and standard sign conventions, including
+#               order detection and root-based construction.
+# Flode Module: reach.hydro (pre-promotion; standalone package)
+# Author:       Jonathan Payne, jonathan.payne@example.org
+# Created:      2026-09-22
+# Modified:     2026-10-02 - JP: added mandatory governance header block
+# Tier:         2
+# Inputs:       Numeric AR coefficient vectors, decay-time/oscillation-period
+#               pairs, or named arguments via `...`.
+# Outputs:      ARParameterSet objects consumed by roots(), assess(),
+#               forecast_ar() and the fixed lead-time functions.
+# Dependencies: none beyond base R.
+# ============================================================ #
+
 #' Detect effective autoregressive order
 #'
 #' Identify the highest active AR lag after allowing for small numerical values

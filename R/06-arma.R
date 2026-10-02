@@ -1,3 +1,20 @@
+# ============================================================ #
+# Tool:         ARMA Response Evaluation
+# Description:  Evaluate a deterministic ARMA error recurrence from supplied
+#               AR and MA coefficients and residual innovations, and compare
+#               AR-only against ARMA response components.
+# Flode Module: reach.hydro (pre-promotion; standalone package)
+# Author:       Jonathan Payne, jonathan.payne@example.org
+# Created:      2026-09-22
+# Modified:     2026-10-02 - JP: added mandatory governance header block
+# Tier:         2
+# Inputs:       An ARParameterSet, MA coefficients, residual innovations and
+#               prior residual memory.
+# Outputs:      data.table series of AR, residual and MA contributions, and
+#               ARMAResponse objects.
+# Dependencies: data.table.
+# ============================================================ #
+
 #' Evaluate a deterministic ARMA error recurrence
 #'
 #' Calculate an error series from autoregressive memory, current residual

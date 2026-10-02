@@ -1,3 +1,21 @@
+# ============================================================ #
+# Tool:         Combined Event Triggered and Time Jumped AR
+# Description:  Use TJ-AR to reconstruct a noise-resistant recent consecutive
+#               error state, then continue with the standard ET-AR recurrence
+#               and its one-way parameter switch.
+# Flode Module: reach.hydro (pre-promotion; standalone package)
+# Author:       Jonathan Payne, jonathan.payne@example.org
+# Created:      2026-10-01
+# Modified:     2026-10-02 - JP: added mandatory governance header block
+# Tier:         2
+# Inputs:       An et_ar_configuration, a complete recent error history and a
+#               jump interval.
+# Outputs:      An et_tj_ar_forecast object (an et_ar_forecast with TJ-AR
+#               initialisation details attached).
+# Dependencies: none beyond base R (built on forecast_tj_ar() and
+#               forecast_et_ar()).
+# ============================================================ #
+
 #' Forecast combined Event Triggered and Time Jumped AR
 #'
 #' Use TJ-AR to infer a noise-resistant recent consecutive state, then continue

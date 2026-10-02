@@ -1,3 +1,17 @@
+# ============================================================ #
+# Tool:         Global Variable Declarations
+# Description:  Declares data.table and ggplot2 NSE symbols to R CMD check
+#               to prevent false "no visible binding" notes.
+# Flode Module: reach.hydro (pre-promotion; standalone package)
+# Author:       Jonathan Payne, jonathan.payne@example.org
+# Created:      2026-09-24
+# Modified:     2026-10-02 - JP: added mandatory governance header block
+# Tier:         2
+# Inputs:       None.
+# Outputs:      None (package-level side effect only).
+# Dependencies: utils.
+# ============================================================ #
+
 # Package-level declarations for data.table and ggplot2 evaluation
 #' @importFrom utils globalVariables
 NULL
