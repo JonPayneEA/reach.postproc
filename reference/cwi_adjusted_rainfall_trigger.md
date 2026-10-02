@@ -44,9 +44,10 @@ trigger <- cwi_adjusted_rainfall_trigger(
   dry_threshold = 8, window_steps = 3L
 )
 trigger$data
-#>   step rainfall accumulated_rainfall threshold triggered cwi
-#> 1    1        0                    0         4     FALSE 145
-#> 2    2        1                    1         4     FALSE 145
-#> 3    3        2                    3         4     FALSE 145
-#> 4    4        3                    6         4      TRUE 145
+#>     step rainfall accumulated_rainfall threshold triggered   cwi
+#>    <int>    <num>                <num>     <num>    <lgcl> <num>
+#> 1:     1        0                    0         4     FALSE   145
+#> 2:     2        1                    1         4     FALSE   145
+#> 3:     3        2                    3         4     FALSE   145
+#> 4:     4        3                    6         4      TRUE   145
 ```

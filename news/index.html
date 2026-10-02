@@ -44,7 +44,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">reach.postproc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,6 +70,27 @@
       <small>Source: <a href="https://github.com/JonPayneEA/reach.postproc/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.8.1" id="reachpostproc-081">reach.postproc 0.8.1<a class="anchor" aria-label="anchor" href="#reachpostproc-081"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-0-8-1">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-8-1"></a></h3>
+<ul><li>
+<code><a href="../reference/assess_jump_size.html">assess_jump_size()</a></code>: fixed root ranking when the principal root has infinite decay (the steady-state ET-AR configuration). The earlier implementation filtered to finite decay times before ranking, which dropped the infinite-decay principal root and relabelled the remaining two roots as principal and middle, with the fast-root figure silently duplicating the middle one. Ranking now follows <code><a href="../reference/root_table.html">root_table()</a></code>’s own <code>display_order</code>, so an infinite principal decay is reported as such.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changes-0-8-1">Changes<a class="anchor" aria-label="anchor" href="#changes-0-8-1"></a></h3>
+<ul><li>Trigger constructors (<code><a href="../reference/logical_et_trigger.html">logical_et_trigger()</a></code>, <code><a href="../reference/rainfall_accumulation_trigger.html">rainfall_accumulation_trigger()</a></code>, <code><a href="../reference/updated_threshold_trigger.html">updated_threshold_trigger()</a></code>, <code><a href="../reference/cwi_adjusted_rainfall_trigger.html">cwi_adjusted_rainfall_trigger()</a></code>) now build their <code>data</code> field as a <code>data.table</code>, matching the rest of the package, rather than a base <code>data.frame</code>.</li>
+<li>
+<code><a href="../reference/forecast_et_ar.html">forecast_et_ar()</a></code> now accumulates its per-step series with <code><a href="https://rdrr.io/pkg/data.table/man/rbindlist.html" class="external-link">data.table::rbindlist()</a></code> instead of <code><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame()</a></code> rows joined by <code>do.call(rbind, ...)</code>.</li>
+<li>All <code>R/</code> files now carry the mandatory governance header block.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-0-8-1">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-8-1"></a></h3>
+<ul><li>Removed <code>event-triggered-vignette-error.log</code> and the orphaned <code>event-triggered-and-time-jumped-ar.knit.md</code> intermediate left behind by a failed vignette render predating the <code><a href="../reference/assess_jump_size.html">assess_jump_size()</a></code> and TJ-AR conditioning fixes. The vignette needs re-rendering with <code>devtools::build_vignettes()</code> in an environment with R installed; that could not be done from this session (see commit message).</li>
+<li>
+<code>*.knit.md</code> and <code>*-error.log</code> are now gitignored so build intermediates and failure logs are not committed again.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.8.0" id="reachpostproc-080">reach.postproc 0.8.0<a class="anchor" aria-label="anchor" href="#reachpostproc-080"></a></h2>
 <ul><li>Added experimental Event Triggered AR, Time Jumped AR and combined ET-TJ-AR.</li>

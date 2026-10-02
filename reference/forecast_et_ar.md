@@ -78,7 +78,7 @@ et_ar_series(result)
 #> 11:    11    11               165         1 0.2512101              1.251210
 #> 12:    12    12               180         1 0.2485975              1.248597
 #>      updated parameter_state trigger_type trigger_evidence triggered_this_step
-#>        <num>          <char>       <char>           <AsIs>              <lgcl>
+#>        <num>          <char>       <char>           <lgcl>              <lgcl>
 #>  1: 1.216111          steady      logical               NA               FALSE
 #>  2: 1.229248          steady      logical               NA               FALSE
 #>  3: 1.238993           event      logical               NA                TRUE

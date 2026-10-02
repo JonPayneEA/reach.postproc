@@ -57,10 +57,11 @@ trigger <- rainfall_accumulation_trigger(
   rainfall = c(0, 1, 2, 3, 0), window_steps = 3L, threshold = 5
 )
 trigger$data
-#>   step rainfall accumulated_rainfall threshold triggered
-#> 1    1        0                    0         5     FALSE
-#> 2    2        1                    1         5     FALSE
-#> 3    3        2                    3         5     FALSE
-#> 4    4        3                    6         5      TRUE
-#> 5    5        0                    5         5      TRUE
+#>     step rainfall accumulated_rainfall threshold triggered
+#>    <int>    <num>                <num>     <num>    <lgcl>
+#> 1:     1        0                    0         5     FALSE
+#> 2:     2        1                    1         5     FALSE
+#> 3:     3        2                    3         5     FALSE
+#> 4:     4        3                    6         5      TRUE
+#> 5:     5        0                    5         5      TRUE
 ```
