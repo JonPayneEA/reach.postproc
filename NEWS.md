@@ -1,3 +1,33 @@
+# reach.postproc 0.11.0
+
+## New functions
+- `fit_ar_from_events()`: fits AR coefficients directly from a set of event
+  windows, by weighted least squares across all of them at once, with event
+  boundaries respected by construction (each event builds its own lagged
+  design matrix in isolation; no regression row is ever formed across an
+  event boundary, unlike naively concatenating events into one series
+  first). This is a deliberate, narrow exception to `reach.postproc`
+  otherwise having no AR estimator of its own: everywhere else, coefficients
+  come from published defaults, a default-family construction, or
+  Performance Testing (PT), which fits across a model's whole residual
+  record with no way to restrict to events. Defaults to
+  `weighting = "variance"` (each event's rows weighted by
+  `1 / (n_rows * variance)`) rather than the more obvious-looking
+  `weighting = "equal_event"` (`1 / n_rows`), because a stress test run
+  before this function was written showed row-count weighting alone barely
+  protects a pooled fit from being dominated by one atypical,
+  much-larger-magnitude event, while variance weighting does. Returns an
+  ordinary `ARParameterSet` with per-event fit diagnostics attached
+  (`fit_weighting`, `fit_total_rows`, `fit_n_events`, `fit_residual_se`,
+  `fit_per_event`), so a fit dominated by one event is visible rather than
+  silently trusted.
+
+## Documentation
+- Two new vignettes: "Event-Pooled AR Fitting: Mathematics and Validation"
+  (the weighted least squares derivation and the executable stress test
+  behind the default weighting scheme) and "Event-Pooled AR Fitting for
+  Novice Flood Forecast Modellers" (the same material in plain English).
+
 # reach.postproc 0.10.2
 
 ## Documentation

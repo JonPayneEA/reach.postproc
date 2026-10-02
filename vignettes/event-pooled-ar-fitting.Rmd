@@ -1,0 +1,184 @@
+---
+title: "Event-Pooled AR Fitting: Mathematics and Validation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Event-Pooled AR Fitting: Mathematics and Validation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 9,
+  fig.height = 5.5,
+  warning = FALSE,
+  message = FALSE
+)
+
+library(reach.postproc)
+library(data.table)
+library(ggplot2)
+
+render_mermaid <- function(diagram) {
+  escaped_diagram <- htmltools::htmlEscape(
+    diagram
+  )
+
+  knitr::asis_output(
+    paste0(
+      '<pre class="mermaid">',
+      escaped_diagram,
+      '</pre>'
+    )
+  )
+}
+```
+
+# Purpose
+
+`fit_ar_from_events()` estimates AR coefficients directly from a set of event windows, by weighted least squares across all of them at once. This article records why it exists, the mathematics behind it, and the numerical evidence that led to its default weighting scheme. It assumes familiarity with ["Mathematical and Developer Validation"](developer-mathematics.html) and the decision guide in ["Setting AR Parameters for a New Model"](setting-parameters-for-a-new-model.html).
+
+# Why this exists
+
+`reach.postproc` otherwise has no AR estimator of its own: everywhere else, coefficients are either published defaults, a default-family construction from a timescale, or fitted externally by Performance Testing (PT) and brought in with `ar_parameters()`. PT fits across a model's entire residual record, with no way to restrict the fit to events. For a package whose correction is meant to matter during floods, that means ordinary and low-flow behaviour — including anything a hydraulic model's own minimum-flow floor has corrupted, see ["Setting AR Parameters for a New Model"](setting-parameters-for-a-new-model.html) — shapes the calibration of a model meant to correct flood events specifically.
+
+`fit_ar_from_events()` is a narrow, deliberate exception to the no-estimator design, built to close exactly that gap, transparently, inside a package whose mathematics is meant to be reviewed rather than worked around from the outside. It is not a general replacement for PT: it has no access to a model's full operational history, only the event windows supplied to it, and it makes no claim to outperform PT once a genuine residual series exists to fit PT against.
+
+# The problem with naive concatenation
+
+The direct-looking approach — paste all the event series end to end into one long vector and fit an ordinary AR model to it — is wrong, and worth seeing why rather than taking on trust. Concatenation invents a lag-1 relationship between the last point of one event and the first point of the next, even though nothing connects them: they may be years apart, under completely different conditions. Any lagged-regression estimator reads that invented adjacency as real autocorrelation.
+
+```{r concatenation-problem}
+set.seed(1)
+# Two short, unrelated events. Nothing connects event_b's start to
+# event_a's end -- they could be entirely different years.
+event_a <- cumsum(rnorm(15, sd = 0.3))
+event_b <- cumsum(rnorm(15, sd = 0.3)) - 4
+
+concatenated <- c(event_a, event_b)
+
+# The lag-1 pair straddling the join:
+boundary_index <- length(event_a)
+data.table(
+  position = c("last point of event_a", "first point of event_b"),
+  value = c(event_a[length(event_a)], event_b[1])
+)
+```
+
+That single invented pair is one row out of many, but every additional event boundary adds another one, and each is a *false* observation of how the process evolves from one timestep to the next. `fit_ar_from_events()` avoids this by never forming a regression row that spans two events: every event builds its own lagged design matrix in isolation before the rows are pooled.
+
+```{r boundary-flow, echo=FALSE}
+render_mermaid("
+flowchart LR
+    A[Event 1 residuals] --> D1[Event 1's own lagged rows]
+    B[Event 2 residuals] --> D2[Event 2's own lagged rows]
+    C[Event 3 residuals] --> D3[Event 3's own lagged rows]
+    D1 --> E[Stack all rows]
+    D2 --> E
+    D3 --> E
+    E --> F[One weighted regression]
+")
+```
+
+# Per-event design matrix construction
+
+For one event's residual series $e_1, e_2, \ldots, e_n$ (chronological, oldest first) and AR order $p$, the usual lagged-regression rows are formed entirely within that event:
+
+$$
+e_t = a_1 e_{t-1} + a_2 e_{t-2} + \cdots + a_p e_{t-p}, \qquad t = p+1, \ldots, n.
+$$
+
+This is already the Deltares recurrence's own additive form, with no intercept and no sign conversion needed: the regression coefficients recovered below *are* the Deltares $a_1, \ldots, a_p$ coefficients directly. An event of length $n$ contributes $n-p$ rows; events may be any length, from any dates, with gaps of any size between them, because no row is ever built across that gap.
+
+# Weighted least squares across events
+
+Stacking every event's rows gives one design matrix $X$ and response $y$, and `fit_ar_from_events()` fits
+
+$$
+\hat a = \arg\min_a \sum_i w_i \left(y_i - x_i^\top a\right)^2
+$$
+
+by `stats::lm.wfit()` — direct matrix input, no intercept, no formula built programmatically for an arbitrary order. The only design choice left is the per-row weight $w_i$, and it is not a free one: it is the whole reason this function needed numerical validation before shipping.
+
+# Choosing a weighting scheme
+
+Two tempting defaults both turn out to be wrong in the same way. Equal weighting of *every row* makes long events dominate purely by producing more rows. Equalising by *row count per event* (`"equal_event"`, $w = 1/n_{\text{rows}}$) looks like it should fix that, since every event then casts the same total vote regardless of length — but it does not protect against a single event whose errors are simply much *larger* in magnitude than the rest, because squared-residual loss amplifies a scale difference faster than a row-count weight can cancel it out. Only weighting each event by the inverse of its own variance (`"variance"`, $w = 1/(n_{\text{rows}} \cdot \mathrm{Var}(e))$, the default) removes magnitude as a channel of influence entirely: an event's vote then depends on neither its length nor its scale.
+
+This is checked below, not asserted. Fifteen typical events share true coefficients $a_1=1.2, a_2=-0.45$; one atypical event is both far longer and an order of magnitude larger in scale, with different true coefficients $a_1=0.3, a_2=0.1$ — the kind of thing a single unusually severe or long event could plausibly produce in a real record.
+
+```{r weighting-stress-test}
+simulate_ar_event <- function(n, a1, a2, sd = 1, burn_in = 50) {
+  x <- numeric(n + burn_in)
+  for (t in 3:length(x)) {
+    x[t] <- a1 * x[t - 1] + a2 * x[t - 2] + rnorm(1, sd = sd)
+  }
+  x[-(1:burn_in)]
+}
+
+set.seed(7)
+typical_events <- replicate(
+  15,
+  simulate_ar_event(n = 40, a1 = 1.2, a2 = -0.45, sd = 1),
+  simplify = FALSE
+)
+atypical_event <- simulate_ar_event(n = 400, a1 = 0.3, a2 = 0.1, sd = 12)
+events <- c(typical_events, list(atypical = atypical_event))
+
+comparison <- rbindlist(lapply(
+  c("none", "equal_event", "variance"),
+  function(scheme) {
+    fitted <- fit_ar_from_events(events, order = 2, weighting = scheme)
+    data.table(
+      weighting = scheme,
+      a_1 = unname(fitted@coefficients[["a_1"]]),
+      a_2 = unname(fitted@coefficients[["a_2"]]),
+      distance_from_typical_a1 = abs(unname(fitted@coefficients[["a_1"]]) - 1.2)
+    )
+  }
+))
+comparison
+```
+
+The typical events' true $a_1$ is $1.2$. `"none"` and `"equal_event"` both land well short of it, pulled toward the atypical event's much larger-magnitude errors; `"variance"` lands closest. This is the basis for making `"variance"` the default rather than the more obvious-looking `"equal_event"`.
+
+# Reading the per-event diagnostics
+
+`fit_ar_from_events()` attaches `fit_per_event`, a table of each event's row count, variance and realised share of the total fitting weight, so a fit quietly dominated by one event is visible rather than silently trusted:
+
+```{r per-event-diagnostics}
+fitted <- fit_ar_from_events(events, order = 2, weighting = "variance")
+per_event <- attr(fitted, "fit_per_event")
+per_event[order(-weight_share)]
+```
+
+A `weight_share` far above what an even split across events would give (here, roughly $1/16 \approx 6\%$) is worth a second look: either that event is genuinely representative and the others are thin, or something about it (a data problem, a genuinely different regime) deserves separate treatment rather than being pooled in. As with `default_family_ar_parameters()`'s attributes, these are provenance for this call's own output, not part of the `ARParameterSet` contract: they will not survive the object being reconstructed elsewhere in the package.
+
+# Composing with the rest of the package
+
+The returned object is an ordinary AR parameter set in Deltares convention and composes exactly like any other construction path:
+
+```{r composition}
+root_information <- roots(fitted, time_step_minutes = 15)
+root_table(root_information)
+
+assessment <- assess(fitted, permitted_orders = c(2L, 3L))
+assessment@summary
+```
+
+A fit that produces sensible-looking coefficients can still fail `assess()` — pooling does not exempt the result from the same root-based acceptance criteria as every other path. Treat a pass here the same way the decision-guide vignette treats a PT fit: necessary, not sufficient, and still worth scoring against held-out events with `fixed_lead_ar()` and `score_lead_times()` before trusting it operationally.
+
+# Scope and limitations
+
+- **Tier 1, experimental.** Not yet operationally reviewed; treat output as a candidate to validate, not a finished calibration.
+- **Needs enough events.** A pooled fit from two or three short events carries little more information than a single one; the weighting scheme controls *influence*, not the total evidence available.
+- **`"variance"` requires non-degenerate variance.** An event with a flat (zero-variance) residual series cannot be weighted this way; use `"equal_event"` or `"none"`, or exclude that event.
+- **Not a PT replacement.** Once a model has run long enough to accumulate a genuine residual history, PT's full-record fit remains the higher-confidence path for everything PT is meant to capture; this function's purpose is specifically event-only calibration, which PT cannot do, not a general substitute for it.
+
+# Key messages
+
+1. Concatenating events before fitting invents a false lag-1 relationship at every boundary; `fit_ar_from_events()` avoids this by building each event's design matrix in isolation.
+2. Row-count weighting (`"equal_event"`) looks like it should prevent one event from dominating a pooled fit, but does not: magnitude, not just row count, needs to be controlled for.
+3. Variance weighting (the default) was adopted because it was checked numerically, not assumed, and it is the only one of the three schemes that held up under a stress test with one atypical event.
+4. The output still has to pass `assess()` and still benefits from scoring against held-out events, exactly like every other construction path in this package.

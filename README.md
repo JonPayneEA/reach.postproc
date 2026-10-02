@@ -350,6 +350,7 @@ Keep these limitations in view:
 - `default_family_ar_parameters()` constructs a continuous default-family parameter set from one principal decay timescale.
 - `standard_family_ar_parameters()` returns a published standard point on that family.
 - `standard_family_ar_table()` lists the full published standard catalogue.
+- `fit_ar_from_events()` fits AR coefficients by pooled weighted least squares across event windows only.
 
 ### Analysis and assessment
 
@@ -377,15 +378,17 @@ Keep these limitations in view:
 
 ## Documentation
 
-The package contains eight vignettes:
+The package contains ten vignettes:
 
 - **ARMA for Novice Flood Forecast Modellers** provides a plain-English introduction and glossary.
 - **Characteristic Roots for Novice Flood Forecast Modellers** is a plain-English deep dive on roots, what they mean and what stability requires.
 - **AR and ARMA for Flood Forecasting** explains the operational theory and IMFS context.
 - **Using reach.postproc** provides a practical package workflow.
 - **Setting AR Parameters for a New Model** is a decision guide for choosing between PT-fitted coefficients, the default-family constructions and ET-AR when a model has no existing calibration.
+- **Event-Pooled AR Fitting for Novice Flood Forecast Modellers** is a plain-English explanation of fitting AR coefficients from flood events alone, rather than a model's whole history.
 - **Mathematical and Developer Validation** explains numerical equivalence tests and indexing conventions.
 - **Selecting a Default-Family Parameter Set** explains the continuous analytical family the published default parameter sets are drawn from.
+- **Event-Pooled AR Fitting: Mathematics and Validation** covers the weighted least squares construction behind `fit_ar_from_events()` and the numerical evidence behind its default weighting scheme.
 - **Event Triggered and Time Jumped AR** covers the experimental ET-AR and TJ-AR methods.
 
 Build and open the vignettes with:

@@ -65,12 +65,14 @@ articles:
       - roots-for-novices
       - using-reach-postproc
       - setting-parameters-for-a-new-model
+      - event-pooled-ar-fitting-for-novices
 
   - title: Theory and assurance
     contents:
       - arma-flood-forecasting
       - developer-mathematics
       - default-parameter-family-section
+      - event-pooled-ar-fitting
 
   - title: Advanced methods
     contents:
