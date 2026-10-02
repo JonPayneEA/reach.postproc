@@ -20,6 +20,9 @@ event_ar_parameters(
 
   Positive response time in model timesteps. For a 15-minute model, 48
   steps represent 12 hours.
+  [`response_time_steps_from_tp()`](https://jonpayneea.github.io/reach.postproc/reference/response_time_steps_from_tp.md)
+  offers one temporary, approximate way to derive this from
+  time-to-peak.
 
 - middle_decay_steps:
 

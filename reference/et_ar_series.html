@@ -111,7 +111,56 @@ error projection and updated values.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># et_ar_series(result)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">config</span> <span class="op">&lt;-</span> <span class="fu"><a href="et_ar_configuration.html">et_ar_configuration</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="default_et_ar_steady_parameters.html">default_et_ar_steady_parameters</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="event_ar_parameters.html">event_ar_parameters</a></span><span class="op">(</span><span class="fl">48</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="logical_et_trigger.html">logical_et_trigger</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="fl">9</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="forecast_et_ar.html">forecast_et_ar</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">config</span>, initial_errors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.18</span>, <span class="fl">0.16</span><span class="op">)</span>, simulated <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">12</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">et_ar_series</span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      step  time lead_time_minutes simulated  ar_error updated_unconstrained</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;int&gt; &lt;int&gt;             &lt;num&gt;     &lt;num&gt;     &lt;num&gt;                 &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:     1     1                15         1 0.2161113              1.216111</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:     2     2                30         1 0.2292478              1.229248</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:     3     3                45         1 0.2389928              1.238993</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:     4     4                60         1 0.2460087              1.246009</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:     5     5                75         1 0.2507916              1.250792</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:     6     6                90         1 0.2537527              1.253753</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:     7     7               105         1 0.2552309              1.255231</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:     8     8               120         1 0.2555054              1.255505</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:     9     9               135         1 0.2548061              1.254806</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:    10    10               150         1 0.2533224              1.253322</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:    11    11               165         1 0.2512101              1.251210</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:    12    12               180         1 0.2485975              1.248597</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      updated parameter_state trigger_type trigger_evidence triggered_this_step</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        &lt;num&gt;          &lt;char&gt;       &lt;char&gt;           &lt;lgcl&gt;              &lt;lgcl&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1: 1.216111          steady      logical               NA               FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2: 1.229248          steady      logical               NA               FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3: 1.238993           event      logical               NA                TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4: 1.246009           event      logical               NA               FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5: 1.250792           event      logical               NA               FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6: 1.253753           event      logical               NA               FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7: 1.255231           event      logical               NA               FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8: 1.255505           event      logical               NA               FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9: 1.254806           event      logical               NA               FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10: 1.253322           event      logical               NA               FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11: 1.251210           event      logical               NA               FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12: 1.248597           event      logical               NA               FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     switch_step</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           &lt;int&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:           3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:           3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:           3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:           3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:           3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:           3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:           3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:           3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:           3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:           3</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

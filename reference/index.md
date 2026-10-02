@@ -76,6 +76,8 @@
   : Calculate an ARMA unit-innovation response
 - [`response_components()`](https://jonpayneea.github.io/reach.postproc/reference/response_components.md)
   : Compare AR and ARMA response components
+- [`response_time_steps_from_tp()`](https://jonpayneea.github.io/reach.postproc/reference/response_time_steps_from_tp.md)
+  : Estimate an ET-AR event response time from catchment time-to-peak
 - [`root_from_timescale()`](https://jonpayneea.github.io/reach.postproc/reference/root_from_timescale.md)
   : Construct one modal root from decay and oscillation timescales
 - [`root_table()`](https://jonpayneea.github.io/reach.postproc/reference/root_table.md)

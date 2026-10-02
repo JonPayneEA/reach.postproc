@@ -110,7 +110,37 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># tj_ar_series(result)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">history</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.20</span>, <span class="fl">0.19</span>, <span class="fl">0.23</span>, <span class="fl">0.18</span>, <span class="fl">0.17</span>, <span class="fl">0.16</span>, <span class="fl">0.15</span>, <span class="fl">0.14</span>, <span class="fl">0.13</span>, <span class="fl">0.12</span>, <span class="fl">0.11</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="forecast_tj_ar.html">forecast_tj_ar</a></span><span class="op">(</span><span class="fu"><a href="default_ar_parameters.html">default_ar_parameters</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">history</span>, jump <span class="op">=</span> <span class="fl">5L</span>, steps <span class="op">=</span> <span class="fl">24L</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">tj_ar_series</span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      step lead_time_minutes lead_time_hours  ar_error</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;int&gt;             &lt;num&gt;           &lt;num&gt;     &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  1:     1                15            0.25 0.2032683</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  2:     2                30            0.50 0.2055681</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3:     3                45            0.75 0.2070729</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  4:     4                60            1.00 0.2079258</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  5:     5                75            1.25 0.2082447</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  6:     6                90            1.50 0.2081271</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  7:     7               105            1.75 0.2076531</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8:     8               120            2.00 0.2068891</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  9:     9               135            2.25 0.2058896</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10:    10               150            2.50 0.2046995</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11:    11               165            2.75 0.2033561</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12:    12               180            3.00 0.2018898</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13:    13               195            3.25 0.2003259</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14:    14               210            3.50 0.1986851</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15:    15               225            3.75 0.1969844</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16:    16               240            4.00 0.1952381</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17:    17               255            4.25 0.1934575</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18:    18               270            4.50 0.1916522</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19:    19               285            4.75 0.1898301</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20:    20               300            5.00 0.1879974</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21:    21               315            5.25 0.1861596</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22:    22               330            5.50 0.1843208</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23:    23               345            5.75 0.1824846</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24:    24               360            6.00 0.1806538</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      step lead_time_minutes lead_time_hours  ar_error</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;int&gt;             &lt;num&gt;           &lt;num&gt;     &lt;num&gt;</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -77,8 +77,9 @@
 
 ### New functions
 
-- `response_time_steps_from_tp()`: converts a catchment time-to-peak
-  into the `response_time_steps` argument of
+- [`response_time_steps_from_tp()`](https://jonpayneea.github.io/reach.postproc/reference/response_time_steps_from_tp.md):
+  converts a catchment time-to-peak into the `response_time_steps`
+  argument of
   [`event_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/event_ar_parameters.md).
   **Temporary**: time-to-peak and AR decay time are different physical
   quantities, and equating them is a modelling approximation, not a
