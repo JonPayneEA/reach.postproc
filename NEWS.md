@@ -1,3 +1,19 @@
+# reach.postproc 0.10.2
+
+## Documentation
+- New vignette, "Setting AR Parameters for a New Model"
+  (`setting-parameters-for-a-new-model.Rmd`): a decision guide for a model
+  with no existing calibration, covering PT-fitted coefficients, the
+  standard and continuous default-family constructions, fully custom
+  timescale construction, and ET-AR (flagged explicitly as untested and
+  not yet deployable in IMFS). Frames the four deployable paths as a
+  lifecycle rather than a flat menu: PT cannot run until a model has been
+  live long enough to accumulate a residual series, so an a-priori
+  default-family or custom-timescale choice is the deliberate, provisional
+  bridge to go-live, intended to be superseded by a PT refit once that
+  history exists. Includes a Mermaid decision tree and a validation
+  checklist shared by every path.
+
 # reach.postproc 0.10.1
 
 ## Documentation

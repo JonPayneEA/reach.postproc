@@ -377,12 +377,13 @@ Keep these limitations in view:
 
 ## Documentation
 
-The package contains seven vignettes:
+The package contains eight vignettes:
 
 - **ARMA for Novice Flood Forecast Modellers** provides a plain-English introduction and glossary.
 - **Characteristic Roots for Novice Flood Forecast Modellers** is a plain-English deep dive on roots, what they mean and what stability requires.
 - **AR and ARMA for Flood Forecasting** explains the operational theory and IMFS context.
 - **Using reach.postproc** provides a practical package workflow.
+- **Setting AR Parameters for a New Model** is a decision guide for choosing between PT-fitted coefficients, the default-family constructions and ET-AR when a model has no existing calibration.
 - **Mathematical and Developer Validation** explains numerical equivalence tests and indexing conventions.
 - **Selecting a Default-Family Parameter Set** explains the continuous analytical family the published default parameter sets are drawn from.
 - **Event Triggered and Time Jumped AR** covers the experimental ET-AR and TJ-AR methods.
