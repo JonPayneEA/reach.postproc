@@ -1,3 +1,16 @@
+# reach.postproc 0.10.1
+
+## Documentation
+- "Selecting a Default-Family Parameter Set" gains two plots: `plot_ar()`
+  on the worked nine-hour example's roots, and a new "Visualising the
+  family" section with a custom plot overlaying the principal, middle and
+  fast roots of five standard members (3 hours to Infinite) on one unit
+  circle. Makes the "why the coefficients change so little" claim visible
+  rather than asserted: the principal root visibly compresses towards `1`
+  as decay time lengthens, numerically confirmed (the 3-hours-to-12-hours
+  gap in the principal root is roughly 91x the 16-days-to-Infinite gap,
+  despite the second pair spanning far more decay time).
+
 # reach.postproc 0.10.0
 
 ## New functions

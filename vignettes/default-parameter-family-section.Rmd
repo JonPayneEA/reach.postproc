@@ -39,9 +39,10 @@ parameters <- default_family_ar_parameters(
 
 parameters@coefficients
 root_table(roots(parameters, time_step_minutes = 15))
+plot_ar(roots(parameters, time_step_minutes = 15), root_definition = "modal")
 ```
 
-This calculation does not interpolate between the six-hour and twelve-hour rows of a table. It sets the nine-hour principal root directly, solves the middle root while retaining the default-family constraints and converts the three roots to AR coefficients.
+This calculation does not interpolate between the six-hour and twelve-hour rows of a table. It sets the nine-hour principal root directly, solves the middle root while retaining the default-family constraints and converts the three roots to AR coefficients. All three roots sit inside the unit circle, as the family's own construction guarantees: the validity check in `default_family_ar_parameters()` refuses to return a member whose middle root would not.
 
 ## Standard published choices
 
@@ -190,3 +191,49 @@ $$
 As $\tau$ becomes large, $|z|$ approaches one. Large changes in a long decay time therefore correspond to small changes in the principal root and still smaller changes in the resulting coefficients. This explains why parameter sets with markedly different principal decay times can have visually similar values of $a_2$ and $a_3$.
 
 It also explains why coefficient rounding matters. A small numerical change in a coefficient can imply a much larger change in the longest decay time. Calculate and store coefficients at full precision; round only for display.
+
+### Visualising the family
+
+`plot_ar()` shows one parameter set's roots at a time. To see the claim above directly, rather than take it on trust, plot the principal root from several published standard sets together:
+
+```{r default-family-sweep}
+family_roots <- data.table::rbindlist(lapply(
+  c("3 hours", "12 hours", "2 days", "16 days", "Infinite"),
+  function(choice) {
+    d <- root_table(roots(standard_family_ar_parameters(choice)))
+    d[, parameter_set := choice]
+    d
+  }
+))
+
+# Same unit-circle construction plot_ar() uses internally, for a consistent
+# visual style between this custom plot and the package's own plots.
+angle <- seq(0, 2 * pi, length.out = 721L)
+unit_circle <- data.table::data.table(x = cos(angle), y = sin(angle))
+
+ggplot() +
+  geom_polygon(
+    data = unit_circle, aes(x, y, group = 1),
+    fill = "grey95", colour = "grey45"
+  ) +
+  geom_hline(yintercept = 0, colour = "grey75") +
+  geom_vline(xintercept = 0, colour = "grey75") +
+  geom_point(
+    data = family_roots,
+    aes(
+      root_real, root_imaginary,
+      colour = factor(parameter_set, levels = c(
+        "3 hours", "12 hours", "2 days", "16 days", "Infinite"
+      ))
+    ),
+    size = 3
+  ) +
+  coord_fixed() +
+  theme_minimal() +
+  labs(
+    x = "Real component", y = "Imaginary component", colour = "Parameter set",
+    title = "Roots of five standard default-family members"
+  )
+```
+
+Three clusters are visible. The fast root sits at the same point for every parameter set (it is fixed by construction, at `-0.0498`). The middle root moves only a little across the whole published range. The principal root is the one doing most of the work: it starts noticeably inside the circle at "3 hours" and crowds closer and closer to `1` as the principal decay lengthens, exactly as the exponential relationship above predicts, and visibly slowing down as it does so -- the gap between "16 days" and "Infinite" is far smaller than the gap between "3 hours" and "12 hours", even though the second pair differs by far more decay time. That compression is the whole reason coefficient rounding has to be handled with care at the long-decay end of the family.
