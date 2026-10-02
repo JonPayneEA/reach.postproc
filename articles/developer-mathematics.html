@@ -73,7 +73,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">reach.postproc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -208,6 +208,63 @@ model. Confirm which convention a comparison is using before treating a
 mismatch as a defect.</p>
 </div>
 <div class="section level2">
+<h2 id="floating-point-residuals-on-real-roots">Floating-point residuals on real roots<a class="anchor" aria-label="anchor" href="#floating-point-residuals-on-real-roots"></a>
+</h2>
+<p>A root that is mathematically real, such as the <code>0.5</code>
+above, will rarely print as a clean <code>0.5+0i</code>. Expect
+something like <code>0.5+8.414707e-16i</code> instead. That residual is
+floating-point rounding noise, not a genuine imaginary component, and it
+is not a sign that anything has gone wrong.</p>
+<p>Two different routes to the same true value accumulate different,
+unrelated rounding dust, because they perform different sequences of
+floating-point operations to get there:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">modal_roots</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/polyroot.html" class="external-link">polyroot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.4</span>, <span class="fl">1.6</span>, <span class="op">-</span><span class="fl">2.1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">inverted_roots</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/polyroot.html" class="external-link">polyroot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">2.1</span>, <span class="fl">1.6</span>, <span class="op">-</span><span class="fl">0.4</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">modal_roots</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/complex.html" class="external-link">Re</a></span><span class="op">(</span><span class="va">modal_roots</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/complex.html" class="external-link">Im</a></span><span class="op">(</span><span class="va">modal_roots</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt; [1] 0.5+8.414707e-16i 0.8-4.000000e-01i 0.8+4.000000e-01i</span></span>
+<span><span class="va">inverted_roots</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/complex.html" class="external-link">Re</a></span><span class="op">(</span><span class="va">inverted_roots</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/complex.html" class="external-link">Im</a></span><span class="op">(</span><span class="va">inverted_roots</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt; [1] 0.5+6.505213e-15i 0.8-4.000000e-01i 0.8+4.000000e-01i</span></span></code></pre></div>
+<p>Both real roots sit at <code>0.5</code>. Their residual imaginary
+parts are both around
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mn>10</mn><mrow><mi>−</mi><mn>15</mn></mrow></msup><annotation encoding="application/x-tex">10^{-15}</annotation></semantics></math>
+to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mn>10</mn><mrow><mi>−</mi><mn>16</mn></mrow></msup><annotation encoding="application/x-tex">10^{-16}</annotation></semantics></math>,
+which is the scale of <code>.Machine$double.eps</code> (roughly
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2.2</mn><mo>×</mo><msup><mn>10</mn><mrow><mi>−</mi><mn>16</mn></mrow></msup></mrow><annotation encoding="application/x-tex">2.2\times10^{-16}</annotation></semantics></math>)
+– the smallest relative difference a double-precision number can
+represent. They are not equal to each other bit for bit, because
+<code>modal_roots</code> came from one <code><a href="https://rdrr.io/r/base/polyroot.html" class="external-link">polyroot()</a></code> call
+solving one cubic, and <code>inverted_roots</code> came from a
+<em>different</em> <code><a href="https://rdrr.io/r/base/polyroot.html" class="external-link">polyroot()</a></code> call solving a different
+cubic, followed by a division. Different arithmetic, same true answer,
+different leftover noise. This happens on any platform, with any
+sequence of floating-point operations that arrive at the same
+mathematical result by different paths; it is a property of
+finite-precision arithmetic, not of <code><a href="https://rdrr.io/r/base/polyroot.html" class="external-link">polyroot()</a></code>, R, or this
+package.</p>
+<p>This is exactly why nothing in <code>reach.postproc</code> compares
+roots with exact equality. <code><a href="../reference/roots.html">roots()</a></code>’s own real/complex
+classification,</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">real</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/complex.html" class="external-link">Im</a></span><span class="op">(</span><span class="va">z</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;=</span> <span class="va">tolerance</span></span></code></pre></div>
+<p>uses <code>tolerance = sqrt(.Machine$double.eps)</code>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≈</mo><mn>1.49</mn><mo>×</mo><msup><mn>10</mn><mrow><mi>−</mi><mn>8</mn></mrow></msup></mrow><annotation encoding="application/x-tex">\approx 1.49\times10^{-8}</annotation></semantics></math>)
+by default – several orders of magnitude larger than any floating-point
+residual this kind of calculation produces, so genuine noise is always
+classified as real. <code><a href="../reference/roots_to_parameters.html">roots_to_parameters()</a></code>’s conjugate-pair
+check and the <code>all.equal(..., tolerance = ...)</code> calls used
+for verification throughout this vignette follow the same principle. A
+residual at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mn>10</mn><mrow><mi>−</mi><mn>15</mn></mrow></msup><annotation encoding="application/x-tex">10^{-15}</annotation></semantics></math>
+or
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mn>10</mn><mrow><mi>−</mi><mn>16</mn></mrow></msup><annotation encoding="application/x-tex">10^{-16}</annotation></semantics></math>
+is never worth investigating. A residual anywhere near
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mn>10</mn><mrow><mi>−</mi><mn>8</mn></mrow></msup><annotation encoding="application/x-tex">10^{-8}</annotation></semantics></math>
+or larger is a different matter, and should be.</p>
+</div>
+<div class="section level2">
 <h2 id="root-to-parameter-conversion">Root-to-parameter conversion<a class="anchor" aria-label="anchor" href="#root-to-parameter-conversion"></a>
 </h2>
 <p>For modal root
@@ -218,12 +275,12 @@ z-r.
 </annotation></semantics></math></p>
 <p>When polynomial coefficients are stored in ascending order, the
 factor is</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="va">r</span>, <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p>Using <code>c(1, -r)</code> would create
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>−</mo><mi>r</mi><mi>z</mi></mrow><annotation encoding="application/x-tex">1-rz</annotation></semantics></math>
 and therefore introduce reciprocal roots.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/default_ar_parameters.html">default_ar_parameters</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">z1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/roots.html">roots</a></span><span class="op">(</span><span class="va">p1</span><span class="op">)</span><span class="op">@</span><span class="va">values</span></span>
 <span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/roots_to_parameters.html">roots_to_parameters</a></span><span class="op">(</span><span class="va">z1</span><span class="op">)</span></span>
@@ -263,7 +320,7 @@ indexing is:</p>
 <pre class="text"><code>modal time 0 = forecast step 1
 modal time 1 = forecast step 2
 modal time 2 = forecast step 3</code></pre>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/default_ar_parameters.html">default_ar_parameters</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">forecast</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/forecast_ar.html">forecast_ar</a></span><span class="op">(</span></span>
 <span>  <span class="va">parameters</span>,</span>
@@ -379,7 +436,7 @@ produce identical internal coefficients, roots and forecasts.</p>
 <div class="section level2">
 <h2 id="minimum-developer-checks">Minimum developer checks<a class="anchor" aria-label="anchor" href="#minimum-developer-checks"></a>
 </h2>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Not run in the vignette build.</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">document</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">load_all</span><span class="op">(</span><span class="op">)</span></span>

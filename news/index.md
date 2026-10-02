@@ -1,5 +1,23 @@
 # Changelog
 
+## reach.postproc 0.9.5
+
+### Documentation
+
+- `developer-mathematics.Rmd` gains “Floating-point residuals on real
+  roots”, immediately after the modal-vs-reciprocal-lag section: why a
+  mathematically real root prints with a nonzero imaginary part at the
+  $`10^{-15}`$–$`10^{-16}`$ scale (different routes to the same true
+  value accumulate different, unrelated floating-point rounding noise),
+  and why
+  [`roots()`](https://jonpayneea.github.io/reach.postproc/reference/roots.md)’s
+  `tolerance = sqrt(.Machine$double.eps)` default correctly classifies
+  it as real anyway. Prompted by exactly this showing up while comparing
+  the modal and reciprocal-lag worked example.
+- `roots-for-novices.Rmd`’s “Try it yourself” section now has a short,
+  plain-English note on the same residual, since its own third example
+  produces one, with a link through to the full explanation.
+
 ## reach.postproc 0.9.4
 
 ### Documentation

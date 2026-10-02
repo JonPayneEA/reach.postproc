@@ -59,7 +59,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">reach.postproc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,6 +85,16 @@
       <small>Source: <a href="https://github.com/JonPayneEA/reach.postproc/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.9.5" id="reachpostproc-095">reach.postproc 0.9.5<a class="anchor" aria-label="anchor" href="#reachpostproc-095"></a></h2>
+<div class="section level3">
+<h3 id="documentation-0-9-5">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-9-5"></a></h3>
+<ul><li>
+<code>developer-mathematics.Rmd</code> gains “Floating-point residuals on real roots”, immediately after the modal-vs-reciprocal-lag section: why a mathematically real root prints with a nonzero imaginary part at the <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mn>10</mn><mrow><mi>−</mi><mn>15</mn></mrow></msup><annotation encoding="application/x-tex">10^{-15}</annotation></semantics></math>–<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mn>10</mn><mrow><mi>−</mi><mn>16</mn></mrow></msup><annotation encoding="application/x-tex">10^{-16}</annotation></semantics></math> scale (different routes to the same true value accumulate different, unrelated floating-point rounding noise), and why <code><a href="../reference/roots.html">roots()</a></code>’s <code>tolerance = sqrt(.Machine$double.eps)</code> default correctly classifies it as real anyway. Prompted by exactly this showing up while comparing the modal and reciprocal-lag worked example.</li>
+<li>
+<code>roots-for-novices.Rmd</code>’s “Try it yourself” section now has a short, plain-English note on the same residual, since its own third example produces one, with a link through to the full explanation.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.9.4" id="reachpostproc-094">reach.postproc 0.9.4<a class="anchor" aria-label="anchor" href="#reachpostproc-094"></a></h2>
 <div class="section level3">

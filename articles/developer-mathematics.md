@@ -99,6 +99,65 @@ arithmetic. It is two valid conventions describing the same model.
 Confirm which convention a comparison is using before treating a
 mismatch as a defect.
 
+## Floating-point residuals on real roots
+
+A root that is mathematically real, such as the `0.5` above, will rarely
+print as a clean `0.5+0i`. Expect something like `0.5+8.414707e-16i`
+instead. That residual is floating-point rounding noise, not a genuine
+imaginary component, and it is not a sign that anything has gone wrong.
+
+Two different routes to the same true value accumulate different,
+unrelated rounding dust, because they perform different sequences of
+floating-point operations to get there:
+
+``` r
+
+modal_roots <- polyroot(c(-0.4, 1.6, -2.1, 1))
+inverted_roots <- 1 / polyroot(c(1, -2.1, 1.6, -0.4))
+
+modal_roots[order(Re(modal_roots), Im(modal_roots))]
+#> [1] 0.5+8.414707e-16i 0.8-4.000000e-01i 0.8+4.000000e-01i
+inverted_roots[order(Re(inverted_roots), Im(inverted_roots))]
+#> [1] 0.5+6.505213e-15i 0.8-4.000000e-01i 0.8+4.000000e-01i
+```
+
+Both real roots sit at `0.5`. Their residual imaginary parts are both
+around $`10^{-15}`$ to $`10^{-16}`$, which is the scale of
+`.Machine$double.eps` (roughly $`2.2\times10^{-16}`$) – the smallest
+relative difference a double-precision number can represent. They are
+not equal to each other bit for bit, because `modal_roots` came from one
+[`polyroot()`](https://rdrr.io/r/base/polyroot.html) call solving one
+cubic, and `inverted_roots` came from a *different*
+[`polyroot()`](https://rdrr.io/r/base/polyroot.html) call solving a
+different cubic, followed by a division. Different arithmetic, same true
+answer, different leftover noise. This happens on any platform, with any
+sequence of floating-point operations that arrive at the same
+mathematical result by different paths; it is a property of
+finite-precision arithmetic, not of
+[`polyroot()`](https://rdrr.io/r/base/polyroot.html), R, or this
+package.
+
+This is exactly why nothing in `reach.postproc` compares roots with
+exact equality.
+[`roots()`](https://jonpayneea.github.io/reach.postproc/reference/roots.md)’s
+own real/complex classification,
+
+``` r
+
+real <- abs(Im(z)) <= tolerance
+```
+
+uses `tolerance = sqrt(.Machine$double.eps)`
+($`\approx 1.49\times10^{-8}`$) by default – several orders of magnitude
+larger than any floating-point residual this kind of calculation
+produces, so genuine noise is always classified as real.
+[`roots_to_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/roots_to_parameters.md)’s
+conjugate-pair check and the `all.equal(..., tolerance = ...)` calls
+used for verification throughout this vignette follow the same
+principle. A residual at $`10^{-15}`$ or $`10^{-16}`$ is never worth
+investigating. A residual anywhere near $`10^{-8}`$ or larger is a
+different matter, and should be.
+
 ## Root-to-parameter conversion
 
 For modal root $`r`$, the polynomial factor is
