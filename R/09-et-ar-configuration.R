@@ -1,17 +1,21 @@
 # ============================================================ #
 # Tool:         Event Triggered AR Configuration
 # Description:  Pair steady- and event-condition AR parameter sets with a
-#               trigger definition, and construct the EA default steady and
-#               response-time-derived event parameter sets.
+#               trigger definition, construct the EA default steady and
+#               response-time-derived event parameter sets, and provide a
+#               temporary time-to-peak estimate of the event response time.
 # Flode Module: reach.hydro (pre-promotion; standalone package)
 # Author:       Jonathan Payne, jonathan.payne@example.org
 # Created:      2026-10-01
-# Modified:     2026-10-02 - JP: added mandatory governance header block
+# Modified:     2026-10-02 - JP: added response_time_steps_from_tp(), a
+#               temporary time-to-peak conversion pending a proper
+#               calculation in reach.hydro.
 # Tier:         2
 # Inputs:       Two AR parameter sets of equal order and an et_ar_trigger
-#               object.
+#               object; or a catchment time-to-peak estimate.
 # Outputs:      An et_ar_configuration object consumed by forecast_et_ar()
-#               and forecast_et_tj_ar().
+#               and forecast_et_tj_ar(); or a response-time estimate in
+#               model timesteps.
 # Dependencies: none beyond base R (uses ar_parameters_from_timescales()
 #               from 03-parameters.R).
 # ============================================================ #
@@ -96,13 +100,63 @@ default_et_ar_steady_parameters <- function(
   )
 }
 
+#' Estimate an ET-AR event response time from catchment time-to-peak
+#'
+#' Convert a catchment time-to-peak directly into the `response_time_steps`
+#' argument of [event_ar_parameters()], on the assumption that the
+#' event-condition AR root should decay on roughly the timescale the
+#' catchment itself takes to reach peak flow.
+#'
+#' @section Status: temporary. Time-to-peak (rainfall-to-peak-flow) and AR
+#'   decay time (forecast-error persistence) are different physical
+#'   quantities; equating them here is a modelling approximation, not a
+#'   derived equivalence. This function exists so that approximation has one
+#'   place to live, rather than being re-implemented ad hoc in calibration
+#'   scripts for individual gauges. It belongs in `reach.hydro` once that
+#'   module has a proper FEH or unit-hydrograph time-to-peak calculation to
+#'   draw on, and it should move there rather than be extended in place.
+#'   Whatever it returns is a starting estimate, not a validated parameter:
+#'   check it with [assess()] and against historic events with
+#'   [fixed_lead_ar()] / [score_lead_times()] before operational use.
+#'
+#' @param time_to_peak Positive numeric catchment time-to-peak, in the units
+#'   given by `time_to_peak_units`.
+#' @param time_step_minutes Minutes represented by one model timestep.
+#' @param time_to_peak_units Units of `time_to_peak`. `"hours"` (default) or
+#'   `"minutes"`.
+#'
+#' @returns A single positive numeric response-time estimate in model
+#'   timesteps, suitable as `response_time_steps` for
+#'   [event_ar_parameters()].
+#'
+#' @examples
+#' response_time_steps_from_tp(time_to_peak = 12, time_step_minutes = 15)
+#' event_ar_parameters(
+#'   response_time_steps = response_time_steps_from_tp(12, time_step_minutes = 15)
+#' )
+#' @export
+response_time_steps_from_tp <- function(time_to_peak,
+                                         time_step_minutes = 15,
+                                         time_to_peak_units = c("hours", "minutes")) {
+  time_to_peak_units <- match.arg(time_to_peak_units)
+  if (length(time_to_peak) != 1L || !is.finite(time_to_peak) || time_to_peak <= 0) {
+    stop("`time_to_peak` must be one positive finite value.", call. = FALSE)
+  }
+  if (length(time_step_minutes) != 1L || !is.finite(time_step_minutes) || time_step_minutes <= 0) {
+    stop("`time_step_minutes` must be one positive finite value.", call. = FALSE)
+  }
+  time_to_peak_minutes <- if (time_to_peak_units == "hours") time_to_peak * 60 else time_to_peak
+  time_to_peak_minutes / time_step_minutes
+}
+
 #' Construct ET-AR event parameters from catchment response time
 #'
 #' Retain the standard middle and fast roots while setting the principal decay
 #' time from a catchment response estimate.
 #'
 #' @param response_time_steps Positive response time in model timesteps. For a
-#'   15-minute model, 48 steps represent 12 hours.
+#'   15-minute model, 48 steps represent 12 hours. [response_time_steps_from_tp()]
+#'   offers one temporary, approximate way to derive this from time-to-peak.
 #' @param middle_decay_steps Decay time of the intermediate positive root.
 #' @param fast_decay_steps Decay time of the rapid negative root.
 #' @param label Description attached to the result.

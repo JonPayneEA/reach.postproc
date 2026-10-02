@@ -1,3 +1,16 @@
+# reach.postproc 0.9.0
+
+## New functions
+- `response_time_steps_from_tp()`: converts a catchment time-to-peak into the
+  `response_time_steps` argument of `event_ar_parameters()`. **Temporary**:
+  time-to-peak and AR decay time are different physical quantities, and
+  equating them is a modelling approximation, not a derived equivalence.
+  This belongs in `reach.hydro` once that module has a proper FEH or
+  unit-hydrograph time-to-peak calculation; it should move there rather
+  than be extended in place. Treat its output as a starting estimate to
+  validate with `assess()` and `fixed_lead_ar()` / `score_lead_times()`,
+  never as a fitted parameter.
+
 # reach.postproc 0.8.1
 
 ## Bug fixes
