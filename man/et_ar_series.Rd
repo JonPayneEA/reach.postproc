@@ -17,5 +17,12 @@ error projection and updated values.
 Extract an ET-AR forecast series
 }
 \examples{
-# et_ar_series(result)
+config <- et_ar_configuration(
+  default_et_ar_steady_parameters(), event_ar_parameters(48),
+  logical_et_trigger(c(FALSE, FALSE, TRUE, rep(TRUE, 9)))
+)
+result <- forecast_et_ar(
+  config, initial_errors = c(0.2, 0.18, 0.16), simulated = rep(1, 12)
+)
+et_ar_series(result)
 }

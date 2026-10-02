@@ -399,15 +399,20 @@ Keep these limitations in view:
 
 ## Documentation
 
-The package contains four vignettes:
+The package contains six vignettes:
 
 - **ARMA for Novice Flood Forecast Modellers** provides a plain-English
   introduction and glossary.
+- **Characteristic Roots for Novice Flood Forecast Modellers** is a
+  plain-English deep dive on roots, what they mean and what stability
+  requires.
 - **AR and ARMA for Flood Forecasting** explains the operational theory
   and IMFS context.
 - **Using reach.postproc** provides a practical package workflow.
 - **Mathematical and Developer Validation** explains numerical
   equivalence tests and indexing conventions.
+- **Event Triggered and Time Jumped AR** covers the experimental ET-AR
+  and TJ-AR methods.
 
 Build and open the vignettes with:
 
@@ -533,6 +538,8 @@ details.
   : Calculate an ARMA unit-innovation response
 - [`response_components()`](https://jonpayneea.github.io/reach.postproc/reference/response_components.md)
   : Compare AR and ARMA response components
+- [`response_time_steps_from_tp()`](https://jonpayneea.github.io/reach.postproc/reference/response_time_steps_from_tp.md)
+  : Estimate an ET-AR event response time from catchment time-to-peak
 - [`roots()`](https://jonpayneea.github.io/reach.postproc/reference/roots.md)
   : Calculate characteristic roots and their timescales
 - [`roots_to_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/roots_to_parameters.md)
@@ -554,6 +561,8 @@ details.
 
 - [ARMA for Novice Flood Forecast
   Modellers](https://jonpayneea.github.io/reach.postproc/articles/arma-for-novices.md):
+- [Characteristic Roots for Novice Flood Forecast
+  Modellers](https://jonpayneea.github.io/reach.postproc/articles/roots-for-novices.md):
 - [Using
   reach.postproc](https://jonpayneea.github.io/reach.postproc/articles/using-reach-postproc.md):
 

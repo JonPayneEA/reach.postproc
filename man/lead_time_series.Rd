@@ -17,6 +17,17 @@ Extract the tabular data from a structured package result without exposing
 callers to its internal S7 property layout.
 }
 \examples{
-# See fixed_lead_ar() for a complete construction example.
-# lead_time_series(result)
+time <- as.POSIXct("2024-01-01", tz = "UTC") + 0:80 * 900
+simulation <- 0.8 + sin(0:80 / 12)
+observation <- simulation + 0.1
+aligned <- align_forecast_series(
+  data.frame(date_time = time, value = observation),
+  data.frame(date_time = time, value = simulation),
+  interval_minutes = 15
+)
+result <- fixed_lead_ar(
+  default_ar_parameters(), aligned,
+  lead_times_minutes = c(30, 60), time_step_minutes = 15
+)
+head(lead_time_series(result))
 }
