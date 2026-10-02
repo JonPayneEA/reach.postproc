@@ -59,7 +59,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">reach.postproc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,6 +85,64 @@
       <small>Source: <a href="https://github.com/JonPayneEA/reach.postproc/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.10.2" id="reachpostproc-0102">reach.postproc 0.10.2<a class="anchor" aria-label="anchor" href="#reachpostproc-0102"></a></h2>
+<div class="section level3">
+<h3 id="documentation-0-10-2">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-10-2"></a></h3>
+<ul><li>New vignette, “Setting AR Parameters for a New Model” (<code>setting-parameters-for-a-new-model.Rmd</code>): a decision guide for a model with no existing calibration, covering PT-fitted coefficients, the standard and continuous default-family constructions, fully custom timescale construction, and ET-AR (flagged explicitly as untested and not yet deployable in IMFS). Frames the four deployable paths as a lifecycle rather than a flat menu: PT cannot run until a model has been live long enough to accumulate a residual series, so an a-priori default-family or custom-timescale choice is the deliberate, provisional bridge to go-live, intended to be superseded by a PT refit once that history exists. Includes a Mermaid decision tree and a validation checklist shared by every path.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.10.1" id="reachpostproc-0101">reach.postproc 0.10.1<a class="anchor" aria-label="anchor" href="#reachpostproc-0101"></a></h2>
+<div class="section level3">
+<h3 id="documentation-0-10-1">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-10-1"></a></h3>
+<ul><li>“Selecting a Default-Family Parameter Set” gains two plots: <code><a href="../reference/plot_ar.html">plot_ar()</a></code> on the worked nine-hour example’s roots, and a new “Visualising the family” section with a custom plot overlaying the principal, middle and fast roots of five standard members (3 hours to Infinite) on one unit circle. Makes the “why the coefficients change so little” claim visible rather than asserted: the principal root visibly compresses towards <code>1</code> as decay time lengthens, numerically confirmed (the 3-hours-to-12-hours gap in the principal root is roughly 91x the 16-days-to-Infinite gap, despite the second pair spanning far more decay time).</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.10.0" id="reachpostproc-0100">reach.postproc 0.10.0<a class="anchor" aria-label="anchor" href="#reachpostproc-0100"></a></h2>
+<div class="section level3">
+<h3 id="new-functions-0-10-0">New functions<a class="anchor" aria-label="anchor" href="#new-functions-0-10-0"></a></h3>
+<ul><li>
+<code><a href="../reference/default_family_ar_parameters.html">default_family_ar_parameters()</a></code>: constructs a continuous analytical family of default AR(3) parameter sets from a single principal decay timescale, holding the first coefficient and fast root fixed and solving the middle root so the three roots sum to the fixed <code>a_1</code>. Verified by hand and numerically against the test suite: the “1 day” and “Infinite” members reproduce <code><a href="../reference/default_ar_parameters.html">default_ar_parameters()</a></code>’s and <code><a href="../reference/default_et_ar_steady_parameters.html">default_et_ar_steady_parameters()</a></code>’s published coefficients almost to the last digit, which is strong evidence the construction is correct and that those two previously-independent hard-coded defaults are in fact the same analytical family.</li>
+<li>
+<code><a href="../reference/standard_family_ar_parameters.html">standard_family_ar_parameters()</a></code> and <code><a href="../reference/standard_family_ar_table.html">standard_family_ar_table()</a></code>: the published standard catalogue (3 hours to 64 days, plus Infinite) as named lookups on the same construction, for governance recognition rather than bespoke calibration.</li>
+<li>New vignette, “Selecting a Default-Family Parameter Set” (<code>default-parameter-family-section.Rmd</code>), covering the practical workflow and the full mathematical derivation, including a worked nine-hour example.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-0-10-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-10-0"></a></h3>
+<ul><li>
+<code><a href="../reference/default_family_ar_parameters.html">default_family_ar_parameters()</a></code>’s fast root was taken via <code>Re(root_from_timescale(...))</code> with no check that the result was actually real. Any <code>fast_period_steps</code> other than <code>Inf</code> or <code>2</code> would have been genuinely complex, and <code><a href="https://rdrr.io/r/base/complex.html" class="external-link">Re()</a></code> would have silently discarded the imaginary half rather than error, producing a subtly wrong, truncated root with no indication anything was lost. Now validated explicitly.</li>
+<li>
+<code><a href="../reference/standard_family_ar_parameters.html">standard_family_ar_parameters()</a></code> and <code><a href="../reference/standard_family_ar_table.html">standard_family_ar_table()</a></code> hard-coded a 15-minute model timestep regardless of what the caller’s model actually used, even though the principal decay labels (“12 hours”, say) only translate to a specific number of model steps – and therefore specific AR coefficients – once the timestep is known. Both now take and forward <code>time_step_minutes</code>, defaulting to 15 for backward compatibility.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="governance-0-10-0">Governance<a class="anchor" aria-label="anchor" href="#governance-0-10-0"></a></h3>
+<ul><li>
+<code>R/14-default-parameter-family.R</code> now carries the mandatory header block (it had none), and explanatory comments at each non-obvious decision: the tighter-than-default <code>1e-12</code> tolerance passed to <code><a href="../reference/roots_to_parameters.html">roots_to_parameters()</a></code>, the <code><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr()</a></code>-based provenance metadata’s limits (informational only, not guaranteed to survive further transformation elsewhere in the package), and the family’s implicit shortest representable principal decay (around 1.2 hours at default settings, scaling with <code>time_step_minutes</code>).</li>
+<li>Added validation and regression tests to <code>test-default-family-ar.R</code>: invalid <code>principal_decay</code>/<code>time_step_minutes</code>, the new <code>fast_period_steps</code> guard, the too-short-principal-decay failure path, a <code>units = "days"</code> check, and regression coverage for the <code>time_step_minutes</code> forwarding fix.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.9.5" id="reachpostproc-095">reach.postproc 0.9.5<a class="anchor" aria-label="anchor" href="#reachpostproc-095"></a></h2>
+<div class="section level3">
+<h3 id="documentation-0-9-5">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-9-5"></a></h3>
+<ul><li>
+<code>developer-mathematics.Rmd</code> gains “Floating-point residuals on real roots”, immediately after the modal-vs-reciprocal-lag section: why a mathematically real root prints with a nonzero imaginary part at the <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mn>10</mn><mrow><mi>−</mi><mn>15</mn></mrow></msup><annotation encoding="application/x-tex">10^{-15}</annotation></semantics></math>–<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mn>10</mn><mrow><mi>−</mi><mn>16</mn></mrow></msup><annotation encoding="application/x-tex">10^{-16}</annotation></semantics></math> scale (different routes to the same true value accumulate different, unrelated floating-point rounding noise), and why <code><a href="../reference/roots.html">roots()</a></code>’s <code>tolerance = sqrt(.Machine$double.eps)</code> default correctly classifies it as real anyway. Prompted by exactly this showing up while comparing the modal and reciprocal-lag worked example.</li>
+<li>
+<code>roots-for-novices.Rmd</code>’s “Try it yourself” section now has a short, plain-English note on the same residual, since its own third example produces one, with a link through to the full explanation.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.9.4" id="reachpostproc-094">reach.postproc 0.9.4<a class="anchor" aria-label="anchor" href="#reachpostproc-094"></a></h2>
+<div class="section level3">
+<h3 id="documentation-0-9-4">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-9-4"></a></h3>
+<ul><li>
+<code>developer-mathematics.Rmd</code> gains a new section, “Modal roots versus reciprocal lag roots”, recording the mathematical contract between <code>reach.postproc</code>’s modal-root convention (<code>root_real</code>/<code>root_imaginary</code>, stable inside the unit circle) and the Box-Jenkins/ARIMA backshift-operator convention (<code>lag_root_real</code>/<code>lag_root_imaginary</code>, stable outside it). The two are reciprocals of the same model, not competing answers, and this had never been written down as an explicit contract before – it came up as a real point of confusion when an external check of this package’s root output used the other convention and got, correctly, different numbers. Includes a worked, executable example and a one-line warning for future maintainers: a convention mismatch isn’t a defect.</li>
+<li>
+<code>roots-for-novices.Rmd</code> now cross-references this section rather than leaving <code>lag_root_*</code> unexplained.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.9.3" id="reachpostproc-093">reach.postproc 0.9.3<a class="anchor" aria-label="anchor" href="#reachpostproc-093"></a></h2>
 <div class="section level3">

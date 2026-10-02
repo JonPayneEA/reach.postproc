@@ -30,6 +30,132 @@ The modal solution is
 x_t=\sum_{n=1}^{p}c_nz_n^t.
 ```
 
+## Modal roots versus reciprocal lag roots
+
+The polynomial above is solved directly for $`z`$ in $`x_t=c\,z^t`$.
+Call these the **modal roots**. Stable modal roots lie inside the unit
+circle.
+[`roots()`](https://jonpayneea.github.io/reach.postproc/reference/roots.md),
+[`assess()`](https://jonpayneea.github.io/reach.postproc/reference/assess.md)
+and
+[`plot_ar()`](https://jonpayneea.github.io/reach.postproc/reference/plot_ar.md)’s
+default view all use this convention.
+
+A different, equally standard construction exists. Write the recurrence
+with the backshift operator $`B`$ (where $`Bx_t=x_{t-1}`$) and solve
+$`\phi(B)=0`$ directly for $`B`$:
+
+``` math
+
+1-a_1B-a_2B^2-\cdots-a_pB^p=0.
+```
+
+This is the Box-Jenkins/ARIMA textbook convention, and its stable region
+is *outside* the unit circle. The two polynomials are reciprocals of one
+another: substituting $`B=1/z`$ into the modal polynomial and clearing
+denominators recovers the backshift polynomial, so each backshift root
+is the reciprocal of the matching modal root.
+
+``` r
+parameters <- ar_parameters(c(2.1, -1.6, 0.4))
+
+# Modal roots: direct solution of z^3 - 2.1z^2 + 1.6z - 0.4 = 0
+modal <- polyroot(c(-0.4, 1.6, -2.1, 1))
+
+# Reciprocal lag (backshift/Box-Jenkins) roots: 1 - 2.1z + 1.6z^2 - 0.4z^3 = 0
+lag <- polyroot(c(1, -2.1, 1.6, -0.4))
+
+modal
+#> [1] 0.5+8.414707e-16i 0.8+4.000000e-01i 0.8-4.000000e-01i
+lag
+#> [1] 1+5.000000e-01i 1-5.000000e-01i 2-2.602085e-14i
+
+all.equal(sort(Mod(1 / modal)), sort(Mod(lag)), tolerance = 1e-9)
+#> [1] TRUE
+```
+
+[`root_table()`](https://jonpayneea.github.io/reach.postproc/reference/root_table.md)
+reports both without requiring either polynomial to be built by hand:
+`root_real`/`root_imaginary` for the modal form,
+`lag_root_real`/`lag_root_imaginary` for the reciprocal.
+
+``` r
+root_table(roots(parameters))[
+  ,
+  .(root_real, root_imaginary, lag_root_real, lag_root_imaginary)
+]
+#>    root_real root_imaginary lag_root_real lag_root_imaginary
+#>        <num>          <num>         <num>              <num>
+#> 1:       0.8   4.000000e-01             1      -5.000000e-01
+#> 2:       0.8  -4.000000e-01             1       5.000000e-01
+#> 3:       0.5   8.414707e-16             2      -3.365883e-15
+```
+
+An external check of this package’s root calculations that assumes the
+Box-Jenkins convention will report different root values, and a
+different stability region (outside rather than inside the unit circle),
+to those `reach.postproc` reports. That is not a disagreement about the
+arithmetic. It is two valid conventions describing the same model.
+Confirm which convention a comparison is using before treating a
+mismatch as a defect.
+
+## Floating-point residuals on real roots
+
+A root that is mathematically real, such as the `0.5` above, will rarely
+print as a clean `0.5+0i`. Expect something like `0.5+8.414707e-16i`
+instead. That residual is floating-point rounding noise, not a genuine
+imaginary component, and it is not a sign that anything has gone wrong.
+
+Two different routes to the same true value accumulate different,
+unrelated rounding dust, because they perform different sequences of
+floating-point operations to get there:
+
+``` r
+modal_roots <- polyroot(c(-0.4, 1.6, -2.1, 1))
+inverted_roots <- 1 / polyroot(c(1, -2.1, 1.6, -0.4))
+
+modal_roots[order(Re(modal_roots), Im(modal_roots))]
+#> [1] 0.5+8.414707e-16i 0.8-4.000000e-01i 0.8+4.000000e-01i
+inverted_roots[order(Re(inverted_roots), Im(inverted_roots))]
+#> [1] 0.5+6.505213e-15i 0.8-4.000000e-01i 0.8+4.000000e-01i
+```
+
+Both real roots sit at `0.5`. Their residual imaginary parts are both
+around $`10^{-15}`$ to $`10^{-16}`$, which is the scale of
+`.Machine$double.eps` (roughly $`2.2\times10^{-16}`$) – the smallest
+relative difference a double-precision number can represent. They are
+not equal to each other bit for bit, because `modal_roots` came from one
+[`polyroot()`](https://rdrr.io/r/base/polyroot.html) call solving one
+cubic, and `inverted_roots` came from a *different*
+[`polyroot()`](https://rdrr.io/r/base/polyroot.html) call solving a
+different cubic, followed by a division. Different arithmetic, same true
+answer, different leftover noise. This happens on any platform, with any
+sequence of floating-point operations that arrive at the same
+mathematical result by different paths; it is a property of
+finite-precision arithmetic, not of
+[`polyroot()`](https://rdrr.io/r/base/polyroot.html), R, or this
+package.
+
+This is exactly why nothing in `reach.postproc` compares roots with
+exact equality.
+[`roots()`](https://jonpayneea.github.io/reach.postproc/reference/roots.md)’s
+own real/complex classification,
+
+``` r
+real <- abs(Im(z)) <= tolerance
+```
+
+uses `tolerance = sqrt(.Machine$double.eps)`
+($`\approx 1.49\times10^{-8}`$) by default – several orders of magnitude
+larger than any floating-point residual this kind of calculation
+produces, so genuine noise is always classified as real.
+[`roots_to_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/roots_to_parameters.md)’s
+conjugate-pair check and the `all.equal(..., tolerance = ...)` calls
+used for verification throughout this vignette follow the same
+principle. A residual at $`10^{-15}`$ or $`10^{-16}`$ is never worth
+investigating. A residual anywhere near $`10^{-8}`$ or larger is a
+different matter, and should be.
+
 ## Root-to-parameter conversion
 
 For modal root $`r`$, the polynomial factor is

@@ -2,10 +2,12 @@
 <url><loc>https://jonpayneea.github.io/reach.postproc/404.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/articles/arma-flood-forecasting.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/articles/arma-for-novices.html</loc></url>
+<url><loc>https://jonpayneea.github.io/reach.postproc/articles/default-parameter-family-section.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/articles/developer-mathematics.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/articles/event-triggered-and-time-jumped-ar.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/articles/index.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/articles/roots-for-novices.html</loc></url>
+<url><loc>https://jonpayneea.github.io/reach.postproc/articles/setting-parameters-for-a-new-model.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/articles/using-reach-postproc.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/authors.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/index.html</loc></url>
@@ -27,6 +29,7 @@
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/decompose_ar.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/default_ar_parameters.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/default_et_ar_steady_parameters.html</loc></url>
+<url><loc>https://jonpayneea.github.io/reach.postproc/reference/default_family_ar_parameters.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/detect_ar_order.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/detect_ma_order.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/effective_decay_time.html</loc></url>
@@ -56,6 +59,8 @@
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/root_from_timescale.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/root_table.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/score_lead_times.html</loc></url>
+<url><loc>https://jonpayneea.github.io/reach.postproc/reference/standard_family_ar_parameters.html</loc></url>
+<url><loc>https://jonpayneea.github.io/reach.postproc/reference/standard_family_ar_table.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/tj_ar_series.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/updated_threshold_trigger.html</loc></url>
 </urlset>

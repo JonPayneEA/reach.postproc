@@ -357,6 +357,13 @@ Keep these limitations in view:
   constructs parameters from root timescales.
 - [`roots_to_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/roots_to_parameters.md)
   converts modal roots to AR coefficients.
+- [`default_family_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/default_family_ar_parameters.md)
+  constructs a continuous default-family parameter set from one
+  principal decay timescale.
+- [`standard_family_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/standard_family_ar_parameters.md)
+  returns a published standard point on that family.
+- [`standard_family_ar_table()`](https://jonpayneea.github.io/reach.postproc/reference/standard_family_ar_table.md)
+  lists the full published standard catalogue.
 
 ### Analysis and assessment
 
@@ -399,7 +406,7 @@ Keep these limitations in view:
 
 ## Documentation
 
-The package contains six vignettes:
+The package contains eight vignettes:
 
 - **ARMA for Novice Flood Forecast Modellers** provides a plain-English
   introduction and glossary.
@@ -409,8 +416,13 @@ The package contains six vignettes:
 - **AR and ARMA for Flood Forecasting** explains the operational theory
   and IMFS context.
 - **Using reach.postproc** provides a practical package workflow.
+- **Setting AR Parameters for a New Model** is a decision guide for
+  choosing between PT-fitted coefficients, the default-family
+  constructions and ET-AR when a model has no existing calibration.
 - **Mathematical and Developer Validation** explains numerical
   equivalence tests and indexing conventions.
+- **Selecting a Default-Family Parameter Set** explains the continuous
+  analytical family the published default parameter sets are drawn from.
 - **Event Triggered and Time Jumped AR** covers the experimental ET-AR
   and TJ-AR methods.
 
