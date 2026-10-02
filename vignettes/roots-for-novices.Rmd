@@ -158,7 +158,7 @@ flowchart LR
 ")
 ```
 
-- [`roots()`](../reference/roots.html) calculates the roots once and packages them up for everything else to use.
+- [`roots()`](../reference/roots.html) calculates the roots once and packages them up for everything else to use. `root_table()`'s output actually contains two complete sets of root columns, `root_real`/`root_imaginary` and `lag_root_real`/`lag_root_imaginary`: two different, equally valid ways of writing the same maths, which is why you'll sometimes see a different-looking (but not wrong) answer if you check a root calculation against a general statistics source rather than this package. The ["Mathematical and Developer Validation"](developer-mathematics.html#modal-roots-versus-reciprocal-lag-roots) vignette has the full explanation; this package's own plots and checks always use the first set.
 - [`root_table()`](../reference/root_table.html) and [`plot_ar()`](../reference/plot_ar.html) let you inspect them directly, as above.
 - [`assess()`](../reference/assess.html) runs the Environment Agency's acceptance criteria against the roots and returns a pass or fail with a plain-English summary.
 - [`decompose_ar()`](../reference/decompose_ar.html) shows each root's individual wobble over time, rather than only the sum — useful when a projected error looks odd and you want to know which root is responsible.
