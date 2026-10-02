@@ -59,7 +59,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">reach.postproc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,6 +85,14 @@
       <small>Source: <a href="https://github.com/JonPayneEA/reach.postproc/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.9.2" id="reachpostproc-092">reach.postproc 0.9.2<a class="anchor" aria-label="anchor" href="#reachpostproc-092"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-0-9-2">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-9-2"></a></h3>
+<ul><li>
+<code><a href="../reference/ar_parameters_from_timescales.html">ar_parameters_from_timescales()</a></code> could never actually produce a genuinely oscillating (complex-conjugate) root pair. <code><a href="../reference/root_from_timescale.html">root_from_timescale()</a></code> always rotates by <code>+2*pi/period</code>, so it only ever returns one member of a pair; any <code>oscillation_period</code> other than <code>Inf</code> (real) or <code>2</code> (real, period-2 alternation) therefore failed <code><a href="../reference/roots_to_parameters.html">roots_to_parameters()</a></code>’s “complex roots must occur as conjugate pairs” check. In practice this meant every parameter set built through the documented timescale API was entirely real, which is why <code><a href="../reference/plot_ar.html">plot_ar()</a></code> never showed a point off the real axis regardless of what was asked for – not a plotting bug, a construction one. <code><a href="../reference/ar_parameters_from_timescales.html">ar_parameters_from_timescales()</a></code> now adds the missing conjugate automatically whenever a genuinely complex root is requested. This changes its order contract: an entry with a non-trivial period now contributes two roots, not one, so the resulting AR order can exceed <code>length(decay_times)</code>. Documented on both functions, with a worked oscillating-pair example.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.9.1" id="reachpostproc-091">reach.postproc 0.9.1<a class="anchor" aria-label="anchor" href="#reachpostproc-091"></a></h2>
 <div class="section level3">
