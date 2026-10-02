@@ -13,7 +13,8 @@ event_ar_parameters(
 }
 \arguments{
 \item{response_time_steps}{Positive response time in model timesteps. For a
-15-minute model, 48 steps represent 12 hours.}
+15-minute model, 48 steps represent 12 hours. \code{\link[=response_time_steps_from_tp]{response_time_steps_from_tp()}}
+offers one temporary, approximate way to derive this from time-to-peak.}
 
 \item{middle_decay_steps}{Decay time of the intermediate positive root.}
 

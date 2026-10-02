@@ -3,15 +3,30 @@
   import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
 
   const renderMermaid = async () => {
-    const fencedBlocks = document.querySelectorAll(
-      "pre code.language-mermaid"
-    );
-
-    fencedBlocks.forEach((code) => {
-      const pre = code.parentElement;
-      pre.className = "mermaid";
-      pre.textContent = code.textContent;
+    // pkgdown renders a fenced ```mermaid code block as
+    // <pre class="mermaid"><code>...</code></pre>: the class lands on
+    // <pre> already, but the diagram source is left nested inside a
+    // <code> child. mermaid.run() reads the matched element's own
+    // text and cannot see through that nesting, so unwrap it first.
+    // (An earlier version of this script looked for
+    // "pre code.language-mermaid" instead, which pkgdown has never
+    // actually produced here and so never matched anything -- every
+    // diagram on this site is written as a raw <pre class="mermaid">
+    // HTML block for exactly this reason; this selector is a
+    // defensive fallback in case a fenced block is used again.)
+    document.querySelectorAll("pre.mermaid > code").forEach((code) => {
+      code.parentElement.textContent = code.textContent;
     });
+
+    // Fallback for the originally-assumed shape, in case a future
+    // pandoc/commonmark version renders fenced blocks differently.
+    document
+      .querySelectorAll("pre code.language-mermaid")
+      .forEach((code) => {
+        const pre = code.parentElement;
+        pre.className = "mermaid";
+        pre.textContent = code.textContent;
+      });
 
     mermaid.initialize({
       startOnLoad: false,
@@ -44,7 +59,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">reach.postproc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,6 +85,60 @@
       <small>Source: <a href="https://github.com/JonPayneEA/reach.postproc/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.9.3" id="reachpostproc-093">reach.postproc 0.9.3<a class="anchor" aria-label="anchor" href="#reachpostproc-093"></a></h2>
+<div class="section level3">
+<h3 id="documentation-0-9-3">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-9-3"></a></h3>
+<ul><li>Added a new vignette, “Characteristic Roots for Novice Flood Forecast Modellers” (<code>roots-for-novices.Rmd</code>): a plain-English deep dive on what a characteristic root is, how modulus and the unit circle determine stability, what decay time and oscillation mean in practice, how complex conjugate pairs work, and how <code><a href="../reference/roots.html">roots()</a></code>, <code><a href="../reference/root_table.html">root_table()</a></code>, <code><a href="../reference/plot_ar.html">plot_ar()</a></code>, <code><a href="../reference/assess.html">assess()</a></code> and <code><a href="../reference/decompose_ar.html">decompose_ar()</a></code> fit together. Includes the hand-checkable worked examples from recent root-finding troubleshooting. Added to the pkgdown “Getting started” article group, between “ARMA for Novice Flood Forecast Modellers” and “Using reach.postproc”.</li>
+<li>README’s vignette list was stale (said “four vignettes”, missed “Event Triggered and Time Jumped AR” as well as the new one); corrected to list all six.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.9.2" id="reachpostproc-092">reach.postproc 0.9.2<a class="anchor" aria-label="anchor" href="#reachpostproc-092"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-0-9-2">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-9-2"></a></h3>
+<ul><li>
+<code><a href="../reference/ar_parameters_from_timescales.html">ar_parameters_from_timescales()</a></code> could never actually produce a genuinely oscillating (complex-conjugate) root pair. <code><a href="../reference/root_from_timescale.html">root_from_timescale()</a></code> always rotates by <code>+2*pi/period</code>, so it only ever returns one member of a pair; any <code>oscillation_period</code> other than <code>Inf</code> (real) or <code>2</code> (real, period-2 alternation) therefore failed <code><a href="../reference/roots_to_parameters.html">roots_to_parameters()</a></code>’s “complex roots must occur as conjugate pairs” check. In practice this meant every parameter set built through the documented timescale API was entirely real, which is why <code><a href="../reference/plot_ar.html">plot_ar()</a></code> never showed a point off the real axis regardless of what was asked for – not a plotting bug, a construction one. <code><a href="../reference/ar_parameters_from_timescales.html">ar_parameters_from_timescales()</a></code> now adds the missing conjugate automatically whenever a genuinely complex root is requested. This changes its order contract: an entry with a non-trivial period now contributes two roots, not one, so the resulting AR order can exceed <code>length(decay_times)</code>. Documented on both functions, with a worked oscillating-pair example.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.9.1" id="reachpostproc-091">reach.postproc 0.9.1<a class="anchor" aria-label="anchor" href="#reachpostproc-091"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-0-9-1">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-9-1"></a></h3>
+<ul><li>Fixed Mermaid diagrams not rendering on the pkgdown home page (the “Syntax error in text” box on <a href="https://jonpayneea.github.io/reach.postproc/" class="uri">https://jonpayneea.github.io/reach.postproc/</a>). The home page is built from <code>README.md</code> directly, not through knitr, so its fenced <code>```mermaid</code> blocks were rendered by pkgdown as <code>&lt;pre class="mermaid"&gt;&lt;code&gt;...&lt;/code&gt;&lt;/pre&gt;</code>: the diagram source ends up nested inside a <code>&lt;code&gt;</code> child, which Mermaid’s client-side renderer cannot read. Every vignette already avoids this by writing diagrams through a <code>render_mermaid()</code> helper that emits a flat <code>&lt;pre class="mermaid"&gt;TEXT&lt;/pre&gt;</code> with no nesting. <code>README.md</code>’s two diagrams now use that same raw-HTML shape. The <code>_pkgdown.yml</code> unwrap script, which was targeting a DOM shape pkgdown has never actually produced here, now also targets the shape it does produce, as a defensive fallback should a fenced block be used again.</li>
+<li>
+<code><a href="../reference/lead_time_series.html">lead_time_series()</a></code>, <code><a href="../reference/et_ar_series.html">et_ar_series()</a></code> and <code><a href="../reference/tj_ar_series.html">tj_ar_series()</a></code> had <code>@examples</code> blocks containing only a commented-out call. All three now have runnable examples.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.9.0" id="reachpostproc-090">reach.postproc 0.9.0<a class="anchor" aria-label="anchor" href="#reachpostproc-090"></a></h2>
+<div class="section level3">
+<h3 id="new-functions-0-9-0">New functions<a class="anchor" aria-label="anchor" href="#new-functions-0-9-0"></a></h3>
+<ul><li>
+<code><a href="../reference/response_time_steps_from_tp.html">response_time_steps_from_tp()</a></code>: converts a catchment time-to-peak into the <code>response_time_steps</code> argument of <code><a href="../reference/event_ar_parameters.html">event_ar_parameters()</a></code>. <strong>Temporary</strong>: time-to-peak and AR decay time are different physical quantities, and equating them is a modelling approximation, not a derived equivalence. This belongs in <code>reach.hydro</code> once that module has a proper FEH or unit-hydrograph time-to-peak calculation; it should move there rather than be extended in place. Treat its output as a starting estimate to validate with <code><a href="../reference/assess.html">assess()</a></code> and <code><a href="../reference/fixed_lead_ar.html">fixed_lead_ar()</a></code> / <code><a href="../reference/score_lead_times.html">score_lead_times()</a></code>, never as a fitted parameter.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.8.1" id="reachpostproc-081">reach.postproc 0.8.1<a class="anchor" aria-label="anchor" href="#reachpostproc-081"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-0-8-1">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-8-1"></a></h3>
+<ul><li>
+<code><a href="../reference/assess_jump_size.html">assess_jump_size()</a></code>: fixed root ranking when the principal root has infinite decay (the steady-state ET-AR configuration). The earlier implementation filtered to finite decay times before ranking, which dropped the infinite-decay principal root and relabelled the remaining two roots as principal and middle, with the fast-root figure silently duplicating the middle one. Ranking now follows <code><a href="../reference/root_table.html">root_table()</a></code>’s own <code>display_order</code>, so an infinite principal decay is reported as such.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changes-0-8-1">Changes<a class="anchor" aria-label="anchor" href="#changes-0-8-1"></a></h3>
+<ul><li>Trigger constructors (<code><a href="../reference/logical_et_trigger.html">logical_et_trigger()</a></code>, <code><a href="../reference/rainfall_accumulation_trigger.html">rainfall_accumulation_trigger()</a></code>, <code><a href="../reference/updated_threshold_trigger.html">updated_threshold_trigger()</a></code>, <code><a href="../reference/cwi_adjusted_rainfall_trigger.html">cwi_adjusted_rainfall_trigger()</a></code>) now build their <code>data</code> field as a <code>data.table</code>, matching the rest of the package, rather than a base <code>data.frame</code>.</li>
+<li>
+<code><a href="../reference/forecast_et_ar.html">forecast_et_ar()</a></code> now accumulates its per-step series with <code><a href="https://rdrr.io/pkg/data.table/man/rbindlist.html" class="external-link">data.table::rbindlist()</a></code> instead of <code><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame()</a></code> rows joined by <code>do.call(rbind, ...)</code>.</li>
+<li>All <code>R/</code> files now carry the mandatory governance header block.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-0-8-1">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-8-1"></a></h3>
+<ul><li>Removed <code>event-triggered-vignette-error.log</code> and the orphaned <code>event-triggered-and-time-jumped-ar.knit.md</code> intermediate left behind by a failed vignette render predating the <code><a href="../reference/assess_jump_size.html">assess_jump_size()</a></code> and TJ-AR conditioning fixes. The vignette needs re-rendering with <code><a href="https://devtools.r-lib.org/reference/build_vignettes.html" class="external-link">devtools::build_vignettes()</a></code> in an environment with R installed; that could not be done from this session (see commit message).</li>
+<li>
+<code>*.knit.md</code> and <code>*-error.log</code> are now gitignored so build intermediates and failure logs are not committed again.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.8.0" id="reachpostproc-080">reach.postproc 0.8.0<a class="anchor" aria-label="anchor" href="#reachpostproc-080"></a></h2>
 <ul><li>Added experimental Event Triggered AR, Time Jumped AR and combined ET-TJ-AR.</li>

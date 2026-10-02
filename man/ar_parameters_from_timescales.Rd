@@ -13,10 +13,12 @@ ar_parameters_from_timescales(
 }
 \arguments{
 \item{decay_times}{Numeric vector of decay times in model steps, one value per
-required root.}
+requested root (before conjugate pairing).}
 
 \item{oscillation_periods}{Numeric vector of matching periods in model steps.
-Use \code{Inf} for non-oscillating positive roots and \code{2} for negative real roots.}
+Use \code{Inf} for a non-oscillating positive root and \code{2} for a negative real
+root. Any other value (for example \code{8}, for a root that completes one
+oscillation every eight steps) requests a genuinely complex pair.}
 
 \item{label}{Description attached to the result.}
 
@@ -24,20 +26,39 @@ Use \code{Inf} for non-oscillating positive roots and \code{2} for negative real
 conversion.}
 }
 \value{
-An AR parameter object whose order equals the number of supplied
-roots after numerical trimming.
+An AR parameter object. Its order equals \code{length(decay_times)}
+plus one for every entry that requested a genuinely complex root (any
+period other than \code{Inf} or \code{2}), after numerical trimming.
 }
 \description{
 Build interpretable modal roots from decay times and oscillation periods, then
 convert those roots to Deltares AR coefficients.
 }
+\details{
+An oscillation period of \code{Inf} or \code{2} produces a single real root (see
+\code{\link[=root_from_timescale]{root_from_timescale()}}) and contributes one root to the result. Any other
+period produces a genuinely complex root; since a real AR polynomial can
+only contain complex roots in conjugate pairs, its conjugate is added
+automatically. Each such entry therefore contributes \strong{two} roots to the
+result, so the AR order can exceed \code{length(decay_times)}.
+}
 \examples{
 parameters <- ar_parameters_from_timescales(
   decay_times = c(96, 5.203171, 1 / 3),
   oscillation_periods = c(Inf, Inf, 2),
-  label = "Example AR(3)"
+  label = "Example AR(3), all real roots"
 )
 
 parameters@coefficients
 root_table(roots(parameters))
+
+# A genuinely oscillating root: one timescale, one period, but the
+# conjugate is added automatically, so this is an AR(2) model.
+oscillating <- ar_parameters_from_timescales(
+  decay_times = 20,
+  oscillation_periods = 8,
+  label = "Example AR(2), oscillating pair"
+)
+oscillating@order
+root_table(roots(oscillating))
 }

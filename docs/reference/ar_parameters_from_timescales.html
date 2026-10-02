@@ -5,15 +5,30 @@ convert those roots to Deltares AR coefficients."><script type="module">
   import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
 
   const renderMermaid = async () => {
-    const fencedBlocks = document.querySelectorAll(
-      "pre code.language-mermaid"
-    );
-
-    fencedBlocks.forEach((code) => {
-      const pre = code.parentElement;
-      pre.className = "mermaid";
-      pre.textContent = code.textContent;
+    // pkgdown renders a fenced ```mermaid code block as
+    // <pre class="mermaid"><code>...</code></pre>: the class lands on
+    // <pre> already, but the diagram source is left nested inside a
+    // <code> child. mermaid.run() reads the matched element's own
+    // text and cannot see through that nesting, so unwrap it first.
+    // (An earlier version of this script looked for
+    // "pre code.language-mermaid" instead, which pkgdown has never
+    // actually produced here and so never matched anything -- every
+    // diagram on this site is written as a raw <pre class="mermaid">
+    // HTML block for exactly this reason; this selector is a
+    // defensive fallback in case a fenced block is used again.)
+    document.querySelectorAll("pre.mermaid > code").forEach((code) => {
+      code.parentElement.textContent = code.textContent;
     });
+
+    // Fallback for the originally-assumed shape, in case a future
+    // pandoc/commonmark version renders fenced blocks differently.
+    document
+      .querySelectorAll("pre code.language-mermaid")
+      .forEach((code) => {
+        const pre = code.parentElement;
+        pre.className = "mermaid";
+        pre.textContent = code.textContent;
+      });
 
     mermaid.initialize({
       startOnLoad: false,
@@ -46,7 +61,7 @@ convert those roots to Deltares AR coefficients."><script type="module">
 
     <a class="navbar-brand me-2" href="../index.html">reach.postproc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,12 +109,14 @@ convert those roots to Deltares AR coefficients.</p>
 
 <dl><dt id="arg-decay-times">decay_times<a class="anchor" aria-label="anchor" href="#arg-decay-times"></a></dt>
 <dd><p>Numeric vector of decay times in model steps, one value per
-required root.</p></dd>
+requested root (before conjugate pairing).</p></dd>
 
 
 <dt id="arg-oscillation-periods">oscillation_periods<a class="anchor" aria-label="anchor" href="#arg-oscillation-periods"></a></dt>
 <dd><p>Numeric vector of matching periods in model steps.
-Use <code>Inf</code> for non-oscillating positive roots and <code>2</code> for negative real roots.</p></dd>
+Use <code>Inf</code> for a non-oscillating positive root and <code>2</code> for a negative real
+root. Any other value (for example <code>8</code>, for a root that completes one
+oscillation every eight steps) requests a genuinely complex pair.</p></dd>
 
 
 <dt id="arg-label">label<a class="anchor" aria-label="anchor" href="#arg-label"></a></dt>
@@ -113,8 +130,18 @@ conversion.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>An AR parameter object whose order equals the number of supplied
-roots after numerical trimming.</p>
+    <p>An AR parameter object. Its order equals <code>length(decay_times)</code>
+plus one for every entry that requested a genuinely complex root (any
+period other than <code>Inf</code> or <code>2</code>), after numerical trimming.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>An oscillation period of <code>Inf</code> or <code>2</code> produces a single real root (see
+<code><a href="root_from_timescale.html">root_from_timescale()</a></code>) and contributes one root to the result. Any other
+period produces a genuinely complex root; since a real AR polynomial can
+only contain complex roots in conjugate pairs, its conjugate is added
+automatically. Each such entry therefore contributes <strong>two</strong> roots to the
+result, so the AR order can exceed <code>length(decay_times)</code>.</p>
     </div>
 
     <div class="section level2">
@@ -122,7 +149,7 @@ roots after numerical trimming.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">parameters</span> <span class="op">&lt;-</span> <span class="fu">ar_parameters_from_timescales</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  decay_times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">96</span>, <span class="fl">5.203171</span>, <span class="fl">1</span> <span class="op">/</span> <span class="fl">3</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  oscillation_periods <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">Inf</span>, <span class="cn">Inf</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  label <span class="op">=</span> <span class="st">"Example AR(3)"</span></span></span>
+<span class="r-in"><span>  label <span class="op">=</span> <span class="st">"Example AR(3), all real roots"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">parameters</span><span class="op">@</span><span class="va">coefficients</span></span></span>
@@ -154,6 +181,37 @@ roots after numerical trimming.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1:          FALSE          Stable        Stable             1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2:          FALSE          Stable        Stable             2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3:           TRUE          Stable        Stable             3</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># A genuinely oscillating root: one timescale, one period, but the</span></span></span>
+<span class="r-in"><span><span class="co"># conjugate is added automatically, so this is an AR(2) model.</span></span></span>
+<span class="r-in"><span><span class="va">oscillating</span> <span class="op">&lt;-</span> <span class="fu">ar_parameters_from_timescales</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  decay_times <span class="op">=</span> <span class="fl">20</span>,</span></span>
+<span class="r-in"><span>  oscillation_periods <span class="op">=</span> <span class="fl">8</span>,</span></span>
+<span class="r-in"><span>  label <span class="op">=</span> <span class="st">"Example AR(2), oscillating pair"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">oscillating</span><span class="op">@</span><span class="va">order</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
+<span class="r-in"><span><span class="fu"><a href="root_table.html">root_table</a></span><span class="op">(</span><span class="fu"><a href="roots.html">roots</a></span><span class="op">(</span><span class="va">oscillating</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    root_id root_real root_imaginary root_modulus lag_root_real</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      &lt;int&gt;     &lt;num&gt;          &lt;num&gt;        &lt;num&gt;         &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:       2 0.6726208     -0.6726208    0.9512294     0.7433609</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:       1 0.6726208      0.6726208    0.9512294     0.7433609</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    lag_root_imaginary lag_root_modulus raw_decay_time_steps decay_time_steps</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 &lt;num&gt;            &lt;num&gt;                &lt;num&gt;            &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:          0.7433609         1.051271                   20               20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:         -0.7433609         1.051271                   20               20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    effective_decay_time_steps decay_time_hours effective_decay_time_hours</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         &lt;num&gt;            &lt;num&gt;                      &lt;num&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:                   1.481367                5                  0.3703418</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:                   1.481367                5                  0.3703418</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    oscillation_period_steps oscillation_period_hours is_growing is_persistent</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       &lt;num&gt;                    &lt;num&gt;     &lt;lgcl&gt;        &lt;lgcl&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:                        8                        2      FALSE         FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:                        8                        2      FALSE         FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    is_oscillating modal_stability lag_stability display_order</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            &lt;lgcl&gt;          &lt;fctr&gt;        &lt;fctr&gt;         &lt;int&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1:           TRUE          Stable        Stable             1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2:           TRUE          Stable        Stable             2</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

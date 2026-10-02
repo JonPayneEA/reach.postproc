@@ -16,5 +16,7 @@ A copied \code{data.table} of projected error by lead time.
 Extract a TJ-AR projected series
 }
 \examples{
-# tj_ar_series(result)
+history <- c(0.20, 0.19, 0.23, 0.18, 0.17, 0.16, 0.15, 0.14, 0.13, 0.12, 0.11)
+result <- forecast_tj_ar(default_ar_parameters(), history, jump = 5L, steps = 24L)
+tj_ar_series(result)
 }

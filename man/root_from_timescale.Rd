@@ -16,7 +16,12 @@ positive real, non-oscillating root. Use \code{2} for a negative real root that
 changes sign every timestep.}
 }
 \value{
-One complex modal root.
+One complex modal root. For an \code{oscillation_period} other than
+\code{Inf} or \code{2}, this is only one member of a genuine complex-conjugate
+pair: the other member (its complex conjugate) is required for a real AR
+polynomial, but this function has no way to return both. Pass the
+request through \code{\link[=ar_parameters_from_timescales]{ar_parameters_from_timescales()}} rather than building
+on this function directly; it adds the missing conjugate automatically.
 }
 \description{
 Convert an interpretable decay time and oscillation period into a complex
@@ -25,4 +30,5 @@ modal root. Times are expressed in model timesteps, not hours.
 \examples{
 root_from_timescale(decay_time = 96, oscillation_period = Inf)
 root_from_timescale(decay_time = 0.3333, oscillation_period = 2)
+root_from_timescale(decay_time = 20, oscillation_period = 8)
 }
