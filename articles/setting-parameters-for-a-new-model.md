@@ -76,10 +76,10 @@ published point rather than a bespoke number.
 
 ### 3. Continuous default-family construction
 
-`default_family_ar_parameters()`, same fixed shape as option 2 (fixed
-`a_1`, fixed fast root) but driven by a specific principal decay
-estimate — catchment response time, FEH lag, event analysis — rather
-than snapping to a published label.
+[`default_family_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/default_family_ar_parameters.md),
+same fixed shape as option 2 (fixed `a_1`, fixed fast root) but driven
+by a specific principal decay estimate — catchment response time, FEH
+lag, event analysis — rather than snapping to a published label.
 
 **Needs:** one defensible timescale estimate for the catchment. Does not
 need a residual series.

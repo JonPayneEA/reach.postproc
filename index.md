@@ -373,12 +373,13 @@ Keep these limitations in view:
   constructs parameters from root timescales.
 - [`roots_to_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/roots_to_parameters.md)
   converts modal roots to AR coefficients.
-- `default_family_ar_parameters()` constructs a continuous
-  default-family parameter set from one principal decay timescale.
-- `standard_family_ar_parameters()` returns a published standard point
-  on that family.
-- `standard_family_ar_table()` lists the full published standard
-  catalogue.
+- [`default_family_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/default_family_ar_parameters.md)
+  constructs a continuous default-family parameter set from one
+  principal decay timescale.
+- [`standard_family_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/standard_family_ar_parameters.md)
+  returns a published standard point on that family.
+- [`standard_family_ar_table()`](https://jonpayneea.github.io/reach.postproc/reference/standard_family_ar_table.md)
+  lists the full published standard catalogue.
 
 ### Analysis and assessment
 

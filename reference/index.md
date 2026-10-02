@@ -34,6 +34,8 @@
   : Return the Environment Agency 2024 default AR parameters
 - [`default_et_ar_steady_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/default_et_ar_steady_parameters.md)
   : Default steady-condition parameters for ET-AR
+- [`default_family_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/default_family_ar_parameters.md)
+  : Construct a default-family AR parameter set
 - [`detect_ar_order()`](https://jonpayneea.github.io/reach.postproc/reference/detect_ar_order.md)
   : Detect effective autoregressive order
 - [`detect_ma_order()`](https://jonpayneea.github.io/reach.postproc/reference/detect_ma_order.md)
@@ -88,6 +90,10 @@
   : Convert modal roots to AR coefficients
 - [`score_lead_times()`](https://jonpayneea.github.io/reach.postproc/reference/score_lead_times.md)
   : Score fixed lead-time AR forecasts
+- [`standard_family_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/standard_family_ar_parameters.md)
+  : Return a published standard default-family AR parameter set
+- [`standard_family_ar_table()`](https://jonpayneea.github.io/reach.postproc/reference/standard_family_ar_table.md)
+  : List the published standard default-family AR parameter sets
 - [`tj_ar_series()`](https://jonpayneea.github.io/reach.postproc/reference/tj_ar_series.md)
   : Extract a TJ-AR projected series
 - [`updated_threshold_trigger()`](https://jonpayneea.github.io/reach.postproc/reference/updated_threshold_trigger.md)

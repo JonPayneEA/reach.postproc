@@ -373,12 +373,13 @@ Keep these limitations in view:
   constructs parameters from root timescales.
 - [`roots_to_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/roots_to_parameters.md)
   converts modal roots to AR coefficients.
-- `default_family_ar_parameters()` constructs a continuous
-  default-family parameter set from one principal decay timescale.
-- `standard_family_ar_parameters()` returns a published standard point
-  on that family.
-- `standard_family_ar_table()` lists the full published standard
-  catalogue.
+- [`default_family_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/default_family_ar_parameters.md)
+  constructs a continuous default-family parameter set from one
+  principal decay timescale.
+- [`standard_family_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/standard_family_ar_parameters.md)
+  returns a published standard point on that family.
+- [`standard_family_ar_table()`](https://jonpayneea.github.io/reach.postproc/reference/standard_family_ar_table.md)
+  lists the full published standard catalogue.
 
 ### Analysis and assessment
 
@@ -525,6 +526,8 @@ details.
   : Return the Environment Agency 2024 default AR parameters
 - [`default_et_ar_steady_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/default_et_ar_steady_parameters.md)
   : Default steady-condition parameters for ET-AR
+- [`default_family_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/default_family_ar_parameters.md)
+  : Construct a default-family AR parameter set
 - [`detect_ar_order()`](https://jonpayneea.github.io/reach.postproc/reference/detect_ar_order.md)
   : Detect effective autoregressive order
 - [`detect_ma_order()`](https://jonpayneea.github.io/reach.postproc/reference/detect_ma_order.md)
@@ -579,6 +582,10 @@ details.
   : Convert modal roots to AR coefficients
 - [`score_lead_times()`](https://jonpayneea.github.io/reach.postproc/reference/score_lead_times.md)
   : Score fixed lead-time AR forecasts
+- [`standard_family_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/standard_family_ar_parameters.md)
+  : Return a published standard default-family AR parameter set
+- [`standard_family_ar_table()`](https://jonpayneea.github.io/reach.postproc/reference/standard_family_ar_table.md)
+  : List the published standard default-family AR parameter sets
 - [`tj_ar_series()`](https://jonpayneea.github.io/reach.postproc/reference/tj_ar_series.md)
   : Extract a TJ-AR projected series
 - [`updated_threshold_trigger()`](https://jonpayneea.github.io/reach.postproc/reference/updated_threshold_trigger.md)

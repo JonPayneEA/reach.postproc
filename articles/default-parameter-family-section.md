@@ -64,7 +64,8 @@ twelve-hour rows of a table. It sets the nine-hour principal root
 directly, solves the middle root while retaining the default-family
 constraints and converts the three roots to AR coefficients. All three
 roots sit inside the unit circle, as the family’s own construction
-guarantees: the validity check in `default_family_ar_parameters()`
+guarantees: the validity check in
+[`default_family_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/default_family_ar_parameters.md)
 refuses to return a member whose middle root would not.
 
 ### Standard published choices
@@ -214,7 +215,8 @@ and
 a_3 = z_1z_2z_3.
 ```
 
-This is the calculation performed by `default_family_ar_parameters()`.
+This is the calculation performed by
+[`default_family_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/default_family_ar_parameters.md).
 The only empirical decision is the choice of principal decay time. The
 conversion from that timescale to roots and coefficients is
 deterministic.

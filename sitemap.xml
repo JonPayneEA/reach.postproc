@@ -29,6 +29,7 @@
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/decompose_ar.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/default_ar_parameters.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/default_et_ar_steady_parameters.html</loc></url>
+<url><loc>https://jonpayneea.github.io/reach.postproc/reference/default_family_ar_parameters.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/detect_ar_order.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/detect_ma_order.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/effective_decay_time.html</loc></url>
@@ -58,6 +59,8 @@
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/roots.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/roots_to_parameters.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/score_lead_times.html</loc></url>
+<url><loc>https://jonpayneea.github.io/reach.postproc/reference/standard_family_ar_parameters.html</loc></url>
+<url><loc>https://jonpayneea.github.io/reach.postproc/reference/standard_family_ar_table.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/tj_ar_series.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/updated_threshold_trigger.html</loc></url>
 </urlset>

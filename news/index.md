@@ -37,12 +37,12 @@
 
 ### New functions
 
-- `default_family_ar_parameters()`: constructs a continuous analytical
-  family of default AR(3) parameter sets from a single principal decay
-  timescale, holding the first coefficient and fast root fixed and
-  solving the middle root so the three roots sum to the fixed `a_1`.
-  Verified by hand and numerically against the test suite: the “1 day”
-  and “Infinite” members reproduce
+- [`default_family_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/default_family_ar_parameters.md):
+  constructs a continuous analytical family of default AR(3) parameter
+  sets from a single principal decay timescale, holding the first
+  coefficient and fast root fixed and solving the middle root so the
+  three roots sum to the fixed `a_1`. Verified by hand and numerically
+  against the test suite: the “1 day” and “Infinite” members reproduce
   [`default_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/default_ar_parameters.md)’s
   and
   [`default_et_ar_steady_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/default_et_ar_steady_parameters.md)’s
@@ -50,7 +50,9 @@
   evidence the construction is correct and that those two
   previously-independent hard-coded defaults are in fact the same
   analytical family.
-- `standard_family_ar_parameters()` and `standard_family_ar_table()`:
+- [`standard_family_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/standard_family_ar_parameters.md)
+  and
+  [`standard_family_ar_table()`](https://jonpayneea.github.io/reach.postproc/reference/standard_family_ar_table.md):
   the published standard catalogue (3 hours to 64 days, plus Infinite)
   as named lookups on the same construction, for governance recognition
   rather than bespoke calibration.
@@ -61,15 +63,17 @@
 
 ### Bug fixes
 
-- `default_family_ar_parameters()`’s fast root was taken via
-  `Re(root_from_timescale(...))` with no check that the result was
-  actually real. Any `fast_period_steps` other than `Inf` or `2` would
-  have been genuinely complex, and
+- [`default_family_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/default_family_ar_parameters.md)’s
+  fast root was taken via `Re(root_from_timescale(...))` with no check
+  that the result was actually real. Any `fast_period_steps` other than
+  `Inf` or `2` would have been genuinely complex, and
   [`Re()`](https://rdrr.io/r/base/complex.html) would have silently
   discarded the imaginary half rather than error, producing a subtly
   wrong, truncated root with no indication anything was lost. Now
   validated explicitly.
-- `standard_family_ar_parameters()` and `standard_family_ar_table()`
+- [`standard_family_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/standard_family_ar_parameters.md)
+  and
+  [`standard_family_ar_table()`](https://jonpayneea.github.io/reach.postproc/reference/standard_family_ar_table.md)
   hard-coded a 15-minute model timestep regardless of what the caller’s
   model actually used, even though the principal decay labels (“12
   hours”, say) only translate to a specific number of model steps – and
