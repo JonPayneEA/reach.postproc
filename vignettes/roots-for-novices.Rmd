@@ -204,6 +204,8 @@ ar_parameters(c(2.1, -1.6, 0.4)) |> roots() |> root_table()
 
 Each one is small enough to factorise and check by hand if you want to be completely sure the package agrees with you, not just the other way round.
 
+One thing you'll notice in the third example: the real root doesn't print as a clean `0.5`, it prints as something like `0.5+8.41e-16i`. That tiny number is rounding noise left over from the computer's arithmetic, not a real imaginary component -- it's roughly a billion billion times smaller than `0.5` itself, far too small to mean anything. The package already accounts for this: `root_table()`'s own test for whether a root counts as real uses a tolerance comfortably larger than this kind of noise, so it still correctly reports this root as real. See ["Mathematical and Developer Validation"](developer-mathematics.html#floating-point-residuals-on-real-roots) if you want the full explanation of where that noise comes from.
+
 # Key messages
 
 1. A root describes one wobble within the projected error; the package adds them together.
