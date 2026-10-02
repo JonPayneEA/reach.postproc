@@ -1,5 +1,28 @@
 # Changelog
 
+## reach.postproc 0.9.3
+
+### Documentation
+
+- Added a new vignette, “Characteristic Roots for Novice Flood Forecast
+  Modellers” (`roots-for-novices.Rmd`): a plain-English deep dive on
+  what a characteristic root is, how modulus and the unit circle
+  determine stability, what decay time and oscillation mean in practice,
+  how complex conjugate pairs work, and how
+  [`roots()`](https://jonpayneea.github.io/reach.postproc/reference/roots.md),
+  [`root_table()`](https://jonpayneea.github.io/reach.postproc/reference/root_table.md),
+  [`plot_ar()`](https://jonpayneea.github.io/reach.postproc/reference/plot_ar.md),
+  [`assess()`](https://jonpayneea.github.io/reach.postproc/reference/assess.md)
+  and
+  [`decompose_ar()`](https://jonpayneea.github.io/reach.postproc/reference/decompose_ar.md)
+  fit together. Includes the hand-checkable worked examples from recent
+  root-finding troubleshooting. Added to the pkgdown “Getting started”
+  article group, between “ARMA for Novice Flood Forecast Modellers” and
+  “Using reach.postproc”.
+- README’s vignette list was stale (said “four vignettes”, missed “Event
+  Triggered and Time Jumped AR” as well as the new one); corrected to
+  list all six.
+
 ## reach.postproc 0.9.2
 
 ### Bug fixes
