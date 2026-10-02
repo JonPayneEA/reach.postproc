@@ -44,7 +44,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">reach.postproc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,6 +70,14 @@
       <small>Source: <a href="https://github.com/JonPayneEA/reach.postproc/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.9.0" id="reachpostproc-090">reach.postproc 0.9.0<a class="anchor" aria-label="anchor" href="#reachpostproc-090"></a></h2>
+<div class="section level3">
+<h3 id="new-functions-0-9-0">New functions<a class="anchor" aria-label="anchor" href="#new-functions-0-9-0"></a></h3>
+<ul><li>
+<code>response_time_steps_from_tp()</code>: converts a catchment time-to-peak into the <code>response_time_steps</code> argument of <code><a href="../reference/event_ar_parameters.html">event_ar_parameters()</a></code>. <strong>Temporary</strong>: time-to-peak and AR decay time are different physical quantities, and equating them is a modelling approximation, not a derived equivalence. This belongs in <code>reach.hydro</code> once that module has a proper FEH or unit-hydrograph time-to-peak calculation; it should move there rather than be extended in place. Treat its output as a starting estimate to validate with <code><a href="../reference/assess.html">assess()</a></code> and <code><a href="../reference/fixed_lead_ar.html">fixed_lead_ar()</a></code> / <code><a href="../reference/score_lead_times.html">score_lead_times()</a></code>, never as a fitted parameter.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.8.1" id="reachpostproc-081">reach.postproc 0.8.1<a class="anchor" aria-label="anchor" href="#reachpostproc-081"></a></h2>
 <div class="section level3">
