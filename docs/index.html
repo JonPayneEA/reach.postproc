@@ -17,15 +17,17 @@
   import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
 
   const renderMermaid = async () => {
-    const fencedBlocks = document.querySelectorAll(
-      "pre code.language-mermaid"
-    );
-
-    fencedBlocks.forEach((code) => {
-      const pre = code.parentElement;
-      pre.className = "mermaid";
-      pre.textContent = code.textContent;
+    document.querySelectorAll("pre.mermaid > code").forEach((code) => {
+      code.parentElement.textContent = code.textContent;
     });
+
+    document
+      .querySelectorAll("pre code.language-mermaid")
+      .forEach((code) => {
+        const pre = code.parentElement;
+        pre.className = "mermaid";
+        pre.textContent = code.textContent;
+      });
 
     mermaid.initialize({
       startOnLoad: false,
@@ -97,7 +99,8 @@
 <h2 id="scope">Scope<a class="anchor" aria-label="anchor" href="#scope"></a>
 </h2>
 <p><code>reach.postproc</code> starts from prepared observed and simulated time series. It does not import operational data or apply rating curves.</p>
-<pre class="mermaid"><code>flowchart LR
+<pre class="mermaid">
+flowchart LR
     A[reach.io&lt;br/&gt;Import and standardise data]
     B{Do level or flow&lt;br/&gt;values need conversion?}
     C[reach.rate&lt;br/&gt;Apply the rating]
@@ -106,7 +109,8 @@
     A --&gt; B
     B -- Yes --&gt; C
     B -- No --&gt; D
-    C --&gt; D</code></pre>
+    C --&gt; D
+</pre>
 <p>The intended package boundaries are:</p>
 <ul>
 <li>
@@ -276,7 +280,8 @@
 <div class="section level2">
 <h2 id="recommended-workflow">Recommended workflow<a class="anchor" aria-label="anchor" href="#recommended-workflow"></a>
 </h2>
-<pre class="mermaid"><code>flowchart TD
+<pre class="mermaid">
+flowchart TD
     A([Start]) --&gt; B[Load approved AR parameters]
     B --&gt; C[Assess the parameters]
     C --&gt; D{Pass?}
@@ -294,7 +299,8 @@
     M --&gt; N[Plot and interpret results]
     N --&gt; O{Does AR improve&lt;br/&gt;representative events?}
     O -- Yes --&gt; P[Document the evidence and&lt;br/&gt;use with operational judgement]
-    O -- No --&gt; Q[Review parameters, data,&lt;br/&gt;rating domain and model structure]</code></pre>
+    O -- No --&gt; Q[Review parameters, data,&lt;br/&gt;rating domain and model structure]
+</pre>
 <p>A parameter pass means the roots avoid the principal forms of unacceptable mathematical behaviour. It does not guarantee that every updated forecast will outperform the simulation.</p>
 </div>
 <div class="section level2">

@@ -7,7 +7,8 @@
 # Author:       Jonathan Payne, jonathan.payne@example.org
 # Created:      2026-10-01
 # Modified:     2026-10-02 - JP: added mandatory governance header block;
-#               series now built with rbindlist() instead of rbind().
+#               series now built with rbindlist() instead of rbind(); gave
+#               et_ar_series() a runnable example.
 # Tier:         2
 # Inputs:       An et_ar_configuration, recent initial errors matching AR
 #               order, and a simulated projection horizon.
@@ -93,6 +94,13 @@ forecast_et_ar <- function(configuration, initial_errors, simulated, time = seq_
 #' @returns A copied `data.table` containing trigger evidence, parameter state,
 #'   error projection and updated values.
 #' @examples
-#' # et_ar_series(result)
+#' config <- et_ar_configuration(
+#'   default_et_ar_steady_parameters(), event_ar_parameters(48),
+#'   logical_et_trigger(c(FALSE, FALSE, TRUE, rep(TRUE, 9)))
+#' )
+#' result <- forecast_et_ar(
+#'   config, initial_errors = c(0.2, 0.18, 0.16), simulated = rep(1, 12)
+#' )
+#' et_ar_series(result)
 #' @export
 et_ar_series <- function(x) data.table::copy(x$series)

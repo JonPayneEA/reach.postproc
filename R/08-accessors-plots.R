@@ -6,7 +6,8 @@
 # Flode Module: reach.hydro (pre-promotion; standalone package)
 # Author:       Jonathan Payne, jonathan.payne@example.org
 # Created:      2026-09-24
-# Modified:     2026-10-02 - JP: added mandatory governance header block
+# Modified:     2026-10-02 - JP: added mandatory governance header block;
+#               gave lead_time_series() a runnable example.
 # Tier:         2
 # Inputs:       Package result objects (CharacteristicRoots, ARForecast,
 #               ARLeadTimeResult, etc.).
@@ -89,8 +90,19 @@ alignment_diagnostics<-function(x)data.table::copy(x@diagnostics)
 #' @returns a copied long `data.table` containing observations, simulations, projected errors and updates by lead. The returned table is a copy and may be modified safely.
 #'
 #' @examples
-#' # See fixed_lead_ar() for a complete construction example.
-#' # lead_time_series(result)
+#' time <- as.POSIXct("2024-01-01", tz = "UTC") + 0:80 * 900
+#' simulation <- 0.8 + sin(0:80 / 12)
+#' observation <- simulation + 0.1
+#' aligned <- align_forecast_series(
+#'   data.frame(date_time = time, value = observation),
+#'   data.frame(date_time = time, value = simulation),
+#'   interval_minutes = 15
+#' )
+#' result <- fixed_lead_ar(
+#'   default_ar_parameters(), aligned,
+#'   lead_times_minutes = c(30, 60), time_step_minutes = 15
+#' )
+#' head(lead_time_series(result))
 #' @export
 lead_time_series<-function(x)data.table::copy(x@series)
 S7::method(plot_ar,CharacteristicRoots)<-function(x,...,root_definition=c("modal","lag"),show_labels=TRUE,maximum_plot_limit=NULL){root_definition<-match.arg(root_definition);d<-data.table::copy(x@table);if(root_definition=="modal"){d[,`:=`(plot_real=root_real,plot_imaginary=root_imaginary,stability=modal_stability)];subtitle<-"EA modal roots: stable region is inside the unit circle"}else{d[,`:=`(plot_real=lag_root_real,plot_imaginary=lag_root_imaginary,stability=lag_stability)];subtitle<-"Reciprocal lag roots: stable region is outside the unit circle"};a<-seq(0,2*pi,length.out=721L);circle<-data.table::data.table(x=cos(a),y=sin(a));limit<-1.1*max(1,abs(d$plot_real),abs(d$plot_imaginary));if(!is.null(maximum_plot_limit))limit<-min(limit,maximum_plot_limit);p<-ggplot2::ggplot()+ggplot2::geom_polygon(data=circle,ggplot2::aes(x,y,group=1),fill="grey95",colour="grey45")+ggplot2::geom_hline(yintercept=0,colour="grey75")+ggplot2::geom_vline(xintercept=0,colour="grey75")+ggplot2::geom_point(data=d,ggplot2::aes(plot_real,plot_imaginary,colour=stability),size=3.5)+ggplot2::scale_colour_manual(values=c(Stable="#00703C",Marginal="#F47738",Unstable="#D4351C"),drop=FALSE)+ggplot2::coord_fixed(xlim=c(-limit,limit),ylim=c(-limit,limit),expand=FALSE)+ggplot2::theme_minimal()+ggplot2::labs(title="Characteristic roots",subtitle=subtitle,x="Real component",y="Imaginary component",colour=NULL);if(show_labels)p<-p+ggplot2::geom_text(data=d,ggplot2::aes(plot_real,plot_imaginary,label=display_order),nudge_y=.05*limit,show.legend=FALSE);attr(p,"unit_circle_data")<-circle;p}

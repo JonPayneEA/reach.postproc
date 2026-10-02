@@ -1,3 +1,23 @@
+# reach.postproc 0.9.1
+
+## Bug fixes
+- Fixed Mermaid diagrams not rendering on the pkgdown home page (the "Syntax
+  error in text" box on https://jonpayneea.github.io/reach.postproc/). The
+  home page is built from `README.md` directly, not through knitr, so its
+  fenced ` ```mermaid ` blocks were rendered by pkgdown as
+  `<pre class="mermaid"><code>...</code></pre>`: the diagram source ends up
+  nested inside a `<code>` child, which Mermaid's client-side renderer
+  cannot read. Every vignette already avoids this by writing diagrams
+  through a `render_mermaid()` helper that emits a flat
+  `<pre class="mermaid">TEXT</pre>` with no nesting. `README.md`'s two
+  diagrams now use that same raw-HTML shape. The `_pkgdown.yml` unwrap
+  script, which was targeting a DOM shape pkgdown has never actually
+  produced here, now also targets the shape it does produce, as a
+  defensive fallback should a fenced block be used again.
+- `lead_time_series()`, `et_ar_series()` and `tj_ar_series()` had
+  `@examples` blocks containing only a commented-out call. All three now
+  have runnable examples.
+
 # reach.postproc 0.9.0
 
 ## New functions

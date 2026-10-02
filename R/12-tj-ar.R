@@ -9,7 +9,8 @@
 # Created:      2026-10-01
 # Modified:     2026-10-02 - JP: added mandatory governance header block;
 #               fixed assess_jump_size() root ranking when the principal
-#               root has infinite decay (see NEWS.md).
+#               root has infinite decay (see NEWS.md); gave tj_ar_series()
+#               a runnable example.
 # Tier:         2
 # Inputs:       An AR parameter set, an error history (newest first) and a
 #               jump interval in timesteps.
@@ -197,7 +198,9 @@ forecast_tj_ar <- function(parameters,
 #' @param x A result from [forecast_tj_ar()].
 #' @returns A copied `data.table` of projected error by lead time.
 #' @examples
-#' # tj_ar_series(result)
+#' history <- c(0.20, 0.19, 0.23, 0.18, 0.17, 0.16, 0.15, 0.14, 0.13, 0.12, 0.11)
+#' result <- forecast_tj_ar(default_ar_parameters(), history, jump = 5L, steps = 24L)
+#' tj_ar_series(result)
 #' @export
 tj_ar_series <- function(x)
   data.table::copy(x$series)

@@ -12,18 +12,28 @@ The package is designed for flood forecast modellers, analysts and developers. I
 
 `reach.postproc` starts from prepared observed and simulated time series. It does not import operational data or apply rating curves.
 
-```mermaid
+<!--
+Written as a raw HTML <pre class="mermaid"> block, not a fenced ```mermaid
+code block. pkgdown renders README.md's native fenced code blocks as
+<pre class="mermaid"><code>...</code></pre>, and Mermaid's client-side
+renderer cannot read the diagram source back out of that nested <code>
+element (see _pkgdown.yml). Every other diagram on the site goes through
+the render_mermaid() helper in the vignette setup chunks, which produces
+this same flat <pre class="mermaid">TEXT</pre> shape. Keep this one
+consistent with that rather than switching back to a fenced block.
+-->
+<pre class="mermaid">
 flowchart LR
-    A[reach.io<br/>Import and standardise data]
-    B{Do level or flow<br/>values need conversion?}
-    C[reach.rate<br/>Apply the rating]
-    D[reach.postproc<br/>Align, assess, update,<br/>score and plot]
+    A[reach.io&lt;br/&gt;Import and standardise data]
+    B{Do level or flow&lt;br/&gt;values need conversion?}
+    C[reach.rate&lt;br/&gt;Apply the rating]
+    D[reach.postproc&lt;br/&gt;Align, assess, update,&lt;br/&gt;score and plot]
 
-    A --> B
-    B -- Yes --> C
-    B -- No --> D
-    C --> D
-```
+    A --&gt; B
+    B -- Yes --&gt; C
+    B -- No --&gt; D
+    C --&gt; D
+</pre>
 
 The intended package boundaries are:
 
@@ -219,27 +229,28 @@ plot_lead_times(
 
 ## Recommended workflow
 
-```mermaid
+<!-- See the comment above the first diagram: raw HTML, not a fenced block. -->
+<pre class="mermaid">
 flowchart TD
-    A([Start]) --> B[Load approved AR parameters]
-    B --> C[Assess the parameters]
-    C --> D{Pass?}
-    D -- No --> E[Review, replace or recalibrate parameters]
-    D -- Yes --> F[Import observations and simulations]
-    F --> G{Same measure<br/>and units?}
-    G -- No --> H[Convert with reach.rate]
-    G -- Yes --> I[Align the series]
-    H --> I
-    I --> J{Diagnostics acceptable?}
-    J -- No --> K[Correct timestamps, gaps,<br/>duplicates or units]
-    K --> I
-    J -- Yes --> L[Calculate fixed lead-time updates]
-    L --> M[Score performance]
-    M --> N[Plot and interpret results]
-    N --> O{Does AR improve<br/>representative events?}
-    O -- Yes --> P[Document the evidence and<br/>use with operational judgement]
-    O -- No --> Q[Review parameters, data,<br/>rating domain and model structure]
-```
+    A([Start]) --&gt; B[Load approved AR parameters]
+    B --&gt; C[Assess the parameters]
+    C --&gt; D{Pass?}
+    D -- No --&gt; E[Review, replace or recalibrate parameters]
+    D -- Yes --&gt; F[Import observations and simulations]
+    F --&gt; G{Same measure&lt;br/&gt;and units?}
+    G -- No --&gt; H[Convert with reach.rate]
+    G -- Yes --&gt; I[Align the series]
+    H --&gt; I
+    I --&gt; J{Diagnostics acceptable?}
+    J -- No --&gt; K[Correct timestamps, gaps,&lt;br/&gt;duplicates or units]
+    K --&gt; I
+    J -- Yes --&gt; L[Calculate fixed lead-time updates]
+    L --&gt; M[Score performance]
+    M --&gt; N[Plot and interpret results]
+    N --&gt; O{Does AR improve&lt;br/&gt;representative events?}
+    O -- Yes --&gt; P[Document the evidence and&lt;br/&gt;use with operational judgement]
+    O -- No --&gt; Q[Review parameters, data,&lt;br/&gt;rating domain and model structure]
+</pre>
 
 A parameter pass means the roots avoid the principal forms of unacceptable mathematical behaviour. It does not guarantee that every updated forecast will outperform the simulation.
 
