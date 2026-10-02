@@ -1,3 +1,28 @@
+# ============================================================ #
+# Tool:         Default Parameter Family Construction
+# Description:  Construct the continuous analytical family of default AR(3)
+#               parameter sets from a single principal decay timescale, and
+#               expose the published standard points on that family.
+# Flode Module: reach.hydro (pre-promotion; standalone package)
+# Author:       Jonathan Payne, jonathan.payne@example.org
+# Created:      2026-10-02
+# Modified:     2026-10-02 - JP: added mandatory governance header block;
+#               validated fast_period_steps (Re() was silently truncating
+#               any genuinely complex request to an incorrect real value);
+#               added time_step_minutes pass-through to
+#               standard_family_ar_parameters() and standard_family_ar_table()
+#               (previously hard-coded to 15 minutes regardless of the
+#               caller's actual model timestep); added explanatory comments
+#               throughout (see NEWS.md).
+# Tier:         2
+# Inputs:       A principal decay timescale (steps, hours or days) and the
+#               model timestep; or a named standard-family label.
+# Outputs:      An AR(3) parameter object (Deltares convention) with
+#               provenance attributes, or a data.table catalogue of the
+#               published standard set.
+# Dependencies: data.table.
+# ============================================================ #
+
 #' Construct a default-family AR parameter set
 #'
 #' Create a third-order autoregressive parameter set from one interpretable
@@ -104,6 +129,24 @@ default_family_ar_parameters <- function(
       time_step_minutes <= 0) {
     stop("`time_step_minutes` must be one positive finite value.", call. = FALSE)
   }
+  # This family only constructs three *real* roots: the fast root is taken
+  # via Re(root_from_timescale(...)) below, which is only mathematically
+  # correct when that call itself returns a real number. Inf and 2 are the
+  # only oscillation periods root_from_timescale() returns as real (see
+  # 03-parameters.R); any other value is genuinely complex, and Re() would
+  # silently discard the imaginary half rather than error, producing a
+  # subtly wrong (incomplete) fast root with no indication anything was
+  # lost. Reject that case explicitly instead.
+  if (!(is.infinite(fast_period_steps) || isTRUE(all.equal(fast_period_steps, 2)))) {
+    stop(
+      paste0(
+        "`fast_period_steps` must be `Inf` or `2`: this family only ",
+        "constructs real roots, and any other period would be genuinely ",
+        "complex and silently truncated."
+      ),
+      call. = FALSE
+    )
+  }
 
   principal_decay_steps <- switch(
     units,
@@ -118,11 +161,23 @@ default_family_ar_parameters <- function(
     exp(-1 / principal_decay_steps)
   }
 
+  # Safe to take Re() here: the guard above already rejected any
+  # fast_period_steps that would make this genuinely complex.
   fast_root <- Re(root_from_timescale(
     decay_time = fast_decay_steps,
     oscillation_period = fast_period_steps
   ))
 
+  # a_1 = z1 + z2 + z3 is fixed at `first_coefficient`, and z1 (principal)
+  # and z3 (fast) are both now known, so z2 is forced: z2 = a_1 - z1 - z3.
+  # That only describes a valid member of this family when z2 comes out as
+  # a stable, non-oscillating positive root (0 < z2 < 1); a very short
+  # principal decay pushes z1 towards 0 and forces z2 above 1 (see
+  # developer-mathematics.Rmd's worked derivation). There is therefore an
+  # implicit shortest principal decay this family can represent -- around
+  # 1.2 hours at the default 1.765/1/3/2 settings, scaling with
+  # time_step_minutes -- below which there is no valid member and this
+  # fails loudly rather than returning an unstable or meaningless result.
   middle_root <- first_coefficient - principal_root - fast_root
 
   if (!is.finite(middle_root) || middle_root <= 0 || middle_root >= 1) {
@@ -151,12 +206,27 @@ default_family_ar_parameters <- function(
     label <- paste0("Default-family AR: principal decay ", decay_label)
   }
 
+  # tolerance is tighter here (1e-12) than roots_to_parameters()'s own
+  # default (1e-10) or the package-wide order_tolerance default (1e-8).
+  # All three modal_roots values are already plain real numbers (fast_root
+  # was stripped of its negligible residual imaginary part above), so the
+  # conjugate-pair check this tolerance also gates has nothing genuine to
+  # reject; a tight tolerance here instead avoids the opposite risk, of a
+  # legitimately small-but-nonzero coefficient being mistaken for an
+  # inactive trailing one and silently dropped, reducing the AR order below
+  # the 3 this family is meant to produce.
   parameters <- roots_to_parameters(
     root_values = modal_roots,
     label = label,
     tolerance = 1e-12
   )
 
+  # These attributes are provenance for this call's own output, not part of
+  # the ARParameterSet contract: nothing else in the package reads or
+  # preserves them, so they will not survive being passed through a
+  # function that reconstructs a new ARParameterSet (convert_sign_convention(),
+  # for instance). Treat them as informational for this object only, and
+  # recompute from `parameters@coefficients` after any such transformation.
   attr(parameters, "principal_decay_steps") <- principal_decay_steps
   attr(parameters, "principal_decay_hours") <-
     principal_decay_steps * time_step_minutes / 60
@@ -177,6 +247,11 @@ default_family_ar_parameters <- function(
 #'   `"3 hours"`, `"6 hours"`, `"12 hours"`, `"1 day"`, `"2 days"`,
 #'   `"4 days"`, `"8 days"`, `"16 days"`, `"32 days"`, `"64 days"` and
 #'   `"Infinite"`.
+#' @param time_step_minutes Duration of one model timestep in minutes. The
+#'   labels above are fixed durations (for example "12 hours"), but how many
+#'   model steps that represents, and therefore the resulting AR
+#'   coefficients, depends on this value. Must match the timestep of the
+#'   model the parameters will actually run in; it is not just metadata.
 #'
 #' @returns An AR parameter object calculated from the analytical default-family
 #'   construction at the selected standard timescale.
@@ -190,7 +265,7 @@ default_family_ar_parameters <- function(
 standard_family_ar_parameters <- function(principal_decay = c(
     "3 hours", "6 hours", "12 hours", "1 day", "2 days", "4 days",
     "8 days", "16 days", "32 days", "64 days", "Infinite"
-)) {
+), time_step_minutes = 15) {
   principal_decay <- match.arg(principal_decay)
   hours <- c(
     "3 hours" = 3, "6 hours" = 6, "12 hours" = 12,
@@ -198,9 +273,17 @@ standard_family_ar_parameters <- function(principal_decay = c(
     "8 days" = 192, "16 days" = 384, "32 days" = 768,
     "64 days" = 1536, "Infinite" = Inf
   )
+  # The "1 day" and "Infinite" entries are a deliberate built-in consistency
+  # check, not a coincidence: they reproduce default_ar_parameters()'s
+  # c(1.765, -0.72625, -0.040656) and default_et_ar_steady_parameters()'s
+  # c(1.765, -0.7244342, -0.04056586) to within the rounding those were
+  # originally published at. If a future change to this family ever stops
+  # reproducing those two independently-established references, that is a
+  # regression -- see test-default-family-ar.R.
   default_family_ar_parameters(
     principal_decay = unname(hours[[principal_decay]]),
     units = "hours",
+    time_step_minutes = time_step_minutes,
     label = paste0("Standard default-family AR: ", principal_decay)
   )
 }
@@ -211,6 +294,9 @@ standard_family_ar_parameters <- function(principal_decay = c(
 #' catalogue for recognition, assurance and verification. The coefficients are
 #' calculated directly rather than interpolated between rows.
 #'
+#' @param time_step_minutes Duration of one model timestep in minutes, passed
+#'   through to [standard_family_ar_parameters()] for every row.
+#'
 #' @returns A `data.table` with the standard label, principal decay, three AR
 #'   coefficients and the three root timescales.
 #'
@@ -218,13 +304,13 @@ standard_family_ar_parameters <- function(principal_decay = c(
 #' standard_family_ar_table()
 #'
 #' @export
-standard_family_ar_table <- function() {
+standard_family_ar_table <- function(time_step_minutes = 15) {
   labels <- c(
     "3 hours", "6 hours", "12 hours", "1 day", "2 days", "4 days",
     "8 days", "16 days", "32 days", "64 days", "Infinite"
   )
   data.table::rbindlist(lapply(labels, function(label) {
-    parameters <- standard_family_ar_parameters(label)
+    parameters <- standard_family_ar_parameters(label, time_step_minutes = time_step_minutes)
     data.table::data.table(
       parameter_set = label,
       principal_decay_steps = attr(parameters, "principal_decay_steps"),

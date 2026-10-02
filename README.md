@@ -347,6 +347,9 @@ Keep these limitations in view:
 - `convert_sign_convention()` converts supplied coefficient signs.
 - `ar_parameters_from_timescales()` constructs parameters from root timescales.
 - `roots_to_parameters()` converts modal roots to AR coefficients.
+- `default_family_ar_parameters()` constructs a continuous default-family parameter set from one principal decay timescale.
+- `standard_family_ar_parameters()` returns a published standard point on that family.
+- `standard_family_ar_table()` lists the full published standard catalogue.
 
 ### Analysis and assessment
 
@@ -374,13 +377,14 @@ Keep these limitations in view:
 
 ## Documentation
 
-The package contains six vignettes:
+The package contains seven vignettes:
 
 - **ARMA for Novice Flood Forecast Modellers** provides a plain-English introduction and glossary.
 - **Characteristic Roots for Novice Flood Forecast Modellers** is a plain-English deep dive on roots, what they mean and what stability requires.
 - **AR and ARMA for Flood Forecasting** explains the operational theory and IMFS context.
 - **Using reach.postproc** provides a practical package workflow.
 - **Mathematical and Developer Validation** explains numerical equivalence tests and indexing conventions.
+- **Selecting a Default-Family Parameter Set** explains the continuous analytical family the published default parameter sets are drawn from.
 - **Event Triggered and Time Jumped AR** covers the experimental ET-AR and TJ-AR methods.
 
 Build and open the vignettes with:

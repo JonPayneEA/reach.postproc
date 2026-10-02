@@ -1,3 +1,27 @@
+---
+title: "Selecting a Default-Family Parameter Set"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Selecting a Default-Family Parameter Set}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 9,
+  fig.height = 5.5,
+  warning = FALSE,
+  message = FALSE
+)
+
+library(reach.postproc)
+library(data.table)
+library(ggplot2)
+```
+
 # Selecting a default-family parameter set
 
 A new AR model does not require three independently estimated decay times. In the default family, the principal root controls most long-duration behaviour. The middle and rapid roots shape the response shortly after the forecast starts. It is therefore sufficient to select one principal timescale for the catchment.

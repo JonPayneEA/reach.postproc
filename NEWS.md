@@ -1,3 +1,56 @@
+# reach.postproc 0.10.0
+
+## New functions
+- `default_family_ar_parameters()`: constructs a continuous analytical
+  family of default AR(3) parameter sets from a single principal decay
+  timescale, holding the first coefficient and fast root fixed and solving
+  the middle root so the three roots sum to the fixed `a_1`. Verified by
+  hand and numerically against the test suite: the "1 day" and "Infinite"
+  members reproduce `default_ar_parameters()`'s and
+  `default_et_ar_steady_parameters()`'s published coefficients almost to
+  the last digit, which is strong evidence the construction is correct and
+  that those two previously-independent hard-coded defaults are in fact
+  the same analytical family.
+- `standard_family_ar_parameters()` and `standard_family_ar_table()`:
+  the published standard catalogue (3 hours to 64 days, plus Infinite) as
+  named lookups on the same construction, for governance recognition
+  rather than bespoke calibration.
+- New vignette, "Selecting a Default-Family Parameter Set"
+  (`default-parameter-family-section.Rmd`), covering the practical
+  workflow and the full mathematical derivation, including a worked
+  nine-hour example.
+
+## Bug fixes
+- `default_family_ar_parameters()`'s fast root was taken via
+  `Re(root_from_timescale(...))` with no check that the result was
+  actually real. Any `fast_period_steps` other than `Inf` or `2` would
+  have been genuinely complex, and `Re()` would have silently discarded
+  the imaginary half rather than error, producing a subtly wrong,
+  truncated root with no indication anything was lost. Now validated
+  explicitly.
+- `standard_family_ar_parameters()` and `standard_family_ar_table()`
+  hard-coded a 15-minute model timestep regardless of what the caller's
+  model actually used, even though the principal decay labels ("12
+  hours", say) only translate to a specific number of model steps -- and
+  therefore specific AR coefficients -- once the timestep is known. Both
+  now take and forward `time_step_minutes`, defaulting to 15 for
+  backward compatibility.
+
+## Governance
+- `R/14-default-parameter-family.R` now carries the mandatory header
+  block (it had none), and explanatory comments at each non-obvious
+  decision: the tighter-than-default `1e-12` tolerance passed to
+  `roots_to_parameters()`, the `attr()`-based provenance metadata's
+  limits (informational only, not guaranteed to survive further
+  transformation elsewhere in the package), and the family's implicit
+  shortest representable principal decay (around 1.2 hours at default
+  settings, scaling with `time_step_minutes`).
+- Added validation and regression tests to `test-default-family-ar.R`:
+  invalid `principal_decay`/`time_step_minutes`, the new
+  `fast_period_steps` guard, the too-short-principal-decay failure path,
+  a `units = "days"` check, and regression coverage for the
+  `time_step_minutes` forwarding fix.
+
 # reach.postproc 0.9.5
 
 ## Documentation
