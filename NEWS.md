@@ -1,3 +1,22 @@
+# reach.postproc 0.9.2
+
+## Bug fixes
+- `ar_parameters_from_timescales()` could never actually produce a genuinely
+  oscillating (complex-conjugate) root pair. `root_from_timescale()` always
+  rotates by `+2*pi/period`, so it only ever returns one member of a pair;
+  any `oscillation_period` other than `Inf` (real) or `2` (real, period-2
+  alternation) therefore failed `roots_to_parameters()`'s "complex roots
+  must occur as conjugate pairs" check. In practice this meant every
+  parameter set built through the documented timescale API was entirely
+  real, which is why `plot_ar()` never showed a point off the real axis
+  regardless of what was asked for -- not a plotting bug, a construction
+  one. `ar_parameters_from_timescales()` now adds the missing conjugate
+  automatically whenever a genuinely complex root is requested. This
+  changes its order contract: an entry with a non-trivial period now
+  contributes two roots, not one, so the resulting AR order can exceed
+  `length(decay_times)`. Documented on both functions, with a worked
+  oscillating-pair example.
+
 # reach.postproc 0.9.1
 
 ## Bug fixes

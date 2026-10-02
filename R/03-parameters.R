@@ -6,7 +6,14 @@
 # Flode Module: reach.hydro (pre-promotion; standalone package)
 # Author:       Jonathan Payne, jonathan.payne@example.org
 # Created:      2026-09-22
-# Modified:     2026-10-02 - JP: added mandatory governance header block
+# Modified:     2026-10-02 - JP: added mandatory governance header block;
+#               ar_parameters_from_timescales() now auto-pairs a genuinely
+#               complex root (any oscillation_period other than Inf or 2)
+#               with its conjugate, since root_from_timescale() can only
+#               return one member of the pair. Previously any such period
+#               failed roots_to_parameters()'s conjugate-pair check, so no
+#               parameter set built through this function ever had a
+#               genuinely oscillating root (see NEWS.md).
 # Tier:         2
 # Inputs:       Numeric AR coefficient vectors, decay-time/oscillation-period
 #               pairs, or named arguments via `...`.
@@ -132,11 +139,17 @@ default_ar_parameters <- function()ar_parameters(c(1.765,-0.72625,-0.040656),lab
 #'   positive real, non-oscillating root. Use `2` for a negative real root that
 #'   changes sign every timestep.
 #'
-#' @returns One complex modal root.
+#' @returns One complex modal root. For an `oscillation_period` other than
+#'   `Inf` or `2`, this is only one member of a genuine complex-conjugate
+#'   pair: the other member (its complex conjugate) is required for a real AR
+#'   polynomial, but this function has no way to return both. Pass the
+#'   request through [ar_parameters_from_timescales()] rather than building
+#'   on this function directly; it adds the missing conjugate automatically.
 #'
 #' @examples
 #' root_from_timescale(decay_time = 96, oscillation_period = Inf)
 #' root_from_timescale(decay_time = 0.3333, oscillation_period = 2)
+#' root_from_timescale(decay_time = 20, oscillation_period = 8)
 #' @export
 root_from_timescale <- function(decay_time,oscillation_period=Inf){if(length(decay_time)!=1L||is.na(decay_time)||decay_time==0)stop_bad_argument("Invalid decay time.");if(length(oscillation_period)!=1L||is.na(oscillation_period)||oscillation_period<2)stop_bad_argument("Invalid period.");m<-exp(-1/decay_time);if(is.infinite(oscillation_period))as.complex(m)else m*exp(1i*2*pi/oscillation_period)}
 #' Convert modal roots to AR coefficients
@@ -170,28 +183,64 @@ roots_to_parameters <- function(root_values,label="Derived from roots",tolerance
 #' Build interpretable modal roots from decay times and oscillation periods, then
 #' convert those roots to Deltares AR coefficients.
 #'
+#' An oscillation period of `Inf` or `2` produces a single real root (see
+#' [root_from_timescale()]) and contributes one root to the result. Any other
+#' period produces a genuinely complex root; since a real AR polynomial can
+#' only contain complex roots in conjugate pairs, its conjugate is added
+#' automatically. Each such entry therefore contributes **two** roots to the
+#' result, so the AR order can exceed `length(decay_times)`.
+#'
 #' @param decay_times Numeric vector of decay times in model steps, one value per
-#'   required root.
+#'   requested root (before conjugate pairing).
 #' @param oscillation_periods Numeric vector of matching periods in model steps.
-#'   Use `Inf` for non-oscillating positive roots and `2` for negative real roots.
+#'   Use `Inf` for a non-oscillating positive root and `2` for a negative real
+#'   root. Any other value (for example `8`, for a root that completes one
+#'   oscillation every eight steps) requests a genuinely complex pair.
 #' @param label Description attached to the result.
 #' @param tolerance Numerical tolerance used during root-to-coefficient
 #'   conversion.
 #'
-#' @returns An AR parameter object whose order equals the number of supplied
-#'   roots after numerical trimming.
+#' @returns An AR parameter object. Its order equals `length(decay_times)`
+#'   plus one for every entry that requested a genuinely complex root (any
+#'   period other than `Inf` or `2`), after numerical trimming.
 #'
 #' @examples
 #' parameters <- ar_parameters_from_timescales(
 #'   decay_times = c(96, 5.203171, 1 / 3),
 #'   oscillation_periods = c(Inf, Inf, 2),
-#'   label = "Example AR(3)"
+#'   label = "Example AR(3), all real roots"
 #' )
 #'
 #' parameters@coefficients
 #' root_table(roots(parameters))
+#'
+#' # A genuinely oscillating root: one timescale, one period, but the
+#' # conjugate is added automatically, so this is an AR(2) model.
+#' oscillating <- ar_parameters_from_timescales(
+#'   decay_times = 20,
+#'   oscillation_periods = 8,
+#'   label = "Example AR(2), oscillating pair"
+#' )
+#' oscillating@order
+#' root_table(roots(oscillating))
 #' @export
-ar_parameters_from_timescales <- function(decay_times,oscillation_periods=rep(Inf,length(decay_times)),label="Derived from timescales",tolerance=1e-10){if(length(decay_times)!=length(oscillation_periods))stop_bad_argument("Timescale vectors must have equal lengths.");roots_to_parameters(mapply(root_from_timescale,decay_times,oscillation_periods),label,tolerance)}
+ar_parameters_from_timescales <- function(decay_times,
+                                           oscillation_periods = rep(Inf, length(decay_times)),
+                                           label = "Derived from timescales",
+                                           tolerance = 1e-10) {
+  if (length(decay_times) != length(oscillation_periods)) {
+    stop_bad_argument("Timescale vectors must have equal lengths.")
+  }
+  root_values <- mapply(root_from_timescale, decay_times, oscillation_periods)
+  # Inf and 2 both produce a real root (see root_from_timescale()); any other
+  # period produces one member of a genuinely complex pair. root_from_timescale()
+  # always rotates by +2*pi/period, so there is no public way to request the
+  # negative-angle twin directly -- add it here instead of requiring the
+  # caller to work around that.
+  is_complex_pair <- is.finite(oscillation_periods) & oscillation_periods != 2
+  root_values <- c(root_values, Conj(root_values[is_complex_pair]))
+  roots_to_parameters(root_values, label, tolerance)
+}
 #' Calculate observed-minus-simulated model error
 #'
 #' Apply the package-wide error convention used to initialise and evaluate AR
