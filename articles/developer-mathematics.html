@@ -73,7 +73,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">reach.postproc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -140,6 +140,74 @@ x_t=\sum_{n=1}^{p}c_nz_n^t.
 </annotation></semantics></math></p>
 </div>
 <div class="section level2">
+<h2 id="modal-roots-versus-reciprocal-lag-roots">Modal roots versus reciprocal lag roots<a class="anchor" aria-label="anchor" href="#modal-roots-versus-reciprocal-lag-roots"></a>
+</h2>
+<p>The polynomial above is solved directly for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>z</mi><annotation encoding="application/x-tex">z</annotation></semantics></math>
+in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mi>t</mi></msub><mo>=</mo><mi>c</mi><mspace width="0.167em"></mspace><msup><mi>z</mi><mi>t</mi></msup></mrow><annotation encoding="application/x-tex">x_t=c\,z^t</annotation></semantics></math>.
+Call these the <strong>modal roots</strong>. Stable modal roots lie
+inside the unit circle. <code><a href="../reference/roots.html">roots()</a></code>, <code><a href="../reference/assess.html">assess()</a></code> and
+<code><a href="../reference/plot_ar.html">plot_ar()</a></code>’s default view all use this convention.</p>
+<p>A different, equally standard construction exists. Write the
+recurrence with the backshift operator
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>
+(where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><msub><mi>x</mi><mi>t</mi></msub><mo>=</mo><msub><mi>x</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">Bx_t=x_{t-1}</annotation></semantics></math>)
+and solve
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϕ</mi><mo stretchy="false" form="prefix">(</mo><mi>B</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\phi(B)=0</annotation></semantics></math>
+directly for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>−</mo><msub><mi>a</mi><mn>1</mn></msub><mi>B</mi><mo>−</mo><msub><mi>a</mi><mn>2</mn></msub><msup><mi>B</mi><mn>2</mn></msup><mo>−</mo><mi>⋯</mi><mo>−</mo><msub><mi>a</mi><mi>p</mi></msub><msup><mi>B</mi><mi>p</mi></msup><mo>=</mo><mn>0</mn><mi>.</mi></mrow><annotation encoding="application/x-tex">
+1-a_1B-a_2B^2-\cdots-a_pB^p=0.
+</annotation></semantics></math></p>
+<p>This is the Box-Jenkins/ARIMA textbook convention, and its stable
+region is <em>outside</em> the unit circle. The two polynomials are
+reciprocals of one another: substituting
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mo>=</mo><mn>1</mn><mi>/</mi><mi>z</mi></mrow><annotation encoding="application/x-tex">B=1/z</annotation></semantics></math>
+into the modal polynomial and clearing denominators recovers the
+backshift polynomial, so each backshift root is the reciprocal of the
+matching modal root.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ar_parameters.html">ar_parameters</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2.1</span>, <span class="op">-</span><span class="fl">1.6</span>, <span class="fl">0.4</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Modal roots: direct solution of z^3 - 2.1z^2 + 1.6z - 0.4 = 0</span></span>
+<span><span class="va">modal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/polyroot.html" class="external-link">polyroot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.4</span>, <span class="fl">1.6</span>, <span class="op">-</span><span class="fl">2.1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Reciprocal lag (backshift/Box-Jenkins) roots: 1 - 2.1z + 1.6z^2 - 0.4z^3 = 0</span></span>
+<span><span class="va">lag</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/polyroot.html" class="external-link">polyroot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">2.1</span>, <span class="fl">1.6</span>, <span class="op">-</span><span class="fl">0.4</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">modal</span></span>
+<span><span class="co">#&gt; [1] 0.5+8.414707e-16i 0.8+4.000000e-01i 0.8-4.000000e-01i</span></span>
+<span><span class="va">lag</span></span>
+<span><span class="co">#&gt; [1] 1+5.000000e-01i 1-5.000000e-01i 2-2.602085e-14i</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/all.equal.html" class="external-link">all.equal</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/complex.html" class="external-link">Mod</a></span><span class="op">(</span><span class="fl">1</span> <span class="op">/</span> <span class="va">modal</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/complex.html" class="external-link">Mod</a></span><span class="op">(</span><span class="va">lag</span><span class="op">)</span><span class="op">)</span>, tolerance <span class="op">=</span> <span class="fl">1e-9</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<p><code><a href="../reference/root_table.html">root_table()</a></code> reports both without requiring either
+polynomial to be built by hand:
+<code>root_real</code>/<code>root_imaginary</code> for the modal form,
+<code>lag_root_real</code>/<code>lag_root_imaginary</code> for the
+reciprocal.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/root_table.html">root_table</a></span><span class="op">(</span><span class="fu"><a href="../reference/roots.html">roots</a></span><span class="op">(</span><span class="va">parameters</span><span class="op">)</span><span class="op">)</span><span class="op">[</span></span>
+<span>  ,</span>
+<span>  <span class="fu">.</span><span class="op">(</span><span class="va">root_real</span>, <span class="va">root_imaginary</span>, <span class="va">lag_root_real</span>, <span class="va">lag_root_imaginary</span><span class="op">)</span></span>
+<span><span class="op">]</span></span>
+<span><span class="co">#&gt;    root_real root_imaginary lag_root_real lag_root_imaginary</span></span>
+<span><span class="co">#&gt;        &lt;num&gt;          &lt;num&gt;         &lt;num&gt;              &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1:       0.8   4.000000e-01             1      -5.000000e-01</span></span>
+<span><span class="co">#&gt; 2:       0.8  -4.000000e-01             1       5.000000e-01</span></span>
+<span><span class="co">#&gt; 3:       0.5   8.414707e-16             2      -3.365883e-15</span></span></code></pre></div>
+<p>An external check of this package’s root calculations that assumes
+the Box-Jenkins convention will report different root values, and a
+different stability region (outside rather than inside the unit circle),
+to those <code>reach.postproc</code> reports. That is not a disagreement
+about the arithmetic. It is two valid conventions describing the same
+model. Confirm which convention a comparison is using before treating a
+mismatch as a defect.</p>
+</div>
+<div class="section level2">
 <h2 id="root-to-parameter-conversion">Root-to-parameter conversion<a class="anchor" aria-label="anchor" href="#root-to-parameter-conversion"></a>
 </h2>
 <p>For modal root
@@ -150,12 +218,12 @@ z-r.
 </annotation></semantics></math></p>
 <p>When polynomial coefficients are stored in ascending order, the
 factor is</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="va">r</span>, <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p>Using <code>c(1, -r)</code> would create
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>−</mo><mi>r</mi><mi>z</mi></mrow><annotation encoding="application/x-tex">1-rz</annotation></semantics></math>
 and therefore introduce reciprocal roots.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/default_ar_parameters.html">default_ar_parameters</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">z1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/roots.html">roots</a></span><span class="op">(</span><span class="va">p1</span><span class="op">)</span><span class="op">@</span><span class="va">values</span></span>
 <span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/roots_to_parameters.html">roots_to_parameters</a></span><span class="op">(</span><span class="va">z1</span><span class="op">)</span></span>
@@ -195,7 +263,7 @@ indexing is:</p>
 <pre class="text"><code>modal time 0 = forecast step 1
 modal time 1 = forecast step 2
 modal time 2 = forecast step 3</code></pre>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/default_ar_parameters.html">default_ar_parameters</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">forecast</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/forecast_ar.html">forecast_ar</a></span><span class="op">(</span></span>
 <span>  <span class="va">parameters</span>,</span>
@@ -311,7 +379,7 @@ produce identical internal coefficients, roots and forecasts.</p>
 <div class="section level2">
 <h2 id="minimum-developer-checks">Minimum developer checks<a class="anchor" aria-label="anchor" href="#minimum-developer-checks"></a>
 </h2>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Not run in the vignette build.</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">document</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">load_all</span><span class="op">(</span><span class="op">)</span></span>

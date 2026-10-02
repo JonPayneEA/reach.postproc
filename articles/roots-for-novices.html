@@ -73,7 +73,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">reach.postproc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -303,7 +303,15 @@ flowchart LR
 <li>
 <a href="../reference/roots.html"><code>roots()</code></a>
 calculates the roots once and packages them up for everything else to
-use.</li>
+use. <code><a href="../reference/root_table.html">root_table()</a></code>’s output actually contains two complete
+sets of root columns, <code>root_real</code>/<code>root_imaginary</code>
+and <code>lag_root_real</code>/<code>lag_root_imaginary</code>: two
+different, equally valid ways of writing the same maths, which is why
+you’ll sometimes see a different-looking (but not wrong) answer if you
+check a root calculation against a general statistics source rather than
+this package. The <a href="developer-mathematics.html#modal-roots-versus-reciprocal-lag-roots">“Mathematical
+and Developer Validation”</a> vignette has the full explanation; this
+package’s own plots and checks always use the first set.</li>
 <li>
 <a href="../reference/root_table.html"><code>root_table()</code></a>
 and <a href="../reference/plot_ar.html"><code>plot_ar()</code></a> let

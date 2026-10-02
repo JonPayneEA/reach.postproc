@@ -29,6 +29,76 @@ The modal solution is
 x_t=\sum_{n=1}^{p}c_nz_n^t.
 ```
 
+## Modal roots versus reciprocal lag roots
+
+The polynomial above is solved directly for $`z`$ in $`x_t=c\,z^t`$.
+Call these the **modal roots**. Stable modal roots lie inside the unit
+circle.
+[`roots()`](https://jonpayneea.github.io/reach.postproc/reference/roots.md),
+[`assess()`](https://jonpayneea.github.io/reach.postproc/reference/assess.md)
+and
+[`plot_ar()`](https://jonpayneea.github.io/reach.postproc/reference/plot_ar.md)’s
+default view all use this convention.
+
+A different, equally standard construction exists. Write the recurrence
+with the backshift operator $`B`$ (where $`Bx_t=x_{t-1}`$) and solve
+$`\phi(B)=0`$ directly for $`B`$:
+
+``` math
+1-a_1B-a_2B^2-\cdots-a_pB^p=0.
+```
+
+This is the Box-Jenkins/ARIMA textbook convention, and its stable region
+is *outside* the unit circle. The two polynomials are reciprocals of one
+another: substituting $`B=1/z`$ into the modal polynomial and clearing
+denominators recovers the backshift polynomial, so each backshift root
+is the reciprocal of the matching modal root.
+
+``` r
+
+parameters <- ar_parameters(c(2.1, -1.6, 0.4))
+
+# Modal roots: direct solution of z^3 - 2.1z^2 + 1.6z - 0.4 = 0
+modal <- polyroot(c(-0.4, 1.6, -2.1, 1))
+
+# Reciprocal lag (backshift/Box-Jenkins) roots: 1 - 2.1z + 1.6z^2 - 0.4z^3 = 0
+lag <- polyroot(c(1, -2.1, 1.6, -0.4))
+
+modal
+#> [1] 0.5+8.414707e-16i 0.8+4.000000e-01i 0.8-4.000000e-01i
+lag
+#> [1] 1+5.000000e-01i 1-5.000000e-01i 2-2.602085e-14i
+
+all.equal(sort(Mod(1 / modal)), sort(Mod(lag)), tolerance = 1e-9)
+#> [1] TRUE
+```
+
+[`root_table()`](https://jonpayneea.github.io/reach.postproc/reference/root_table.md)
+reports both without requiring either polynomial to be built by hand:
+`root_real`/`root_imaginary` for the modal form,
+`lag_root_real`/`lag_root_imaginary` for the reciprocal.
+
+``` r
+
+root_table(roots(parameters))[
+  ,
+  .(root_real, root_imaginary, lag_root_real, lag_root_imaginary)
+]
+#>    root_real root_imaginary lag_root_real lag_root_imaginary
+#>        <num>          <num>         <num>              <num>
+#> 1:       0.8   4.000000e-01             1      -5.000000e-01
+#> 2:       0.8  -4.000000e-01             1       5.000000e-01
+#> 3:       0.5   8.414707e-16             2      -3.365883e-15
+```
+
+An external check of this package’s root calculations that assumes the
+Box-Jenkins convention will report different root values, and a
+different stability region (outside rather than inside the unit circle),
+to those `reach.postproc` reports. That is not a disagreement about the
+arithmetic. It is two valid conventions describing the same model.
+Confirm which convention a comparison is using before treating a
+mismatch as a defect.
+
 ## Root-to-parameter conversion
 
 For modal root $`r`$, the polynomial factor is

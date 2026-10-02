@@ -207,6 +207,16 @@ flowchart LR
 - [`roots()`](https://jonpayneea.github.io/reach.postproc/reference/roots.md)
   calculates the roots once and packages them up for everything else to
   use.
+  [`root_table()`](https://jonpayneea.github.io/reach.postproc/reference/root_table.md)’s
+  output actually contains two complete sets of root columns,
+  `root_real`/`root_imaginary` and `lag_root_real`/`lag_root_imaginary`:
+  two different, equally valid ways of writing the same maths, which is
+  why you’ll sometimes see a different-looking (but not wrong) answer if
+  you check a root calculation against a general statistics source
+  rather than this package. The [“Mathematical and Developer
+  Validation”](https://jonpayneea.github.io/reach.postproc/articles/developer-mathematics.html#modal-roots-versus-reciprocal-lag-roots)
+  vignette has the full explanation; this package’s own plots and checks
+  always use the first set.
 - [`root_table()`](https://jonpayneea.github.io/reach.postproc/reference/root_table.md)
   and
   [`plot_ar()`](https://jonpayneea.github.io/reach.postproc/reference/plot_ar.md)

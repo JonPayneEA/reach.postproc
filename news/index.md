@@ -1,5 +1,24 @@
 # Changelog
 
+## reach.postproc 0.9.4
+
+### Documentation
+
+- `developer-mathematics.Rmd` gains a new section, “Modal roots versus
+  reciprocal lag roots”, recording the mathematical contract between
+  `reach.postproc`’s modal-root convention
+  (`root_real`/`root_imaginary`, stable inside the unit circle) and the
+  Box-Jenkins/ARIMA backshift-operator convention
+  (`lag_root_real`/`lag_root_imaginary`, stable outside it). The two are
+  reciprocals of the same model, not competing answers, and this had
+  never been written down as an explicit contract before – it came up as
+  a real point of confusion when an external check of this package’s
+  root output used the other convention and got, correctly, different
+  numbers. Includes a worked, executable example and a one-line warning
+  for future maintainers: a convention mismatch isn’t a defect.
+- `roots-for-novices.Rmd` now cross-references this section rather than
+  leaving `lag_root_*` unexplained.
+
 ## reach.postproc 0.9.3
 
 ### Documentation
