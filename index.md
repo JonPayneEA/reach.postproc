@@ -16,6 +16,7 @@ the mathematics required for review and assurance.
 series. It does not import operational data or apply rating curves.
 
 ``` mermaid
+
 flowchart LR
     A[reach.io<br/>Import and standardise data]
     B{Do level or flow<br/>values need conversion?}
@@ -238,6 +239,7 @@ plot_lead_times(
 ## Recommended workflow
 
 ``` mermaid
+
 flowchart TD
     A([Start]) --> B[Load approved AR parameters]
     B --> C[Assess the parameters]

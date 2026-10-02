@@ -5,15 +5,30 @@ callers to its internal S7 property layout."><script type="module">
   import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
 
   const renderMermaid = async () => {
-    const fencedBlocks = document.querySelectorAll(
-      "pre code.language-mermaid"
-    );
-
-    fencedBlocks.forEach((code) => {
-      const pre = code.parentElement;
-      pre.className = "mermaid";
-      pre.textContent = code.textContent;
+    // pkgdown renders a fenced ```mermaid code block as
+    // <pre class="mermaid"><code>...</code></pre>: the class lands on
+    // <pre> already, but the diagram source is left nested inside a
+    // <code> child. mermaid.run() reads the matched element's own
+    // text and cannot see through that nesting, so unwrap it first.
+    // (An earlier version of this script looked for
+    // "pre code.language-mermaid" instead, which pkgdown has never
+    // actually produced here and so never matched anything -- every
+    // diagram on this site is written as a raw <pre class="mermaid">
+    // HTML block for exactly this reason; this selector is a
+    // defensive fallback in case a fenced block is used again.)
+    document.querySelectorAll("pre.mermaid > code").forEach((code) => {
+      code.parentElement.textContent = code.textContent;
     });
+
+    // Fallback for the originally-assumed shape, in case a future
+    // pandoc/commonmark version renders fenced blocks differently.
+    document
+      .querySelectorAll("pre code.language-mermaid")
+      .forEach((code) => {
+        const pre = code.parentElement;
+        pre.className = "mermaid";
+        pre.textContent = code.textContent;
+      });
 
     mermaid.initialize({
       startOnLoad: false,
@@ -46,7 +61,7 @@ callers to its internal S7 property layout."><script type="module">
 
     <a class="navbar-brand me-2" href="../index.html">reach.postproc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
