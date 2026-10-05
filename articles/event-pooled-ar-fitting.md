@@ -272,6 +272,92 @@ and
 [`score_lead_times()`](https://jonpayneea.github.io/reach.postproc/reference/score_lead_times.md)
 before trusting it operationally.
 
+## Constraining undesired behaviour
+
+Weighted least squares has no concept of the Environment Agency’s
+root-acceptance criteria; it only minimises squared error. Nothing stops
+it handing back a fit with an excessively fast-decaying root, a
+borderline-persistent one, or an order outside what governance permits,
+if that is what best fits the pooled rows. Two guardrails are available,
+and they are deliberately not the same kind of thing.
+
+**`minimum_rows_per_parameter`** (default `10`, always enforced, not
+gated by `strict`) is a data-sufficiency floor: the pooled fit is
+rejected outright if the total number of regression rows across all
+events is fewer than `order * minimum_rows_per_parameter`. This is the
+same category of guard as the per-event length check already covered
+above, just applied to the pooled total rather than to each event
+individually — a near-singular
+[`lm.wfit()`](https://rdrr.io/r/stats/lmfit.html) solve from too few
+rows would look precise while meaning very little.
+
+``` r
+
+tryCatch(
+  fit_ar_from_events(list(short_a = rnorm(8), short_b = rnorm(8)), order = 3),
+  error = function(e) conditionMessage(e)
+)
+#> [1] "Only 10 regression rows are available across all events, against a minimum of order * minimum_rows_per_parameter = 30 for order = 3. Supply more or longer events, lower `order`, or lower `minimum_rows_per_parameter` deliberately if there is a specific reason to trust a thinner fit."
+```
+
+**`strict`** (default `FALSE`) is a governance gate, not a data check:
+set it `TRUE` and the function runs
+[`assess()`](https://jonpayneea.github.io/reach.postproc/reference/assess.md)
+on the fitted parameters before returning, erroring rather than handing
+back an unvalidated fit if it fails. It deliberately reuses
+[`assess()`](https://jonpayneea.github.io/reach.postproc/reference/assess.md)
+itself — the same single criteria every other construction path in this
+package is already expected to pass — rather than re-implementing or
+approximating those thresholds inside the estimator. That keeps
+[`assess()`](https://jonpayneea.github.io/reach.postproc/reference/assess.md)
+the single source of truth for what “acceptable” means, and keeps this
+function’s contract the same as every other construction path’s, where
+[`assess()`](https://jonpayneea.github.io/reach.postproc/reference/assess.md)
+is always a separate, explicit step the caller chooses to run. This is
+also why `strict` defaults to `FALSE` rather than `TRUE`: making it
+implicit here and nowhere else would make this one construction path
+behave differently from the rest for no reason tied to the estimator
+itself.
+
+``` r
+
+tryCatch(
+  fit_ar_from_events(events, order = 2, weighting = "variance", strict = TRUE),
+  error = function(e) conditionMessage(e)
+)
+#> [1] "strict = TRUE and the pooled fit failed assess(): Fail: All roots decay too quickly Inspect with root_table(roots(parameters)) to see which root(s) are responsible, then adjust the events, the order, or the assess() thresholds passed via `...` -- or re-run with strict = FALSE to accept the fit for further investigation rather than erroring."
+```
+
+Arguments passed via `...` are forwarded to
+[`assess()`](https://jonpayneea.github.io/reach.postproc/reference/assess.md)
+only when `strict = TRUE` — for instance, to work with criteria other
+than the defaults:
+
+``` r
+
+fit_ar_from_events(
+  events, order = 2, weighting = "variance", strict = TRUE,
+  minimum_useful_decay_time = 0, maximum_decay_time = Inf,
+  oscillation_ratio = 0, permitted_orders = 2L
+)
+#> <reach.postproc::ARParameterSet>
+#>  @ coefficients   : Named num [1:2] 1.08 -0.336
+#>  .. - attr(*, "names")= chr [1:2] "a_1" "a_2"
+#>  @ order          : int 2
+#>  @ sign_convention: chr "Deltares"
+#>  @ order_tolerance: num 1e-08
+#>  @ label          : chr "Event-pooled AR fit"
+```
+
+Passed without `strict = TRUE`, the same arguments are silently
+irrelevant to the fit, so they are instead flagged with a warning rather
+than doing nothing unannounced.
+
+Turn `strict` on by default in any workflow where the fit’s output will
+not be inspected by hand before use — exactly the same judgement the
+decision-guide vignette recommends applying to every other construction
+path.
+
 ## Scope and limitations
 
 - **Tier 1, experimental.** Not yet operationally reviewed; treat output
@@ -279,6 +365,8 @@ before trusting it operationally.
 - **Needs enough events.** A pooled fit from two or three short events
   carries little more information than a single one; the weighting
   scheme controls *influence*, not the total evidence available.
+  `minimum_rows_per_parameter` catches the most extreme case of this,
+  not the general one.
 - **`"variance"` requires non-degenerate variance.** An event with a
   flat (zero-variance) residual series cannot be weighted this way; use
   `"equal_event"` or `"none"`, or exclude that event.
@@ -287,6 +375,10 @@ before trusting it operationally.
   the higher-confidence path for everything PT is meant to capture; this
   function’s purpose is specifically event-only calibration, which PT
   cannot do, not a general substitute for it.
+- **`strict` does not make the fit good, only checked.** A pass means
+  the roots meet the acceptance criteria in the abstract, exactly as for
+  every other path — it says nothing about whether the update actually
+  helps on real events. Score against held-out events regardless.
 
 ## Key messages
 
@@ -303,3 +395,8 @@ before trusting it operationally.
     [`assess()`](https://jonpayneea.github.io/reach.postproc/reference/assess.md)
     and still benefits from scoring against held-out events, exactly
     like every other construction path in this package.
+5.  `minimum_rows_per_parameter` always guards against too little pooled
+    data; `strict` optionally makes
+    [`assess()`](https://jonpayneea.github.io/reach.postproc/reference/assess.md)
+    a hard gate inside the function itself, rather than a step a caller
+    could forget to run.

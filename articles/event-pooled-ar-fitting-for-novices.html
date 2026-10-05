@@ -73,7 +73,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">reach.postproc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -251,11 +251,49 @@ severe or unusual flood) worth treating separately rather than pooling
 in by default?</p>
 </div>
 <div class="section level2">
+<h2 id="can-it-go-wrong-and-can-that-be-stopped">Can it go wrong, and can that be stopped?<a class="anchor" aria-label="anchor" href="#can-it-go-wrong-and-can-that-be-stopped"></a>
+</h2>
+<p>Pooled least squares does not know anything about what makes a
+sensible AR parameter set for flood forecasting — it just finds the
+numbers that fit the data best. Left alone, it can hand back something
+nobody would actually want to use: too few events to trust, or
+coefficients that fail the same checks every other way of getting AR
+parameters has to pass. <code>fit_ar_from_events()</code> has two
+separate ways of catching this, and it is worth knowing which is
+which.</p>
+<p>The first is always on: if there simply isn’t enough data for the AR
+order you asked for, the function refuses outright rather than fitting
+something unreliable and handing it over anyway.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span></span>
+<span>  <span class="fu">fit_ar_from_events</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>short_a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">8</span><span class="op">)</span>, short_b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">8</span><span class="op">)</span><span class="op">)</span>, order <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,</span>
+<span>  error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">conditionMessage</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "Only 10 regression rows are available across all events, against a minimum of order * minimum_rows_per_parameter = 30 for order = 3. Supply more or longer events, lower `order`, or lower `minimum_rows_per_parameter` deliberately if there is a specific reason to trust a thinner fit."</span></span></code></pre></div>
+<p>The second is a switch you turn on yourself:
+<code>strict = TRUE</code>. With it on, the function runs the same
+<code><a href="../reference/assess.html">assess()</a></code> check described in <a href="setting-parameters-for-a-new-model.html">“Setting AR Parameters
+for a New Model”</a> itself, before handing anything back, and refuses
+to return a fit that fails it.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span></span>
+<span>  <span class="fu">fit_ar_from_events</span><span class="op">(</span><span class="va">events</span>, order <span class="op">=</span> <span class="fl">2</span>, weighting <span class="op">=</span> <span class="st">"variance"</span>, strict <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>  error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">conditionMessage</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "strict = TRUE and the pooled fit failed assess(): Fail: All roots decay too quickly Inspect with root_table(roots(parameters)) to see which root(s) are responsible, then adjust the events, the order, or the assess() thresholds passed via `...` -- or re-run with strict = FALSE to accept the fit for further investigation rather than erroring."</span></span></code></pre></div>
+<p>It defaults to off, not on, because every other way of getting AR
+parameters in this package leaves <code><a href="../reference/assess.html">assess()</a></code> as a separate
+step you run yourself — turning it on automatically just for this one
+function would make it behave differently from everything else for no
+good reason. Turn it on whenever you’re not planning to look at the fit
+by hand before trusting it.</p>
+</div>
+<div class="section level2">
 <h2 id="treat-the-result-like-any-other-parameter-set">Treat the result like any other parameter set<a class="anchor" aria-label="anchor" href="#treat-the-result-like-any-other-parameter-set"></a>
 </h2>
 <p>A pooled fit is still just an AR parameter set once it comes out the
 other end — it does not skip the usual checks:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">assessment</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/assess.html">assess</a></span><span class="op">(</span><span class="va">fitted</span>, permitted_orders <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2L</span>, <span class="fl">3L</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">assessment</span><span class="op">@</span><span class="va">summary</span></span>
 <span><span class="co">#&gt; [1] "Fail: All roots decay too quickly"</span></span></code></pre></div>
@@ -299,6 +337,10 @@ unusually large event from dominating; this function corrects for scale
 <li>The result is an ordinary AR parameter set — it still needs
 <code><a href="../reference/assess.html">assess()</a></code> and, where possible, scoring against real events,
 exactly like every other path.</li>
+<li>
+<code>fit_ar_from_events()</code> refuses to fit at all when there’s
+too little data, always; it can also be told to refuse to return a fit
+that fails <code><a href="../reference/assess.html">assess()</a></code>, via <code>strict = TRUE</code>.</li>
 </ol>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

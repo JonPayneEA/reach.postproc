@@ -73,7 +73,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">reach.postproc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -387,6 +387,76 @@ sufficient, and still worth scoring against held-out events with
 trusting it operationally.</p>
 </div>
 <div class="section level2">
+<h2 id="constraining-undesired-behaviour">Constraining undesired behaviour<a class="anchor" aria-label="anchor" href="#constraining-undesired-behaviour"></a>
+</h2>
+<p>Weighted least squares has no concept of the Environment Agency’s
+root-acceptance criteria; it only minimises squared error. Nothing stops
+it handing back a fit with an excessively fast-decaying root, a
+borderline-persistent one, or an order outside what governance permits,
+if that is what best fits the pooled rows. Two guardrails are available,
+and they are deliberately not the same kind of thing.</p>
+<p><strong><code>minimum_rows_per_parameter</code></strong> (default
+<code>10</code>, always enforced, not gated by <code>strict</code>) is a
+data-sufficiency floor: the pooled fit is rejected outright if the total
+number of regression rows across all events is fewer than
+<code>order * minimum_rows_per_parameter</code>. This is the same
+category of guard as the per-event length check already covered above,
+just applied to the pooled total rather than to each event individually
+— a near-singular <code><a href="https://rdrr.io/r/stats/lmfit.html" class="external-link">lm.wfit()</a></code> solve from too few rows would
+look precise while meaning very little.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span></span>
+<span>  <span class="fu">fit_ar_from_events</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>short_a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">8</span><span class="op">)</span>, short_b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">8</span><span class="op">)</span><span class="op">)</span>, order <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,</span>
+<span>  error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">conditionMessage</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "Only 10 regression rows are available across all events, against a minimum of order * minimum_rows_per_parameter = 30 for order = 3. Supply more or longer events, lower `order`, or lower `minimum_rows_per_parameter` deliberately if there is a specific reason to trust a thinner fit."</span></span></code></pre></div>
+<p><strong><code>strict</code></strong> (default <code>FALSE</code>) is
+a governance gate, not a data check: set it <code>TRUE</code> and the
+function runs <code><a href="../reference/assess.html">assess()</a></code> on the fitted parameters before
+returning, erroring rather than handing back an unvalidated fit if it
+fails. It deliberately reuses <code><a href="../reference/assess.html">assess()</a></code> itself — the same
+single criteria every other construction path in this package is already
+expected to pass — rather than re-implementing or approximating those
+thresholds inside the estimator. That keeps <code><a href="../reference/assess.html">assess()</a></code> the
+single source of truth for what “acceptable” means, and keeps this
+function’s contract the same as every other construction path’s, where
+<code><a href="../reference/assess.html">assess()</a></code> is always a separate, explicit step the caller
+chooses to run. This is also why <code>strict</code> defaults to
+<code>FALSE</code> rather than <code>TRUE</code>: making it implicit
+here and nowhere else would make this one construction path behave
+differently from the rest for no reason tied to the estimator
+itself.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span></span>
+<span>  <span class="fu">fit_ar_from_events</span><span class="op">(</span><span class="va">events</span>, order <span class="op">=</span> <span class="fl">2</span>, weighting <span class="op">=</span> <span class="st">"variance"</span>, strict <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>  error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">conditionMessage</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "strict = TRUE and the pooled fit failed assess(): Fail: All roots decay too quickly Inspect with root_table(roots(parameters)) to see which root(s) are responsible, then adjust the events, the order, or the assess() thresholds passed via `...` -- or re-run with strict = FALSE to accept the fit for further investigation rather than erroring."</span></span></code></pre></div>
+<p>Arguments passed via <code>...</code> are forwarded to
+<code><a href="../reference/assess.html">assess()</a></code> only when <code>strict = TRUE</code> — for
+instance, to work with criteria other than the defaults:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">fit_ar_from_events</span><span class="op">(</span></span>
+<span>  <span class="va">events</span>, order <span class="op">=</span> <span class="fl">2</span>, weighting <span class="op">=</span> <span class="st">"variance"</span>, strict <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  minimum_useful_decay_time <span class="op">=</span> <span class="fl">0</span>, maximum_decay_time <span class="op">=</span> <span class="cn">Inf</span>,</span>
+<span>  oscillation_ratio <span class="op">=</span> <span class="fl">0</span>, permitted_orders <span class="op">=</span> <span class="fl">2L</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;reach.postproc::ARParameterSet&gt;</span></span>
+<span><span class="co">#&gt;  @ coefficients   : Named num [1:2] 1.08 -0.336</span></span>
+<span><span class="co">#&gt;  .. - attr(*, "names")= chr [1:2] "a_1" "a_2"</span></span>
+<span><span class="co">#&gt;  @ order          : int 2</span></span>
+<span><span class="co">#&gt;  @ sign_convention: chr "Deltares"</span></span>
+<span><span class="co">#&gt;  @ order_tolerance: num 1e-08</span></span>
+<span><span class="co">#&gt;  @ label          : chr "Event-pooled AR fit"</span></span></code></pre></div>
+<p>Passed without <code>strict = TRUE</code>, the same arguments are
+silently irrelevant to the fit, so they are instead flagged with a
+warning rather than doing nothing unannounced.</p>
+<p>Turn <code>strict</code> on by default in any workflow where the
+fit’s output will not be inspected by hand before use — exactly the same
+judgement the decision-guide vignette recommends applying to every other
+construction path.</p>
+</div>
+<div class="section level2">
 <h2 id="scope-and-limitations">Scope and limitations<a class="anchor" aria-label="anchor" href="#scope-and-limitations"></a>
 </h2>
 <ul>
@@ -398,7 +468,8 @@ calibration.</li>
 <strong>Needs enough events.</strong> A pooled fit from two or three
 short events carries little more information than a single one; the
 weighting scheme controls <em>influence</em>, not the total evidence
-available.</li>
+available. <code>minimum_rows_per_parameter</code> catches the most
+extreme case of this, not the general one.</li>
 <li>
 <strong><code>"variance"</code> requires non-degenerate
 variance.</strong> An event with a flat (zero-variance) residual series
@@ -410,6 +481,12 @@ enough to accumulate a genuine residual history, PT’s full-record fit
 remains the higher-confidence path for everything PT is meant to
 capture; this function’s purpose is specifically event-only calibration,
 which PT cannot do, not a general substitute for it.</li>
+<li>
+<strong><code>strict</code> does not make the fit good, only
+checked.</strong> A pass means the roots meet the acceptance criteria in
+the abstract, exactly as for every other path — it says nothing about
+whether the update actually helps on real events. Score against held-out
+events regardless.</li>
 </ul>
 </div>
 <div class="section level2">
@@ -428,6 +505,11 @@ that held up under a stress test with one atypical event.</li>
 <li>The output still has to pass <code><a href="../reference/assess.html">assess()</a></code> and still
 benefits from scoring against held-out events, exactly like every other
 construction path in this package.</li>
+<li>
+<code>minimum_rows_per_parameter</code> always guards against too
+little pooled data; <code>strict</code> optionally makes
+<code><a href="../reference/assess.html">assess()</a></code> a hard gate inside the function itself, rather
+than a step a caller could forget to run.</li>
 </ol>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

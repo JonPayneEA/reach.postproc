@@ -59,7 +59,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">reach.postproc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,6 +85,14 @@
       <small>Source: <a href="https://github.com/JonPayneEA/reach.postproc/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.11.1" id="reachpostproc-0111">reach.postproc 0.11.1<a class="anchor" aria-label="anchor" href="#reachpostproc-0111"></a></h2>
+<div class="section level3">
+<h3 id="changes-0-11-1">Changes<a class="anchor" aria-label="anchor" href="#changes-0-11-1"></a></h3>
+<ul><li>
+<code>fit_ar_from_events()</code> gains two guardrails against an estimator that could otherwise hand back an unstable or ill-conditioned fit without complaint. <code>minimum_rows_per_parameter</code> (default <code>10</code>, always enforced) rejects a pooled fit with too few regression rows relative to <code>order</code>, the same category of guard as the existing per-event length check, just applied to the pooled total. <code>strict</code> (default <code>FALSE</code>, opt-in) runs <code><a href="../reference/assess.html">assess()</a></code> internally and errors rather than returning a fit that fails it, reusing the package’s single root-acceptance criteria rather than duplicating any of its thresholds inside the estimator. <code>strict</code> defaults to <code>FALSE</code>, not <code>TRUE</code>, to keep this function’s contract consistent with every other construction path, where <code><a href="../reference/assess.html">assess()</a></code> is always a separate, explicit step. Extra arguments are forwarded to <code><a href="../reference/assess.html">assess()</a></code> via <code>...</code> when <code>strict = TRUE</code>, and ignored (with a warning) otherwise.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.11.0" id="reachpostproc-0110">reach.postproc 0.11.0<a class="anchor" aria-label="anchor" href="#reachpostproc-0110"></a></h2>
 <div class="section level3">

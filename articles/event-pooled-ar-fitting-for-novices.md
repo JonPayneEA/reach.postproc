@@ -150,6 +150,54 @@ representative, or is something about it (a data problem, an unusually
 severe or unusual flood) worth treating separately rather than pooling
 in by default?
 
+## Can it go wrong, and can that be stopped?
+
+Pooled least squares does not know anything about what makes a sensible
+AR parameter set for flood forecasting — it just finds the numbers that
+fit the data best. Left alone, it can hand back something nobody would
+actually want to use: too few events to trust, or coefficients that fail
+the same checks every other way of getting AR parameters has to pass.
+`fit_ar_from_events()` has two separate ways of catching this, and it is
+worth knowing which is which.
+
+The first is always on: if there simply isn’t enough data for the AR
+order you asked for, the function refuses outright rather than fitting
+something unreliable and handing it over anyway.
+
+``` r
+
+tryCatch(
+  fit_ar_from_events(list(short_a = rnorm(8), short_b = rnorm(8)), order = 3),
+  error = function(e) conditionMessage(e)
+)
+#> [1] "Only 10 regression rows are available across all events, against a minimum of order * minimum_rows_per_parameter = 30 for order = 3. Supply more or longer events, lower `order`, or lower `minimum_rows_per_parameter` deliberately if there is a specific reason to trust a thinner fit."
+```
+
+The second is a switch you turn on yourself: `strict = TRUE`. With it
+on, the function runs the same
+[`assess()`](https://jonpayneea.github.io/reach.postproc/reference/assess.md)
+check described in [“Setting AR Parameters for a New
+Model”](https://jonpayneea.github.io/reach.postproc/articles/setting-parameters-for-a-new-model.md)
+itself, before handing anything back, and refuses to return a fit that
+fails it.
+
+``` r
+
+tryCatch(
+  fit_ar_from_events(events, order = 2, weighting = "variance", strict = TRUE),
+  error = function(e) conditionMessage(e)
+)
+#> [1] "strict = TRUE and the pooled fit failed assess(): Fail: All roots decay too quickly Inspect with root_table(roots(parameters)) to see which root(s) are responsible, then adjust the events, the order, or the assess() thresholds passed via `...` -- or re-run with strict = FALSE to accept the fit for further investigation rather than erroring."
+```
+
+It defaults to off, not on, because every other way of getting AR
+parameters in this package leaves
+[`assess()`](https://jonpayneea.github.io/reach.postproc/reference/assess.md)
+as a separate step you run yourself — turning it on automatically just
+for this one function would make it behave differently from everything
+else for no good reason. Turn it on whenever you’re not planning to look
+at the fit by hand before trusting it.
+
 ## Treat the result like any other parameter set
 
 A pooled fit is still just an AR parameter set once it comes out the
@@ -206,3 +254,8 @@ calibration that only “sees” flood behaviour.
     [`assess()`](https://jonpayneea.github.io/reach.postproc/reference/assess.md)
     and, where possible, scoring against real events, exactly like every
     other path.
+5.  `fit_ar_from_events()` refuses to fit at all when there’s too little
+    data, always; it can also be told to refuse to return a fit that
+    fails
+    [`assess()`](https://jonpayneea.github.io/reach.postproc/reference/assess.md),
+    via `strict = TRUE`.
