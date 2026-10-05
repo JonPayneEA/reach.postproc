@@ -380,8 +380,9 @@ Keep these limitations in view:
   returns a published standard point on that family.
 - [`standard_family_ar_table()`](https://jonpayneea.github.io/reach.postproc/reference/standard_family_ar_table.md)
   lists the full published standard catalogue.
-- `fit_ar_from_events()` fits AR coefficients by pooled weighted least
-  squares across event windows only.
+- [`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md)
+  fits AR coefficients by pooled weighted least squares across event
+  windows only.
 
 ### Analysis and assessment
 
@@ -445,8 +446,9 @@ The package contains ten vignettes:
 - **Selecting a Default-Family Parameter Set** explains the continuous
   analytical family the published default parameter sets are drawn from.
 - **Event-Pooled AR Fitting: Mathematics and Validation** covers the
-  weighted least squares construction behind `fit_ar_from_events()` and
-  the numerical evidence behind its default weighting scheme.
+  weighted least squares construction behind
+  [`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md)
+  and the numerical evidence behind its default weighting scheme.
 - **Event Triggered and Time Jumped AR** covers the experimental ET-AR
   and TJ-AR methods.
 

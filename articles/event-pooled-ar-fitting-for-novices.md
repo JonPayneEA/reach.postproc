@@ -8,9 +8,10 @@ explains what AR does. [“Setting AR Parameters for a New
 Model”](https://jonpayneea.github.io/reach.postproc/articles/setting-parameters-for-a-new-model.md)
 explains the usual ways to get AR coefficients for a model. This
 vignette covers one more option that sits alongside those:
-`fit_ar_from_events()`, a way of calibrating AR coefficients using only
-flood events, rather than a model’s whole history. No background in
-time-series mathematics is assumed.
+[`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md),
+a way of calibrating AR coefficients using only flood events, rather
+than a model’s whole history. No background in time-series mathematics
+is assumed.
 
 ## The problem this solves
 
@@ -34,9 +35,10 @@ flowchart LR
     D --> E[Fit mostly reflects normal-flow behaviour]
 ```
 
-`fit_ar_from_events()` is a different way of fitting: give it only the
-event windows you actually care about, and it fits coefficients from
-those alone. Normal and low flow never get a vote.
+[`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md)
+is a different way of fitting: give it only the event windows you
+actually care about, and it fits coefficients from those alone. Normal
+and low flow never get a vote.
 
 ## Why not just glue the events together?
 
@@ -63,10 +65,11 @@ flowchart LR
     B --> C[AR fit wrongly treats these as consecutive timesteps]
 ```
 
-`fit_ar_from_events()` avoids this altogether. It keeps every event’s
-own history separate when building the fit, and only combines the
-*results* across events, never the raw timesteps. No event’s ending ever
-gets treated as another event’s beginning.
+[`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md)
+avoids this altogether. It keeps every event’s own history separate when
+building the fit, and only combines the *results* across events, never
+the raw timesteps. No event’s ending ever gets treated as another
+event’s beginning.
 
 ## Why weighting matters
 
@@ -84,10 +87,11 @@ toward its own behaviour, even if it is only one event among many,
 unless the fitting process specifically corrects for how loud — how
 large in scale — each event’s errors are, not just how long it lasted.
 
-This is exactly why `fit_ar_from_events()` weights each event by the
-inverse of its own internal variance by default
-(`weighting = "variance"`). It was checked with a deliberately extreme
-test case before this function was written: one highly atypical,
+This is exactly why
+[`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md)
+weights each event by the inverse of its own internal variance by
+default (`weighting = "variance"`). It was checked with a deliberately
+extreme test case before this function was written: one highly atypical,
 much-larger event among many ordinary ones. Weighting by row count alone
 barely helped; only weighting by variance kept the fit close to what the
 ordinary events actually shared. See [“Event-Pooled AR Fitting:
@@ -130,8 +134,9 @@ history, not projecting a forecast forward from today.
 
 ## Reading the output
 
-`fit_ar_from_events()` attaches a table showing how much each event
-actually contributed to the fit:
+[`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md)
+attaches a table showing how much each event actually contributed to the
+fit:
 
 ``` r
 
@@ -157,8 +162,9 @@ AR parameter set for flood forecasting — it just finds the numbers that
 fit the data best. Left alone, it can hand back something nobody would
 actually want to use: too few events to trust, or coefficients that fail
 the same checks every other way of getting AR parameters has to pass.
-`fit_ar_from_events()` has two separate ways of catching this, and it is
-worth knowing which is which.
+[`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md)
+has two separate ways of catching this, and it is worth knowing which is
+which.
 
 The first is always on: if there simply isn’t enough data for the AR
 order you asked for, the function refuses outright rather than fitting
@@ -236,8 +242,9 @@ flowchart TD
 This is not a replacement for PT in general. If a model has run long
 enough to have a full residual history and there’s no particular concern
 about normal flow diluting the fit, PT remains the higher-confidence
-choice. Reach for `fit_ar_from_events()` specifically when you want
-calibration that only “sees” flood behaviour.
+choice. Reach for
+[`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md)
+specifically when you want calibration that only “sees” flood behaviour.
 
 ## Key messages
 
@@ -245,7 +252,8 @@ calibration that only “sees” flood behaviour.
     of that record, by time — shape the fit of a model meant to correct
     floods specifically.
 2.  Pasting events together before fitting invents a false “just
-    happened before” relationship at every join; `fit_ar_from_events()`
+    happened before” relationship at every join;
+    [`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md)
     keeps events separate while fitting.
 3.  Counting events equally by length is not enough to stop one
     unusually large event from dominating; this function corrects for
@@ -254,8 +262,8 @@ calibration that only “sees” flood behaviour.
     [`assess()`](https://jonpayneea.github.io/reach.postproc/reference/assess.md)
     and, where possible, scoring against real events, exactly like every
     other path.
-5.  `fit_ar_from_events()` refuses to fit at all when there’s too little
-    data, always; it can also be told to refuse to return a fit that
-    fails
+5.  [`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md)
+    refuses to fit at all when there’s too little data, always; it can
+    also be told to refuse to return a fit that fails
     [`assess()`](https://jonpayneea.github.io/reach.postproc/reference/assess.md),
     via `strict = TRUE`.

@@ -120,7 +120,7 @@
 Modellers”</a> explains what AR does. <a href="setting-parameters-for-a-new-model.html">“Setting AR Parameters
 for a New Model”</a> explains the usual ways to get AR coefficients for
 a model. This vignette covers one more option that sits alongside those:
-<code>fit_ar_from_events()</code>, a way of calibrating AR coefficients
+<code><a href="../reference/fit_ar_from_events.html">fit_ar_from_events()</a></code>, a way of calibrating AR coefficients
 using only flood events, rather than a model’s whole history. No
 background in time-series mathematics is assumed.</p>
 </div>
@@ -144,7 +144,7 @@ flowchart LR
     C --&gt; D
     D --&gt; E[Fit mostly reflects normal-flow behaviour]
 </pre>
-<p><code>fit_ar_from_events()</code> is a different way of fitting: give
+<p><code><a href="../reference/fit_ar_from_events.html">fit_ar_from_events()</a></code> is a different way of fitting: give
 it only the event windows you actually care about, and it fits
 coefficients from those alone. Normal and low flow never get a vote.</p>
 </div>
@@ -170,7 +170,7 @@ flowchart LR
     A -. invented adjacency .-&gt; B
     B --&gt; C[AR fit wrongly treats these as consecutive timesteps]
 </pre>
-<p><code>fit_ar_from_events()</code> avoids this altogether. It keeps
+<p><code><a href="../reference/fit_ar_from_events.html">fit_ar_from_events()</a></code> avoids this altogether. It keeps
 every event’s own history separate when building the fit, and only
 combines the <em>results</em> across events, never the raw timesteps. No
 event’s ending ever gets treated as another event’s beginning.</p>
@@ -191,7 +191,7 @@ pooled fit toward its own behaviour, even if it is only one event among
 many, unless the fitting process specifically corrects for how loud —
 how large in scale — each event’s errors are, not just how long it
 lasted.</p>
-<p>This is exactly why <code>fit_ar_from_events()</code> weights each
+<p>This is exactly why <code><a href="../reference/fit_ar_from_events.html">fit_ar_from_events()</a></code> weights each
 event by the inverse of its own internal variance by default
 (<code>weighting = "variance"</code>). It was checked with a
 deliberately extreme test case before this function was written: one
@@ -220,7 +220,7 @@ reproducible in your own R session.</p>
 <span>  flood_2021 <span class="op">=</span> <span class="fu">simulate_event</span><span class="op">(</span><span class="fl">60</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">fitted</span> <span class="op">&lt;-</span> <span class="fu">fit_ar_from_events</span><span class="op">(</span><span class="va">events</span>, order <span class="op">=</span> <span class="fl">2</span>, weighting <span class="op">=</span> <span class="st">"variance"</span><span class="op">)</span></span>
+<span><span class="va">fitted</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_ar_from_events.html">fit_ar_from_events</a></span><span class="op">(</span><span class="va">events</span>, order <span class="op">=</span> <span class="fl">2</span>, weighting <span class="op">=</span> <span class="st">"variance"</span><span class="op">)</span></span>
 <span><span class="va">fitted</span><span class="op">@</span><span class="va">coefficients</span></span>
 <span><span class="co">#&gt;        a_1        a_2 </span></span>
 <span><span class="co">#&gt;  0.8606041 -0.1203371</span></span></code></pre></div>
@@ -234,7 +234,7 @@ from today.</p>
 <div class="section level2">
 <h2 id="reading-the-output">Reading the output<a class="anchor" aria-label="anchor" href="#reading-the-output"></a>
 </h2>
-<p><code>fit_ar_from_events()</code> attaches a table showing how much
+<p><code><a href="../reference/fit_ar_from_events.html">fit_ar_from_events()</a></code> attaches a table showing how much
 each event actually contributed to the fit:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">fitted</span>, <span class="st">"fit_per_event"</span><span class="op">)</span></span>
@@ -258,7 +258,7 @@ sensible AR parameter set for flood forecasting — it just finds the
 numbers that fit the data best. Left alone, it can hand back something
 nobody would actually want to use: too few events to trust, or
 coefficients that fail the same checks every other way of getting AR
-parameters has to pass. <code>fit_ar_from_events()</code> has two
+parameters has to pass. <code><a href="../reference/fit_ar_from_events.html">fit_ar_from_events()</a></code> has two
 separate ways of catching this, and it is worth knowing which is
 which.</p>
 <p>The first is always on: if there simply isn’t enough data for the AR
@@ -266,7 +266,7 @@ order you asked for, the function refuses outright rather than fitting
 something unreliable and handing it over anyway.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span></span>
-<span>  <span class="fu">fit_ar_from_events</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>short_a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">8</span><span class="op">)</span>, short_b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">8</span><span class="op">)</span><span class="op">)</span>, order <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="../reference/fit_ar_from_events.html">fit_ar_from_events</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>short_a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">8</span><span class="op">)</span>, short_b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">8</span><span class="op">)</span><span class="op">)</span>, order <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>,</span>
 <span>  error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">conditionMessage</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "Only 10 regression rows are available across all events, against a minimum of order * minimum_rows_per_parameter = 30 for order = 3. Supply more or longer events, lower `order`, or lower `minimum_rows_per_parameter` deliberately if there is a specific reason to trust a thinner fit."</span></span></code></pre></div>
@@ -277,7 +277,7 @@ for a New Model”</a> itself, before handing anything back, and refuses
 to return a fit that fails it.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span></span>
-<span>  <span class="fu">fit_ar_from_events</span><span class="op">(</span><span class="va">events</span>, order <span class="op">=</span> <span class="fl">2</span>, weighting <span class="op">=</span> <span class="st">"variance"</span>, strict <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="../reference/fit_ar_from_events.html">fit_ar_from_events</a></span><span class="op">(</span><span class="va">events</span>, order <span class="op">=</span> <span class="fl">2</span>, weighting <span class="op">=</span> <span class="st">"variance"</span>, strict <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>  error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">conditionMessage</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "strict = TRUE and the pooled fit failed assess(): Fail: All roots decay too quickly Inspect with root_table(roots(parameters)) to see which root(s) are responsible, then adjust the events, the order, or the assess() thresholds passed via `...` -- or re-run with strict = FALSE to accept the fit for further investigation rather than erroring."</span></span></code></pre></div>
@@ -317,7 +317,7 @@ flowchart TD
 <p>This is not a replacement for PT in general. If a model has run long
 enough to have a full residual history and there’s no particular concern
 about normal flow diluting the fit, PT remains the higher-confidence
-choice. Reach for <code>fit_ar_from_events()</code> specifically when
+choice. Reach for <code><a href="../reference/fit_ar_from_events.html">fit_ar_from_events()</a></code> specifically when
 you want calibration that only “sees” flood behaviour.</p>
 </div>
 <div class="section level2">
@@ -329,7 +329,7 @@ of that record, by time — shape the fit of a model meant to correct
 floods specifically.</li>
 <li>Pasting events together before fitting invents a false “just
 happened before” relationship at every join;
-<code>fit_ar_from_events()</code> keeps events separate while
+<code><a href="../reference/fit_ar_from_events.html">fit_ar_from_events()</a></code> keeps events separate while
 fitting.</li>
 <li>Counting events equally by length is not enough to stop one
 unusually large event from dominating; this function corrects for scale
@@ -338,7 +338,7 @@ unusually large event from dominating; this function corrects for scale
 <code><a href="../reference/assess.html">assess()</a></code> and, where possible, scoring against real events,
 exactly like every other path.</li>
 <li>
-<code>fit_ar_from_events()</code> refuses to fit at all when there’s
+<code><a href="../reference/fit_ar_from_events.html">fit_ar_from_events()</a></code> refuses to fit at all when there’s
 too little data, always; it can also be told to refuse to return a fit
 that fails <code><a href="../reference/assess.html">assess()</a></code>, via <code>strict = TRUE</code>.</li>
 </ol>

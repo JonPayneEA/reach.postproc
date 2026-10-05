@@ -2,11 +2,12 @@
 
 ## Purpose
 
-`fit_ar_from_events()` estimates AR coefficients directly from a set of
-event windows, by weighted least squares across all of them at once.
-This article records why it exists, the mathematics behind it, and the
-numerical evidence that led to its default weighting scheme. It assumes
-familiarity with [“Mathematical and Developer
+[`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md)
+estimates AR coefficients directly from a set of event windows, by
+weighted least squares across all of them at once. This article records
+why it exists, the mathematics behind it, and the numerical evidence
+that led to its default weighting scheme. It assumes familiarity with
+[“Mathematical and Developer
 Validation”](https://jonpayneea.github.io/reach.postproc/articles/developer-mathematics.md)
 and the decision guide in [“Setting AR Parameters for a New
 Model”](https://jonpayneea.github.io/reach.postproc/articles/setting-parameters-for-a-new-model.md).
@@ -27,13 +28,14 @@ Model”](https://jonpayneea.github.io/reach.postproc/articles/setting-parameter
 — shapes the calibration of a model meant to correct flood events
 specifically.
 
-`fit_ar_from_events()` is a narrow, deliberate exception to the
-no-estimator design, built to close exactly that gap, transparently,
-inside a package whose mathematics is meant to be reviewed rather than
-worked around from the outside. It is not a general replacement for PT:
-it has no access to a model’s full operational history, only the event
-windows supplied to it, and it makes no claim to outperform PT once a
-genuine residual series exists to fit PT against.
+[`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md)
+is a narrow, deliberate exception to the no-estimator design, built to
+close exactly that gap, transparently, inside a package whose
+mathematics is meant to be reviewed rather than worked around from the
+outside. It is not a general replacement for PT: it has no access to a
+model’s full operational history, only the event windows supplied to it,
+and it makes no claim to outperform PT once a genuine residual series
+exists to fit PT against.
 
 ## The problem with naive concatenation
 
@@ -70,9 +72,10 @@ data.table(
 That single invented pair is one row out of many, but every additional
 event boundary adds another one, and each is a *false* observation of
 how the process evolves from one timestep to the next.
-`fit_ar_from_events()` avoids this by never forming a regression row
-that spans two events: every event builds its own lagged design matrix
-in isolation before the rows are pooled.
+[`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md)
+avoids this by never forming a regression row that spans two events:
+every event builds its own lagged design matrix in isolation before the
+rows are pooled.
 
 ``` mermaid
 
@@ -106,7 +109,9 @@ because no row is ever built across that gap.
 ## Weighted least squares across events
 
 Stacking every event’s rows gives one design matrix $`X`$ and response
-$`y`$, and `fit_ar_from_events()` fits
+$`y`$, and
+[`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md)
+fits
 
 ``` math
 \hat a = \arg\min_a \sum_i w_i \left(y_i - x_i^\top a\right)^2
@@ -186,10 +191,10 @@ obvious-looking `"equal_event"`.
 
 ## Reading the per-event diagnostics
 
-`fit_ar_from_events()` attaches `fit_per_event`, a table of each event’s
-row count, variance and realised share of the total fitting weight, so a
-fit quietly dominated by one event is visible rather than silently
-trusted:
+[`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md)
+attaches `fit_per_event`, a table of each event’s row count, variance
+and realised share of the total fitting weight, so a fit quietly
+dominated by one event is visible rather than silently trusted:
 
 ``` r
 
@@ -383,8 +388,9 @@ path.
 ## Key messages
 
 1.  Concatenating events before fitting invents a false lag-1
-    relationship at every boundary; `fit_ar_from_events()` avoids this
-    by building each event’s design matrix in isolation.
+    relationship at every boundary;
+    [`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md)
+    avoids this by building each event’s design matrix in isolation.
 2.  Row-count weighting (`"equal_event"`) looks like it should prevent
     one event from dominating a pooled fit, but does not: magnitude, not
     just row count, needs to be controlled for.

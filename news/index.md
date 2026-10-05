@@ -21,13 +21,13 @@
 
 ### Changes
 
-- `fit_ar_from_events()` gains two guardrails against an estimator that
-  could otherwise hand back an unstable or ill-conditioned fit without
-  complaint. `minimum_rows_per_parameter` (default `10`, always
-  enforced) rejects a pooled fit with too few regression rows relative
-  to `order`, the same category of guard as the existing per-event
-  length check, just applied to the pooled total. `strict` (default
-  `FALSE`, opt-in) runs
+- [`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md)
+  gains two guardrails against an estimator that could otherwise hand
+  back an unstable or ill-conditioned fit without complaint.
+  `minimum_rows_per_parameter` (default `10`, always enforced) rejects a
+  pooled fit with too few regression rows relative to `order`, the same
+  category of guard as the existing per-event length check, just applied
+  to the pooled total. `strict` (default `FALSE`, opt-in) runs
   [`assess()`](https://jonpayneea.github.io/reach.postproc/reference/assess.md)
   internally and errors rather than returning a fit that fails it,
   reusing the package’s single root-acceptance criteria rather than
@@ -44,24 +44,24 @@
 
 ### New functions
 
-- `fit_ar_from_events()`: fits AR coefficients directly from a set of
-  event windows, by weighted least squares across all of them at once,
-  with event boundaries respected by construction (each event builds its
-  own lagged design matrix in isolation; no regression row is ever
-  formed across an event boundary, unlike naively concatenating events
-  into one series first). This is a deliberate, narrow exception to
-  `reach.postproc` otherwise having no AR estimator of its own:
-  everywhere else, coefficients come from published defaults, a
-  default-family construction, or Performance Testing (PT), which fits
-  across a model’s whole residual record with no way to restrict to
-  events. Defaults to `weighting = "variance"` (each event’s rows
-  weighted by `1 / (n_rows * variance)`) rather than the more
-  obvious-looking `weighting = "equal_event"` (`1 / n_rows`), because a
-  stress test run before this function was written showed row-count
-  weighting alone barely protects a pooled fit from being dominated by
-  one atypical, much-larger-magnitude event, while variance weighting
-  does. Returns an ordinary `ARParameterSet` with per-event fit
-  diagnostics attached (`fit_weighting`, `fit_total_rows`,
+- [`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md):
+  fits AR coefficients directly from a set of event windows, by weighted
+  least squares across all of them at once, with event boundaries
+  respected by construction (each event builds its own lagged design
+  matrix in isolation; no regression row is ever formed across an event
+  boundary, unlike naively concatenating events into one series first).
+  This is a deliberate, narrow exception to `reach.postproc` otherwise
+  having no AR estimator of its own: everywhere else, coefficients come
+  from published defaults, a default-family construction, or Performance
+  Testing (PT), which fits across a model’s whole residual record with
+  no way to restrict to events. Defaults to `weighting = "variance"`
+  (each event’s rows weighted by `1 / (n_rows * variance)`) rather than
+  the more obvious-looking `weighting = "equal_event"` (`1 / n_rows`),
+  because a stress test run before this function was written showed
+  row-count weighting alone barely protects a pooled fit from being
+  dominated by one atypical, much-larger-magnitude event, while variance
+  weighting does. Returns an ordinary `ARParameterSet` with per-event
+  fit diagnostics attached (`fit_weighting`, `fit_total_rows`,
   `fit_n_events`, `fit_residual_se`, `fit_per_event`), so a fit
   dominated by one event is visible rather than silently trusted.
 

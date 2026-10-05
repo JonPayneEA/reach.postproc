@@ -48,6 +48,8 @@
   : Extract an ET-AR forecast series
 - [`event_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/event_ar_parameters.md)
   : Construct ET-AR event parameters from catchment response time
+- [`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md)
+  : Fit AR coefficients by pooling weighted least squares across events
 - [`fixed_lead_ar()`](https://jonpayneea.github.io/reach.postproc/reference/fixed_lead_ar.md)
   : Calculate fixed lead-time AR updates
 - [`forecast_ar()`](https://jonpayneea.github.io/reach.postproc/reference/forecast_ar.md)
