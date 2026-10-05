@@ -383,6 +383,8 @@ Keep these limitations in view:
 - [`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md)
   fits AR coefficients by pooled weighted least squares across event
   windows only.
+- `feh_time_to_peak()` and `feh_lag()` estimate FEH catchment response
+  timescales from standard descriptors.
 
 ### Analysis and assessment
 
@@ -407,6 +409,10 @@ Keep these limitations in view:
   calculates forecast-performance metrics.
 - [`plot_lead_times()`](https://jonpayneea.github.io/reach.postproc/reference/plot_lead_times.md)
   plots observations, simulations and updates.
+- `single_origin_ar_update()` projects one AR update forward from a
+  single forecast origin.
+- `plot_single_origin_update()` plots that single-origin update against
+  the observed and simulated series.
 
 ### Result accessors
 

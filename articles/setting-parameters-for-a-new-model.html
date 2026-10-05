@@ -73,7 +73,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">reach.postproc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -190,7 +190,9 @@ it’s a named, published point rather than a bespoke number.</p>
 <p><code><a href="../reference/default_family_ar_parameters.html">default_family_ar_parameters()</a></code>, same fixed shape as
 option 2 (fixed <code>a_1</code>, fixed fast root) but driven by a
 specific principal decay estimate — catchment response time, FEH lag,
-event analysis — rather than snapping to a published label.</p>
+event analysis — rather than snapping to a published label. <a href="../reference/feh_lag.html"><code>feh_lag()</code></a> (via <a href="../reference/feh_time_to_peak.html"><code>feh_time_to_peak()</code></a>)
+calculates FEH lag from standard catchment descriptors, where those are
+available, as one defensible source for this estimate.</p>
 <p><strong>Needs:</strong> one defensible timescale estimate for the
 catchment. Does not need a residual series.</p>
 <p><strong>Confidence:</strong> a step up from option 2 if the timescale

@@ -59,7 +59,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">reach.postproc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,6 +85,21 @@
       <small>Source: <a href="https://github.com/JonPayneEA/reach.postproc/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.12.0" id="reachpostproc-0120">reach.postproc 0.12.0<a class="anchor" aria-label="anchor" href="#reachpostproc-0120"></a></h2>
+<div class="section level3">
+<h3 id="new-functions-0-12-0">New functions<a class="anchor" aria-label="anchor" href="#new-functions-0-12-0"></a></h3>
+<ul><li>
+<code>feh_time_to_peak()</code> and <code>feh_lag()</code>: estimate FEH (Flood Estimation Handbook) time-to-peak and lag from standard catchment descriptors (<code>PROPWET</code>, <code>DPLBAR</code>, <code>DPSBAR</code>, <code>URBEXT</code>). Ported from a team member’s standalone analysis script. This is the “proper FEH… time-to-peak calculation” <code><a href="../reference/response_time_steps_from_tp.html">response_time_steps_from_tp()</a></code>’s own documentation has flagged as missing since that function was written; <code><a href="../reference/response_time_steps_from_tp.html">response_time_steps_from_tp()</a></code> itself is unchanged, and its time-to-peak/AR-decay-time approximation is exactly as provisional as before – this only gives its input a traceable source instead of a guess.</li>
+<li>
+<code>single_origin_ar_update()</code> and <code>plot_single_origin_update()</code>: project one AR update forward from a single forecast origin to the end of an aligned series, and plot it against the observed and simulated hydrograph. Deliberately not a replacement for <code><a href="../reference/fixed_lead_ar.html">fixed_lead_ar()</a></code>: <code><a href="../reference/fixed_lead_ar.html">fixed_lead_ar()</a></code> reconstructs what a fixed-lead update would have said at <em>every</em> timestep, retrospectively, for scoring; this issues exactly <em>one</em> forecast, from <em>one</em> origin, projected forward uninterrupted – closer to what an operational forecaster sees at a single point in time. Also ported from a team member’s script, which pulled its own series directly from the WISKI API; that part is out of scope here (see README “Scope”) and stays in <code>reach.io</code> – this covers only the part downstream of that pull, starting from an already-aligned series.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-0-12-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-12-0"></a></h3>
+<ul><li>“Using reach.postproc” gains a worked “Project a single update from one forecast origin” section using <code>single_origin_ar_update()</code>, and the top-of-vignette task-flow diagram now includes that path alongside <code><a href="../reference/fixed_lead_ar.html">fixed_lead_ar()</a></code>.</li>
+<li>“Setting AR Parameters for a New Model” now points to <code>feh_lag()</code> where it already named FEH lag as example evidence for option 3.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.11.2" id="reachpostproc-0112">reach.postproc 0.11.2<a class="anchor" aria-label="anchor" href="#reachpostproc-0112"></a></h2>
 <div class="section level3">

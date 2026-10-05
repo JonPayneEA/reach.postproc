@@ -80,6 +80,11 @@ published point rather than a bespoke number.
 same fixed shape as option 2 (fixed `a_1`, fixed fast root) but driven
 by a specific principal decay estimate — catchment response time, FEH
 lag, event analysis — rather than snapping to a published label.
+[`feh_lag()`](https://jonpayneea.github.io/reach.postproc/reference/feh_lag.md)
+(via
+[`feh_time_to_peak()`](https://jonpayneea.github.io/reach.postproc/reference/feh_time_to_peak.md))
+calculates FEH lag from standard catchment descriptors, where those are
+available, as one defensible source for this estimate.
 
 **Needs:** one defensible timescale estimate for the catchment. Does not
 need a residual series.

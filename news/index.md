@@ -1,5 +1,45 @@
 # Changelog
 
+## reach.postproc 0.12.0
+
+### New functions
+
+- `feh_time_to_peak()` and `feh_lag()`: estimate FEH (Flood Estimation
+  Handbook) time-to-peak and lag from standard catchment descriptors
+  (`PROPWET`, `DPLBAR`, `DPSBAR`, `URBEXT`). Ported from a team member’s
+  standalone analysis script. This is the “proper FEH… time-to-peak
+  calculation”
+  [`response_time_steps_from_tp()`](https://jonpayneea.github.io/reach.postproc/reference/response_time_steps_from_tp.md)’s
+  own documentation has flagged as missing since that function was
+  written;
+  [`response_time_steps_from_tp()`](https://jonpayneea.github.io/reach.postproc/reference/response_time_steps_from_tp.md)
+  itself is unchanged, and its time-to-peak/AR-decay-time approximation
+  is exactly as provisional as before – this only gives its input a
+  traceable source instead of a guess.
+- `single_origin_ar_update()` and `plot_single_origin_update()`: project
+  one AR update forward from a single forecast origin to the end of an
+  aligned series, and plot it against the observed and simulated
+  hydrograph. Deliberately not a replacement for
+  [`fixed_lead_ar()`](https://jonpayneea.github.io/reach.postproc/reference/fixed_lead_ar.md):
+  [`fixed_lead_ar()`](https://jonpayneea.github.io/reach.postproc/reference/fixed_lead_ar.md)
+  reconstructs what a fixed-lead update would have said at *every*
+  timestep, retrospectively, for scoring; this issues exactly *one*
+  forecast, from *one* origin, projected forward uninterrupted – closer
+  to what an operational forecaster sees at a single point in time. Also
+  ported from a team member’s script, which pulled its own series
+  directly from the WISKI API; that part is out of scope here (see
+  README “Scope”) and stays in `reach.io` – this covers only the part
+  downstream of that pull, starting from an already-aligned series.
+
+### Documentation
+
+- “Using reach.postproc” gains a worked “Project a single update from
+  one forecast origin” section using `single_origin_ar_update()`, and
+  the top-of-vignette task-flow diagram now includes that path alongside
+  [`fixed_lead_ar()`](https://jonpayneea.github.io/reach.postproc/reference/fixed_lead_ar.md).
+- “Setting AR Parameters for a New Model” now points to `feh_lag()`
+  where it already named FEH lag as example evidence for option 3.
+
 ## reach.postproc 0.11.2
 
 ### Documentation

@@ -73,7 +73,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">reach.postproc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -131,16 +131,28 @@ flowchart TD
     B[Assess parameters]
     C[Project one error series]
     D[Evaluate an event archive]
+    J[Project one live update forward]
     E[assess and roots]
     F[forecast_ar and apply_ar_update]
     G[align_forecast_series]
     H[fixed_lead_ar]
     I[score_lead_times and plot_lead_times]
+    K[single_origin_ar_update and plot_single_origin_update]
 
     A --&gt; B --&gt; E
     A --&gt; C --&gt; F
     A --&gt; D --&gt; G --&gt; H --&gt; I
+    A --&gt; J --&gt; G --&gt; K
 </pre>
+<p><code><a href="../reference/fixed_lead_ar.html">fixed_lead_ar()</a></code> and
+<code>single_origin_ar_update()</code> both start from an aligned
+series, but answer different questions: <code><a href="../reference/fixed_lead_ar.html">fixed_lead_ar()</a></code>
+reconstructs what a fixed-lead update would have said at <em>every</em>
+timestep, for scoring against history;
+<code>single_origin_ar_update()</code> issues <em>one</em> forecast,
+from <em>one</em> origin, projected forward to the end of the data —
+closer to what an operational forecaster sees at a single point in
+time.</p>
 </div>
 <div class="section level2">
 <h2 id="construct-parameters">Construct parameters<a class="anchor" aria-label="anchor" href="#construct-parameters"></a>
@@ -623,11 +635,58 @@ zero as well as sign.</p>
 <p><img src="using-reach-postproc_files/figure-html/workflow-plot-1.png" class="r-plt" alt="" width="864"></p>
 </div>
 <div class="section level2">
+<h2 id="project-a-single-update-from-one-forecast-origin">Project a single update from one forecast origin<a class="anchor" aria-label="anchor" href="#project-a-single-update-from-one-forecast-origin"></a>
+</h2>
+<p><code><a href="../reference/fixed_lead_ar.html">fixed_lead_ar()</a></code> is retrospective, by design: it answers
+“how would a fixed-lead update have performed across this whole event,
+had one always been issued.” Sometimes the question is narrower: “if I
+issue one update right now, from this point, how does it look projected
+forward to the end of what I have.”
+<code>single_origin_ar_update()</code> answers that question instead,
+reusing the same <code>aligned</code> series:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">origin_row</span> <span class="op">&lt;-</span> <span class="fl">145L</span> <span class="co"># the same peak used to build the synthetic event above</span></span>
+<span></span>
+<span><span class="va">single_update</span> <span class="op">&lt;-</span> <span class="fu">single_origin_ar_update</span><span class="op">(</span></span>
+<span>  <span class="va">parameters</span>,</span>
+<span>  <span class="va">aligned</span>,</span>
+<span>  origin <span class="op">=</span> <span class="va">origin_row</span>,</span>
+<span>  lower_limit <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  time_step_minutes <span class="op">=</span> <span class="fl">15</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">single_update</span><span class="op">)</span></span>
+<span><span class="co">#&gt;              date_time  observed simulated   ar_error updated_unconstrained</span></span>
+<span><span class="co">#&gt;                 &lt;POSc&gt;     &lt;num&gt;     &lt;num&gt;      &lt;num&gt;                 &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: 2024-11-25 22:45:00 0.5904383 0.5500001 0.02500860             0.5750087</span></span>
+<span><span class="co">#&gt; 2: 2024-11-25 23:00:00 0.5914105 0.5500001 0.02474888             0.5747489</span></span>
+<span><span class="co">#&gt; 3: 2024-11-25 23:15:00 0.5929281 0.5500000 0.02449186             0.5744919</span></span>
+<span><span class="co">#&gt; 4: 2024-11-25 23:30:00 0.5949806 0.5500000 0.02423751             0.5742375</span></span>
+<span><span class="co">#&gt; 5: 2024-11-25 23:45:00 0.5975538 0.5500000 0.02398580             0.5739858</span></span>
+<span><span class="co">#&gt; 6: 2024-11-26 00:00:00 0.6006297 0.5500000 0.02373671             0.5737367</span></span>
+<span><span class="co">#&gt;      updated</span></span>
+<span><span class="co">#&gt;        &lt;num&gt;</span></span>
+<span><span class="co">#&gt; 1: 0.5750087</span></span>
+<span><span class="co">#&gt; 2: 0.5747489</span></span>
+<span><span class="co">#&gt; 3: 0.5744919</span></span>
+<span><span class="co">#&gt; 4: 0.5742375</span></span>
+<span><span class="co">#&gt; 5: 0.5739858</span></span>
+<span><span class="co">#&gt; 6: 0.5737367</span></span>
+<span><span class="fu">plot_single_origin_update</span><span class="op">(</span><span class="va">single_update</span><span class="op">)</span></span></code></pre></div>
+<p><img src="using-reach-postproc_files/figure-html/workflow-single-origin-1.png" class="r-plt" alt="" width="864"></p>
+<p>Rows before <code>origin_row</code> carry <code>NA</code> in
+<code>updated</code>: nothing is reconstructed for them, unlike
+<code><a href="../reference/fixed_lead_ar.html">fixed_lead_ar()</a></code>. The <code>order</code> rows immediately
+before the origin supply the seed <code>initial_errors</code>
+automatically, from the real observed-minus-simulated series, rather
+than being typed in by hand.</p>
+</div>
+<div class="section level2">
 <h2 id="verify-numerical-equivalence">Verify numerical equivalence<a class="anchor" aria-label="anchor" href="#verify-numerical-equivalence"></a>
 </h2>
 <p>During package development, root projection should agree with
 recurrence projection within numerical tolerance.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">recurrence_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fixed_lead_ar.html">fixed_lead_ar</a></span><span class="op">(</span></span>
 <span>  <span class="va">parameters</span>,</span>
 <span>  <span class="va">aligned</span>,</span>
@@ -645,7 +704,7 @@ recurrence projection within numerical tolerance.</p>
 <div class="section level2">
 <h2 id="arma-response-analysis">ARMA response analysis<a class="anchor" aria-label="anchor" href="#arma-response-analysis"></a>
 </h2>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">response_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/response_components.html">response_components</a></span><span class="op">(</span></span>
 <span>  <span class="va">parameters</span>,</span>
 <span>  ma_parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.5</span>, <span class="op">-</span><span class="fl">0.25</span>, <span class="op">-</span><span class="fl">0.125</span><span class="op">)</span>,</span>
@@ -663,7 +722,7 @@ recurrence projection within numerical tolerance.</p>
 </h2>
 <p>Calculation functions do not write files. Save only where the calling
 workflow requests it.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/fwrite.html" class="external-link">fwrite</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/lead_time_series.html">lead_time_series</a></span><span class="op">(</span><span class="va">lead_results</span><span class="op">)</span>,</span>
 <span>  <span class="st">"lead-time-series.csv"</span></span>
@@ -694,7 +753,9 @@ workflow requests it.</p>
 <li>Align timestamps and inspect diagnostics.</li>
 <li>Construct parameters with the correct sign convention.</li>
 <li>Inspect roots and assess quality.</li>
-<li>Calculate fixed lead-time updates.</li>
+<li>Calculate fixed lead-time updates, or project a single update from
+one forecast origin with <code>single_origin_ar_update()</code> if that
+narrower question is what is actually being asked.</li>
 <li>Score and plot performance.</li>
 <li>Compare methods during validation.</li>
 <li>Export only required outputs.</li>

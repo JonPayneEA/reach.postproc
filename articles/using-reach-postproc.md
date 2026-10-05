@@ -16,16 +16,29 @@ flowchart TD
     B[Assess parameters]
     C[Project one error series]
     D[Evaluate an event archive]
+    J[Project one live update forward]
     E[assess and roots]
     F[forecast_ar and apply_ar_update]
     G[align_forecast_series]
     H[fixed_lead_ar]
     I[score_lead_times and plot_lead_times]
+    K[single_origin_ar_update and plot_single_origin_update]
 
     A --> B --> E
     A --> C --> F
     A --> D --> G --> H --> I
+    A --> J --> G --> K
 ```
+
+[`fixed_lead_ar()`](https://jonpayneea.github.io/reach.postproc/reference/fixed_lead_ar.md)
+and `single_origin_ar_update()` both start from an aligned series, but
+answer different questions:
+[`fixed_lead_ar()`](https://jonpayneea.github.io/reach.postproc/reference/fixed_lead_ar.md)
+reconstructs what a fixed-lead update would have said at *every*
+timestep, for scoring against history; `single_origin_ar_update()`
+issues *one* forecast, from *one* origin, projected forward to the end
+of the data — closer to what an operational forecaster sees at a single
+point in time.
 
 ## Construct parameters
 
@@ -539,6 +552,57 @@ plot_lead_times(lead_results)
 
 ![](using-reach-postproc_files/figure-html/workflow-plot-1.png)
 
+## Project a single update from one forecast origin
+
+[`fixed_lead_ar()`](https://jonpayneea.github.io/reach.postproc/reference/fixed_lead_ar.md)
+is retrospective, by design: it answers “how would a fixed-lead update
+have performed across this whole event, had one always been issued.”
+Sometimes the question is narrower: “if I issue one update right now,
+from this point, how does it look projected forward to the end of what I
+have.” `single_origin_ar_update()` answers that question instead,
+reusing the same `aligned` series:
+
+``` r
+
+origin_row <- 145L # the same peak used to build the synthetic event above
+
+single_update <- single_origin_ar_update(
+  parameters,
+  aligned,
+  origin = origin_row,
+  lower_limit = 0,
+  time_step_minutes = 15
+)
+
+tail(single_update)
+#>              date_time  observed simulated   ar_error updated_unconstrained
+#>                 <POSc>     <num>     <num>      <num>                 <num>
+#> 1: 2024-11-25 22:45:00 0.5904383 0.5500001 0.02500860             0.5750087
+#> 2: 2024-11-25 23:00:00 0.5914105 0.5500001 0.02474888             0.5747489
+#> 3: 2024-11-25 23:15:00 0.5929281 0.5500000 0.02449186             0.5744919
+#> 4: 2024-11-25 23:30:00 0.5949806 0.5500000 0.02423751             0.5742375
+#> 5: 2024-11-25 23:45:00 0.5975538 0.5500000 0.02398580             0.5739858
+#> 6: 2024-11-26 00:00:00 0.6006297 0.5500000 0.02373671             0.5737367
+#>      updated
+#>        <num>
+#> 1: 0.5750087
+#> 2: 0.5747489
+#> 3: 0.5744919
+#> 4: 0.5742375
+#> 5: 0.5739858
+#> 6: 0.5737367
+plot_single_origin_update(single_update)
+```
+
+![](using-reach-postproc_files/figure-html/workflow-single-origin-1.png)
+
+Rows before `origin_row` carry `NA` in `updated`: nothing is
+reconstructed for them, unlike
+[`fixed_lead_ar()`](https://jonpayneea.github.io/reach.postproc/reference/fixed_lead_ar.md).
+The `order` rows immediately before the origin supply the seed
+`initial_errors` automatically, from the real observed-minus-simulated
+series, rather than being typed in by hand.
+
 ## Verify numerical equivalence
 
 During package development, root projection should agree with recurrence
@@ -615,7 +679,9 @@ ggsave(
 4.  Align timestamps and inspect diagnostics.
 5.  Construct parameters with the correct sign convention.
 6.  Inspect roots and assess quality.
-7.  Calculate fixed lead-time updates.
+7.  Calculate fixed lead-time updates, or project a single update from
+    one forecast origin with `single_origin_ar_update()` if that
+    narrower question is what is actually being asked.
 8.  Score and plot performance.
 9.  Compare methods during validation.
 10. Export only required outputs.
