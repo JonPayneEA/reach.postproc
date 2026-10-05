@@ -1,3 +1,19 @@
+# reach.postproc 0.11.2
+
+## Documentation
+- "Selecting a Default-Family Parameter Set" gains a plain-English
+  walkthrough alongside the formal maths, a fully worked nine-hour example
+  showing every intermediate number by hand (matched against the package's
+  own output), and a new "Where does 1.765 come from?" section. That
+  section is deliberately honest rather than invented: `1.765` is not
+  derived anywhere in this package; it is the first AR coefficient both
+  the EA's 2024 default and the steady ET-AR default already independently
+  publish, and this family's construction was reverse-engineered from
+  noticing that agreement, not the other way round. The underlying
+  calibration that originally produced `1.765` is not recorded in this
+  repository; flagged as a documentation gap to close if that provenance
+  exists in EA governance material.
+
 # reach.postproc 0.11.1
 
 ## Changes
