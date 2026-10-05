@@ -1,3 +1,21 @@
+# reach.postproc 0.11.1
+
+## Changes
+- `fit_ar_from_events()` gains two guardrails against an estimator that
+  could otherwise hand back an unstable or ill-conditioned fit without
+  complaint. `minimum_rows_per_parameter` (default `10`, always enforced)
+  rejects a pooled fit with too few regression rows relative to `order`,
+  the same category of guard as the existing per-event length check, just
+  applied to the pooled total. `strict` (default `FALSE`, opt-in) runs
+  `assess()` internally and errors rather than returning a fit that fails
+  it, reusing the package's single root-acceptance criteria rather than
+  duplicating any of its thresholds inside the estimator. `strict`
+  defaults to `FALSE`, not `TRUE`, to keep this function's contract
+  consistent with every other construction path, where `assess()` is
+  always a separate, explicit step. Extra arguments are forwarded to
+  `assess()` via `...` when `strict = TRUE`, and ignored (with a warning)
+  otherwise.
+
 # reach.postproc 0.11.0
 
 ## New functions

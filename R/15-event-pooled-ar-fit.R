@@ -20,6 +20,20 @@
 #               gap: fitting an AR model from event windows alone,
 #               transparently, inside the package whose maths is meant to
 #               be reviewable. It is not a general replacement for PT.
+#               2026-10-05 - JP: added two opt-in guardrails against an
+#               estimator that can otherwise hand back an unstable or
+#               ill-conditioned fit without complaint: `minimum_rows_per_
+#               parameter` (always on; a hard data-sufficiency floor, same
+#               category as the existing per-event length check) and
+#               `strict` (opt-in, off by default; runs assess() internally
+#               and errors rather than returning a fit that fails the same
+#               root-acceptance criteria every other construction path is
+#               already expected to pass). strict defaults to FALSE, not
+#               TRUE, to keep this function's contract consistent with
+#               every other construction path in the package: assess() is
+#               always a separate, explicit step the caller chooses to
+#               run, never implicit. See `vignette("event-pooled-ar-fitting")`,
+#               section "Constraining undesired behaviour".
 # Tier:         1 (experimental; new, not yet operationally reviewed)
 # Inputs:       A list of per-event residual series (numeric, chronological
 #               oldest-first, one vector per event) and an AR order.
@@ -87,6 +101,37 @@
 #' @param weighting One of `"variance"` (default), `"equal_event"` or
 #'   `"none"`. See the Details above.
 #' @param label Description attached to the returned parameter set.
+#' @param strict If `TRUE`, run [assess()] on the fitted parameters before
+#'   returning and error (rather than hand back an unchecked fit) if it
+#'   fails. Default `FALSE`, matching every other construction path in this
+#'   package, where `assess()` is always a separate, explicit step the
+#'   caller chooses to run -- see @section Constraining undesired behaviour.
+#' @param minimum_rows_per_parameter Always enforced (not gated by
+#'   `strict`). The pooled fit is rejected if the total number of
+#'   regression rows across all events is fewer than
+#'   `order * minimum_rows_per_parameter`. Default `10`, the common rule of
+#'   thumb for a minimally trustworthy least-squares fit. Set lower only
+#'   with a specific reason to trust a thinner fit.
+#' @param ... Forwarded to [assess()] when `strict = TRUE` (for example
+#'   `permitted_orders`, `minimum_useful_decay_time`). Ignored, with a
+#'   warning, when `strict = FALSE`.
+#'
+#' @section Constraining undesired behaviour: This estimator can return a
+#'   fit nothing else in the package would accept -- an excessively fast-
+#'   decaying root, a borderline-persistent one, an order outside what
+#'   governance permits -- because weighted least squares has no concept of
+#'   the Environment Agency's root-acceptance criteria; it only minimises
+#'   squared error. Two guardrails are available, and they are deliberately
+#'   not the same kind of thing. `minimum_rows_per_parameter` is a data-
+#'   sufficiency floor: a near-singular fit from too few rows relative to
+#'   `order` is rejected unconditionally, the same way too-short individual
+#'   events already are. `strict` is a governance gate: it reuses
+#'   `assess()`, the same single criteria this package applies to every
+#'   other construction path, rather than duplicating or approximating
+#'   those criteria inside the estimator itself. Keeping `strict` opt-in
+#'   preserves that single source of truth and this function's contract
+#'   with the rest of the package; turn it on whenever the fit is not
+#'   going to be inspected by hand before use.
 #'
 #' @returns An AR parameter object in Deltares convention, exactly like
 #'   every other construction path in this package, so it composes
@@ -123,12 +168,34 @@
 #' fitted <- fit_ar_from_events(events, order = 2, weighting = "variance")
 #' fitted@coefficients
 #' attr(fitted, "fit_per_event")
+#'
+#' # strict = TRUE reuses assess() as a hard gate rather than letting an
+#' # unvalidated fit leave the function silently -- wrapped in tryCatch()
+#' # here so the example runs whichever way this particular random draw
+#' # happens to assess:
+#' tryCatch(
+#'   fit_ar_from_events(events, order = 2, weighting = "variance", strict = TRUE),
+#'   error = function(e) conditionMessage(e)
+#' )
 #' @export
 fit_ar_from_events <- function(events,
+                                ...,
                                 order = 3L,
                                 weighting = c("variance", "equal_event", "none"),
-                                label = "Event-pooled AR fit") {
+                                label = "Event-pooled AR fit",
+                                strict = FALSE,
+                                minimum_rows_per_parameter = 10) {
   weighting <- match.arg(weighting)
+
+  if (!strict && length(list(...))) {
+    warning(
+      paste0(
+        "Arguments passed via `...` are only used when `strict = TRUE` ",
+        "(they are forwarded to assess()). Ignored here."
+      ),
+      call. = FALSE
+    )
+  }
 
   if (!is.list(events) || !length(events)) {
     stop(
@@ -139,6 +206,10 @@ fit_ar_from_events <- function(events,
   order <- as.integer(order)
   if (length(order) != 1L || is.na(order) || order < 1L) {
     stop("`order` must be one positive whole number.", call. = FALSE)
+  }
+  if (length(minimum_rows_per_parameter) != 1L ||
+      is.na(minimum_rows_per_parameter) || minimum_rows_per_parameter < 0) {
+    stop("`minimum_rows_per_parameter` must be one non-negative number.", call. = FALSE)
   }
 
   event_labels <- names(events)
@@ -173,6 +244,26 @@ fit_ar_from_events <- function(events,
     if (order == 1L) x <- matrix(x, ncol = 1L)
     list(x = x, y = y, n_rows = length(y), variance = stats::var(e))
   })
+
+  # A data-sufficiency floor, unconditional (not gated by `strict`): the
+  # same category of guard as the per-event length check above, just
+  # applied to the pooled total rather than to each event individually.
+  # Too few rows relative to `order` risks a near-singular, overfit
+  # lm.wfit() solve that would look precise while meaning very little.
+  total_rows <- sum(vapply(rows, `[[`, integer(1), "n_rows"))
+  if (total_rows < order * minimum_rows_per_parameter) {
+    stop(
+      paste0(
+        "Only ", total_rows, " regression rows are available across all ",
+        "events, against a minimum of order * minimum_rows_per_parameter = ",
+        order * minimum_rows_per_parameter, " for order = ", order, ". ",
+        "Supply more or longer events, lower `order`, or lower ",
+        "`minimum_rows_per_parameter` deliberately if there is a specific ",
+        "reason to trust a thinner fit."
+      ),
+      call. = FALSE
+    )
+  }
 
   if (weighting == "variance" &&
       any(vapply(rows, function(r) r$variance <= 0, logical(1)))) {
@@ -235,6 +326,28 @@ fit_ar_from_events <- function(events,
   attr(parameters, "fit_n_events")     <- length(events)
   attr(parameters, "fit_residual_se")  <- sqrt(sum(w_all * fit$residuals^2) / (nrow(x_all) - order))
   attr(parameters, "fit_per_event")    <- per_event
+
+  # Opt-in governance gate: reuses assess() -- the same single criteria
+  # every other construction path is already expected to pass -- rather
+  # than duplicating any of its thresholds inside this estimator. Off by
+  # default so this function's contract matches every other construction
+  # path, where assess() is always a separate, explicit step.
+  if (strict) {
+    assessment <- assess(parameters, ...)
+    if (!assessment@passed) {
+      stop(
+        paste0(
+          "strict = TRUE and the pooled fit failed assess(): ",
+          assessment@summary, " Inspect with root_table(roots(parameters)) ",
+          "to see which root(s) are responsible, then adjust the events, ",
+          "the order, or the assess() thresholds passed via `...` -- or ",
+          "re-run with strict = FALSE to accept the fit for further ",
+          "investigation rather than erroring."
+        ),
+        call. = FALSE
+      )
+    }
+  }
 
   parameters
 }

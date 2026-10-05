@@ -169,12 +169,49 @@ assessment@summary
 
 A fit that produces sensible-looking coefficients can still fail `assess()` — pooling does not exempt the result from the same root-based acceptance criteria as every other path. Treat a pass here the same way the decision-guide vignette treats a PT fit: necessary, not sufficient, and still worth scoring against held-out events with `fixed_lead_ar()` and `score_lead_times()` before trusting it operationally.
 
+# Constraining undesired behaviour
+
+Weighted least squares has no concept of the Environment Agency's root-acceptance criteria; it only minimises squared error. Nothing stops it handing back a fit with an excessively fast-decaying root, a borderline-persistent one, or an order outside what governance permits, if that is what best fits the pooled rows. Two guardrails are available, and they are deliberately not the same kind of thing.
+
+**`minimum_rows_per_parameter`** (default `10`, always enforced, not gated by `strict`) is a data-sufficiency floor: the pooled fit is rejected outright if the total number of regression rows across all events is fewer than `order * minimum_rows_per_parameter`. This is the same category of guard as the per-event length check already covered above, just applied to the pooled total rather than to each event individually — a near-singular `lm.wfit()` solve from too few rows would look precise while meaning very little.
+
+```{r minimum-rows}
+tryCatch(
+  fit_ar_from_events(list(short_a = rnorm(8), short_b = rnorm(8)), order = 3),
+  error = function(e) conditionMessage(e)
+)
+```
+
+**`strict`** (default `FALSE`) is a governance gate, not a data check: set it `TRUE` and the function runs `assess()` on the fitted parameters before returning, erroring rather than handing back an unvalidated fit if it fails. It deliberately reuses `assess()` itself — the same single criteria every other construction path in this package is already expected to pass — rather than re-implementing or approximating those thresholds inside the estimator. That keeps `assess()` the single source of truth for what "acceptable" means, and keeps this function's contract the same as every other construction path's, where `assess()` is always a separate, explicit step the caller chooses to run. This is also why `strict` defaults to `FALSE` rather than `TRUE`: making it implicit here and nowhere else would make this one construction path behave differently from the rest for no reason tied to the estimator itself.
+
+```{r strict-demo}
+tryCatch(
+  fit_ar_from_events(events, order = 2, weighting = "variance", strict = TRUE),
+  error = function(e) conditionMessage(e)
+)
+```
+
+Arguments passed via `...` are forwarded to `assess()` only when `strict = TRUE` — for instance, to work with criteria other than the defaults:
+
+```{r strict-with-overrides}
+fit_ar_from_events(
+  events, order = 2, weighting = "variance", strict = TRUE,
+  minimum_useful_decay_time = 0, maximum_decay_time = Inf,
+  oscillation_ratio = 0, permitted_orders = 2L
+)
+```
+
+Passed without `strict = TRUE`, the same arguments are silently irrelevant to the fit, so they are instead flagged with a warning rather than doing nothing unannounced.
+
+Turn `strict` on by default in any workflow where the fit's output will not be inspected by hand before use — exactly the same judgement the decision-guide vignette recommends applying to every other construction path.
+
 # Scope and limitations
 
 - **Tier 1, experimental.** Not yet operationally reviewed; treat output as a candidate to validate, not a finished calibration.
-- **Needs enough events.** A pooled fit from two or three short events carries little more information than a single one; the weighting scheme controls *influence*, not the total evidence available.
+- **Needs enough events.** A pooled fit from two or three short events carries little more information than a single one; the weighting scheme controls *influence*, not the total evidence available. `minimum_rows_per_parameter` catches the most extreme case of this, not the general one.
 - **`"variance"` requires non-degenerate variance.** An event with a flat (zero-variance) residual series cannot be weighted this way; use `"equal_event"` or `"none"`, or exclude that event.
 - **Not a PT replacement.** Once a model has run long enough to accumulate a genuine residual history, PT's full-record fit remains the higher-confidence path for everything PT is meant to capture; this function's purpose is specifically event-only calibration, which PT cannot do, not a general substitute for it.
+- **`strict` does not make the fit good, only checked.** A pass means the roots meet the acceptance criteria in the abstract, exactly as for every other path — it says nothing about whether the update actually helps on real events. Score against held-out events regardless.
 
 # Key messages
 
@@ -182,3 +219,4 @@ A fit that produces sensible-looking coefficients can still fail `assess()` — 
 2. Row-count weighting (`"equal_event"`) looks like it should prevent one event from dominating a pooled fit, but does not: magnitude, not just row count, needs to be controlled for.
 3. Variance weighting (the default) was adopted because it was checked numerically, not assumed, and it is the only one of the three schemes that held up under a stress test with one atypical event.
 4. The output still has to pass `assess()` and still benefits from scoring against held-out events, exactly like every other construction path in this package.
+5. `minimum_rows_per_parameter` always guards against too little pooled data; `strict` optionally makes `assess()` a hard gate inside the function itself, rather than a step a caller could forget to run.

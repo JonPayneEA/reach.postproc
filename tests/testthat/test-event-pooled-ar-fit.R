@@ -107,6 +107,72 @@ test_that("fit_per_event diagnostics are complete and weight shares sum to one",
   expect_true(attr(fitted, "fit_residual_se") >= 0)
 })
 
+test_that("minimum_rows_per_parameter rejects a pooled fit with too little data", {
+  # Two short events, order 3: only (10-3)+(10-3) = 14 rows, against a
+  # default floor of order * 10 = 30.
+  events <- list(a = rnorm(10), b = rnorm(10))
+  expect_error(
+    fit_ar_from_events(events, order = 3),
+    "Only 14 regression rows.*minimum.*30"
+  )
+  # The same events pass once the floor is lowered deliberately.
+  expect_true(inherits(
+    fit_ar_from_events(events, order = 3, minimum_rows_per_parameter = 4),
+    "ARParameterSet"
+  ))
+})
+
+test_that("minimum_rows_per_parameter rejects invalid input", {
+  events <- list(a = rnorm(20), b = rnorm(20))
+  expect_error(
+    fit_ar_from_events(events, minimum_rows_per_parameter = -1),
+    "non-negative number"
+  )
+  expect_error(
+    fit_ar_from_events(events, minimum_rows_per_parameter = c(1, 2)),
+    "non-negative number"
+  )
+})
+
+test_that("arguments passed via `...` are ignored, with a warning, unless strict = TRUE", {
+  events <- list(a = rnorm(20), b = rnorm(20))
+  expect_warning(
+    fit_ar_from_events(events, order = 2, permitted_orders = 2L),
+    "only used when `strict = TRUE`"
+  )
+})
+
+test_that("strict = TRUE errors when the pooled fit fails assess()'s default criteria", {
+  # This package's own root-acceptance criteria expect decay times typical
+  # of real catchments; a quickly-decaying synthetic AR(2) like this one
+  # fails them even though it is perfectly stable.
+  set.seed(5)
+  events <- replicate(
+    10,
+    simulate_ar_event(n = 50, a1 = 1.2, a2 = -0.45),
+    simplify = FALSE
+  )
+  expect_error(
+    fit_ar_from_events(events, order = 2, strict = TRUE),
+    "strict = TRUE and the pooled fit failed assess\\(\\)"
+  )
+})
+
+test_that("strict = TRUE returns the fit once assess()'s thresholds are satisfied", {
+  set.seed(6)
+  events <- replicate(
+    15,
+    simulate_ar_event(n = 50, a1 = 1.2, a2 = -0.45),
+    simplify = FALSE
+  )
+  fitted <- fit_ar_from_events(
+    events, order = 2, strict = TRUE,
+    minimum_useful_decay_time = 0, maximum_decay_time = Inf,
+    oscillation_ratio = 0, permitted_orders = 2L
+  )
+  expect_true(inherits(fitted, "ARParameterSet"))
+})
+
 test_that("fit_ar_from_events output composes with roots() and assess()", {
   set.seed(4)
   events <- replicate(

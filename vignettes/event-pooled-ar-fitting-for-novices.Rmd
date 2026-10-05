@@ -117,6 +117,30 @@ attr(fitted, "fit_per_event")
 
 `weight_share` is the part worth watching. If events are roughly comparable, their shares should be roughly even. One event sitting far above the rest is a prompt to look closer — is it genuinely representative, or is something about it (a data problem, an unusually severe or unusual flood) worth treating separately rather than pooling in by default?
 
+# Can it go wrong, and can that be stopped?
+
+Pooled least squares does not know anything about what makes a sensible AR parameter set for flood forecasting — it just finds the numbers that fit the data best. Left alone, it can hand back something nobody would actually want to use: too few events to trust, or coefficients that fail the same checks every other way of getting AR parameters has to pass. `fit_ar_from_events()` has two separate ways of catching this, and it is worth knowing which is which.
+
+The first is always on: if there simply isn't enough data for the AR order you asked for, the function refuses outright rather than fitting something unreliable and handing it over anyway.
+
+```{r not-enough-data}
+tryCatch(
+  fit_ar_from_events(list(short_a = rnorm(8), short_b = rnorm(8)), order = 3),
+  error = function(e) conditionMessage(e)
+)
+```
+
+The second is a switch you turn on yourself: `strict = TRUE`. With it on, the function runs the same `assess()` check described in ["Setting AR Parameters for a New Model"](setting-parameters-for-a-new-model.html) itself, before handing anything back, and refuses to return a fit that fails it.
+
+```{r strict-demo}
+tryCatch(
+  fit_ar_from_events(events, order = 2, weighting = "variance", strict = TRUE),
+  error = function(e) conditionMessage(e)
+)
+```
+
+It defaults to off, not on, because every other way of getting AR parameters in this package leaves `assess()` as a separate step you run yourself — turning it on automatically just for this one function would make it behave differently from everything else for no good reason. Turn it on whenever you're not planning to look at the fit by hand before trusting it.
+
 # Treat the result like any other parameter set
 
 A pooled fit is still just an AR parameter set once it comes out the other end — it does not skip the usual checks:
@@ -149,3 +173,4 @@ This is not a replacement for PT in general. If a model has run long enough to h
 2. Pasting events together before fitting invents a false "just happened before" relationship at every join; `fit_ar_from_events()` keeps events separate while fitting.
 3. Counting events equally by length is not enough to stop one unusually large event from dominating; this function corrects for scale (variance), not just event length, by default.
 4. The result is an ordinary AR parameter set — it still needs `assess()` and, where possible, scoring against real events, exactly like every other path.
+5. `fit_ar_from_events()` refuses to fit at all when there's too little data, always; it can also be told to refuse to return a fit that fails `assess()`, via `strict = TRUE`.
