@@ -131,6 +131,49 @@ The standard table contains selected points from a continuous analytical
 family. The coefficients are not obtained by interpolating between
 adjacent rows.
 
+#### In plain English, before the equations
+
+An AR(3) model has three characteristic roots (see [“Characteristic
+Roots for Novice Flood Forecast
+Modellers”](https://jonpayneea.github.io/reach.postproc/articles/roots-for-novices.md)
+if roots themselves are unfamiliar). Picking a parameter set by hand
+normally means picking all three independently — three separate numbers
+to justify, three separate things that could be wrong. The default
+family cuts that down to one honest decision.
+
+It does this by fixing two of the three roots outright and solving for
+the third:
+
+- The **fast root** is nailed down completely — same value, every single
+  member of the family, no exceptions. It governs behaviour in the first
+  timestep or two after the forecast starts and is not something a
+  principal-decay judgement has any business changing.
+- The **first AR coefficient**, $`a_1`$, is also nailed down, at `1.765`
+  (more on where that number comes from below). Because $`a_1`$ is just
+  the sum of all three roots, fixing it is really fixing a *constraint*
+  on the roots, not a root itself.
+- That leaves exactly one unknown: the **middle root**. Once you’ve
+  chosen the principal root (from your catchment’s timescale) and the
+  fast root is already fixed, the constraint “all three roots must sum
+  to 1.765” pins the middle root down uniquely. There’s no fitting, no
+  optimisation, no judgement call left — just arithmetic.
+
+So the modeller’s only real decision is the principal decay time.
+Everything else — the middle root, the fast root, and the three AR
+coefficients that come out at the end — follows automatically and
+deterministically from that one choice. The equations below are that
+arithmetic, written out formally.
+
+The key piece of maths worth having an intuition for, before the
+formulas: a root closer to `1` decays more slowly, and the relationship
+is exponential, not linear. Doubling a decay time does *not* move the
+root halfway to `1` again — it moves it much less than that, because the
+root is already close to `1` and there isn’t much room left to move
+into. That single fact explains almost everything about why this family
+behaves the way it does, including why some coefficients barely move
+even when the underlying decay time changes a great deal (see “Why the
+coefficients change so little” below).
+
 For a principal decay time $`\tau_1`$, expressed in model timesteps, the
 principal modal root is
 
@@ -160,7 +203,12 @@ The default family uses
 T_3 = 2.
 ```
 
-Because $`\exp(\pi i)=-1`$, the rapid root is a negative real root:
+In plain English: a decay time of a third of a timestep is about as fast
+as decay gets without becoming instantaneous, and an oscillation period
+of exactly two timesteps means the root flips sign at every single step
+rather than tracing out a smooth curve. Because $`\exp(\pi i)=-1`$, that
+flip-every-step behaviour collapses what looks like it should be a
+complex (oscillating) root into a plain negative real number:
 
 ``` math
 z_3 = -\exp(-3) \approx -0.04978707.
@@ -179,7 +227,9 @@ The default family fixes
 a_1 = 1.765.
 ```
 
-The middle positive root is therefore solved directly:
+The middle positive root is therefore solved directly, by rearranging
+that same sum — $`z_1`$ and $`z_3`$ are already known, so $`z_2`$ is
+whatever is left over:
 
 ``` math
 z_2 = 1.765 - z_1 - z_3.
@@ -215,29 +265,138 @@ and
 a_3 = z_1z_2z_3.
 ```
 
+In plain English, these three lines are nothing more exotic than
+multiplying out three brackets: $`(z-z_1)(z-z_2)(z-z_3)`$ expands into a
+cubic in $`z`$, and matching that expansion against the AR recurrence’s
+own cubic form is what hands back $`a_1`$, $`a_2`$ and $`a_3`$ directly
+from the three roots — no separate fitting step, just algebra that has
+to come out this way given three roots and a third-order polynomial.
+
 This is the calculation performed by
 [`default_family_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/default_family_ar_parameters.md).
 The only empirical decision is the choice of principal decay time. The
 conversion from that timescale to roots and coefficients is
 deterministic.
 
+#### Where does 1.765 come from?
+
+Not from anything in this package. `1.765` is simply the value of
+$`a_1`$ the Environment Agency’s existing published default parameter
+sets already use: both
+[`default_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/default_ar_parameters.md)’s
+2024 default (`c(1.765, -0.72625, -0.040656)`) and
+[`default_et_ar_steady_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/default_et_ar_steady_parameters.md)’s
+steady ET-AR default (`c(1.765, -0.7244342, -0.04056586)`) were
+established independently, by whatever calibration exercise originally
+produced each of them, and both happen to share this exact first
+coefficient.
+[`default_family_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/default_family_ar_parameters.md)
+does not derive `1.765` from any underlying physical reasoning; it takes
+that agreement as its starting constraint and asks: what family of
+parameter sets do you get if you hold $`a_1`$ fixed at the value both
+existing defaults already share, and let only the principal decay vary?
+
+That the two independently-published defaults turn out to be exact
+points on the same continuous curve is evidence this way of reading
+`1.765` is the right one — a coincidence this exact would be a strange
+one otherwise — but it is evidence, not proof, and it does not explain
+*why* `1.765` rather than some other value was originally chosen. This
+package’s repository has no record of that original calibration (what
+catchment, what data, what fitting method produced the EA’s 2024 default
+in the first place). If that provenance exists in EA governance
+documentation, it belongs here as a citation; until then, treat `1.765`
+as an inherited, externally-approved constant that this family takes as
+given, not as something derived from first principles.
+
+The agreement itself is checkable directly, not just asserted:
+
+``` r
+
+one_day <- standard_family_ar_parameters("1 day")
+one_day@coefficients
+#>         a_1         a_2         a_3 
+#>  1.76500000 -0.72624604 -0.04065607
+default_ar_parameters()@coefficients
+#>       a_1       a_2       a_3 
+#>  1.765000 -0.726250 -0.040656
+
+infinite <- standard_family_ar_parameters("Infinite")
+infinite@coefficients
+#>         a_1         a_2         a_3 
+#>  1.76500000 -0.72443414 -0.04056586
+default_et_ar_steady_parameters()@coefficients
+#>         a_1         a_2         a_3 
+#>  1.76500000 -0.72443420 -0.04056586
+```
+
+Two parameter sets, published independently of one another and of this
+family, both fall out of the same construction at the same
+`a_1 = 1.765`, to within the rounding each was originally published at.
+Nothing forced that to happen; the family’s construction was
+reverse-engineered from noticing it.
+
 #### Worked nine-hour example
 
-For a 15-minute model timestep, a nine-hour principal decay corresponds
-to
+Working entirely by hand, for a catchment with a nine-hour principal
+decay and a 15-minute model timestep:
+
+**Step 1 — convert the principal decay to model timesteps.**
 
 ``` math
-\tau_1 = \frac{9\times60}{15}=36
+\tau_1 = \frac{9\times60}{15}=36 \text{ timesteps.}
 ```
 
-timesteps. The principal root is therefore
+**Step 2 — calculate the principal root.**
 
 ``` math
-z_1 = \exp\left(-\frac{1}{36}\right).
+z_1 = \exp\left(-\frac{1}{36}\right) \approx 0.97260448.
 ```
 
-The package then calculates $`z_2`$, retains the fixed rapid root
-$`z_3`$, and converts the three roots to coefficients.
+This is close to `1`, as expected for a decay time (36 steps, or nine
+hours) that is long compared to a single 15-minute timestep.
+
+**Step 3 — take the fixed fast root.** No calculation needed; it is the
+same for every member of the family:
+
+``` math
+z_3 = -\exp(-3) \approx -0.04978707.
+```
+
+**Step 4 — solve the middle root from the fixed sum.** $`a_1 = 1.765`$
+is fixed, $`z_1`$ and $`z_3`$ are now both known, so:
+
+``` math
+z_2 = 1.765 - 0.97260448 - (-0.04978707) \approx 0.84218259.
+```
+
+**Step 5 — convert the middle root back to a decay time, for
+interpretability.**
+
+``` math
+\tau_2 = -\frac{1}{\ln(0.84218259)} \approx 5.82 \text{ timesteps} \approx 1.46 \text{ hours.}
+```
+
+So this nine-hour catchment’s middle root decays with a time constant of
+roughly an hour and a half — plausible as a secondary response, and not
+something that had to be chosen separately; it fell straight out of
+fixing $`a_1`$ and the fast root.
+
+**Step 6 — expand the three roots into AR coefficients**, by multiplying
+out $`(z-z_1)(z-z_2)(z-z_3)`$:
+
+``` math
+a_1 = z_1+z_2+z_3 = 1.765 \text{ (by construction)}
+```
+
+``` math
+a_2 = -(z_1z_2+z_1z_3+z_2z_3) \approx -0.72875763
+```
+
+``` math
+a_3 = z_1z_2z_3 \approx -0.04078111
+```
+
+That hand calculation should match the package exactly:
 
 ``` r
 
@@ -256,6 +415,12 @@ nine_hour@coefficients
 #>         a_1         a_2         a_3 
 #>  1.76500000 -0.72875763 -0.04078111
 ```
+
+The only number a modeller actually chose in this entire derivation was
+“nine hours.” Everything from Step 2 onward is arithmetic with no
+further judgement calls, which is the whole point of fixing $`a_1`$ and
+the fast root in the first place: it turns three independent decisions
+into one.
 
 #### Why the coefficients change so little
 
