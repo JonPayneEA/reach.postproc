@@ -1,5 +1,9 @@
 # Event Triggered and Time Jumped AR
 
+**In development.** ET-AR has not been tested or validated against real
+events and is not currently deployable in IMFS. Everything in this
+vignette is a prototype for review, not an approved method.
+
 ## Status and scope
 
 Event Triggered AR (ET-AR) and Time Jumped AR (TJ-AR) were developed in

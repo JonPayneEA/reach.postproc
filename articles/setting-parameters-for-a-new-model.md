@@ -111,6 +111,9 @@ pre-validated the way the default family is.
 
 ### 5. ET-AR (event-triggered) — in development, not yet available
 
+**In development.** ET-AR has not been tested or validated against real
+events and is not currently deployable in IMFS.
+
 [`et_ar_configuration()`](https://jonpayneea.github.io/reach.postproc/reference/et_ar_configuration.md)
 pairing steady and event parameter sets with a trigger. Conceptually the
 right answer for a catchment where behaviour genuinely differs between
