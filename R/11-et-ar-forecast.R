@@ -41,6 +41,10 @@ trigger_evidence_at_step <- function(trigger, step, previous_updated = NA_real_)
 #' Begin with steady-condition parameters and switch once to event-condition
 #' parameters when the configured trigger is met. The recurrence state is
 #' retained across the switch, so the error series remains continuous.
+#' @section Status: in development. Event Triggered AR (ET-AR) has not been
+#'   tested or validated against real events, and it is not currently
+#'   deployable in IMFS -- see [et_ar_configuration()] and
+#'   `vignette("event-triggered-and-time-jumped-ar")`.
 #' @param configuration An object from [et_ar_configuration()].
 #' @param initial_errors Recent observed-minus-simulated errors, newest first.
 #'   Length must equal the shared AR order.

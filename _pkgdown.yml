@@ -75,5 +75,9 @@ articles:
       - event-pooled-ar-fitting
 
   - title: Advanced methods
+    desc: >
+      ET-AR is in development: untested and not yet applied operationally
+      (not currently deployable in IMFS). See the vignette's "Status and
+      scope" section before reading further.
     contents:
       - event-triggered-and-time-jumped-ar

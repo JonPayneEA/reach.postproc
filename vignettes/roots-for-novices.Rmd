@@ -163,7 +163,7 @@ flowchart LR
 - [`assess()`](../reference/assess.html) runs the Environment Agency's acceptance criteria against the roots and returns a pass or fail with a plain-English summary.
 - [`decompose_ar()`](../reference/decompose_ar.html) shows each root's individual wobble over time, rather than only the sum — useful when a projected error looks odd and you want to know which root is responsible.
 
-Further into the package, the event-triggered and time-jumped AR methods (`assess_jump_size()`, `forecast_tj_ar()`) rank roots by decay time to judge whether a chosen "jump" size is sensible. If that territory is new to you, see the ["Event Triggered and Time Jumped AR"](event-triggered-and-time-jumped-ar.html) vignette once you're comfortable with the material here — the same unit-circle thinking carries straight over.
+Further into the package, the event-triggered and time-jumped AR methods (`assess_jump_size()`, `forecast_tj_ar()`) rank roots by decay time to judge whether a chosen "jump" size is sensible. If that territory is new to you, see the ["Event Triggered and Time Jumped AR"](event-triggered-and-time-jumped-ar.html) vignette once you're comfortable with the material here — the same unit-circle thinking carries straight over. Note before you do: ET-AR specifically is in development, untested and not yet applied operationally.
 
 # What stability means for your forecast
 

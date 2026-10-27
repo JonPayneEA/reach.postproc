@@ -20,6 +20,10 @@
 #'
 #' Use TJ-AR to infer a noise-resistant recent consecutive state, then continue
 #' with the ET-AR recurrence and its one-way parameter switch.
+#' @section Status: in development. This runs the Event Triggered AR (ET-AR)
+#'   recurrence, which has not been tested or validated against real
+#'   events and is not currently deployable in IMFS -- see
+#'   [et_ar_configuration()].
 #' @param configuration An ET-AR configuration.
 #' @param error_history Complete recent error history supplied newest first.
 #' @param jump Positive timestep separation used to select TJ-AR inputs.

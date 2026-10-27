@@ -435,7 +435,7 @@ ggplot(response_data, aes(step, response, colour = component)) +
 
 Base AR models have fixed timescales. They cannot adapt between wet and dry conditions, anticipate future structure operation or remove observation noise. Their output depends on both forecast origin and recent error history.
 
-These limitations define where judgement remains necessary. They also motivate event-triggered and alternative updating approaches.
+These limitations define where judgement remains necessary. They also motivate event-triggered and alternative updating approaches, of which ET-AR is the package's own candidate -- in development, untested and not yet applied operationally (see ["Event Triggered and Time Jumped AR"](event-triggered-and-time-jumped-ar.html)).
 
 # Summary
 

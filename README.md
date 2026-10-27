@@ -387,12 +387,12 @@ The package contains ten vignettes:
 - **Characteristic Roots for Novice Flood Forecast Modellers** is a plain-English deep dive on roots, what they mean and what stability requires.
 - **AR and ARMA for Flood Forecasting** explains the operational theory and IMFS context.
 - **Using reach.postproc** provides a practical package workflow.
-- **Setting AR Parameters for a New Model** is a decision guide for choosing between PT-fitted coefficients, the default-family constructions and ET-AR when a model has no existing calibration.
+- **Setting AR Parameters for a New Model** is a decision guide for choosing between PT-fitted coefficients, the default-family constructions and ET-AR (flagged there as in development, untested and not deployable in IMFS) when a model has no existing calibration.
 - **Event-Pooled AR Fitting for Novice Flood Forecast Modellers** is a plain-English explanation of fitting AR coefficients from flood events alone, rather than a model's whole history.
 - **Mathematical and Developer Validation** explains numerical equivalence tests and indexing conventions.
 - **Selecting a Default-Family Parameter Set** explains the continuous analytical family the published default parameter sets are drawn from.
 - **Event-Pooled AR Fitting: Mathematics and Validation** covers the weighted least squares construction behind `fit_ar_from_events()` and the numerical evidence behind its default weighting scheme.
-- **Event Triggered and Time Jumped AR** covers the experimental ET-AR and TJ-AR methods.
+- **Event Triggered and Time Jumped AR** covers ET-AR and TJ-AR. **ET-AR is in development: untested and not yet applied operationally** (not currently deployable in IMFS); TJ-AR's trigger and jump-size selection are separately experimental.
 
 Build and open the vignettes with:
 

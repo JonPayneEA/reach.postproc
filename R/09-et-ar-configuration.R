@@ -27,6 +27,15 @@
 #' to `event_parameters` when the trigger first becomes true. They do not switch
 #' back within the same forecast.
 #'
+#' @section Status: in development. Event Triggered AR (ET-AR) has not been
+#'   tested or validated against real events, and it is not currently
+#'   deployable in IMFS. Site-independent trigger-selection procedures have
+#'   not yet been established either. Treat this, and everything built on
+#'   it ([forecast_et_ar()], [forecast_et_tj_ar()]), as a prototype for
+#'   review, not an approved method -- see
+#'   `vignette("event-triggered-and-time-jumped-ar")` and
+#'   `vignette("setting-parameters-for-a-new-model")`.
+#'
 #' @param steady_parameters An AR parameter set created by [ar_parameters()] or
 #'   [ar_parameters_from_timescales()]. It should have a long principal decay
 #'   time suitable for slowly changing errors under steady conditions.
@@ -167,6 +176,11 @@ response_time_steps_from_tp <- function(time_to_peak,
 #'
 #' Retain the standard middle and fast roots while setting the principal decay
 #' time from a catchment response estimate.
+#'
+#' @section Status: in development. This constructs one half of an Event
+#'   Triggered AR configuration, which has not been tested or validated
+#'   against real events and is not currently deployable in IMFS -- see
+#'   [et_ar_configuration()].
 #'
 #' @param response_time_steps Positive response time in model timesteps. For a
 #'   15-minute model, 48 steps represent 12 hours. [response_time_steps_from_tp()]
