@@ -59,7 +59,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">reach.postproc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,6 +85,62 @@
       <small>Source: <a href="https://github.com/JonPayneEA/reach.postproc/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.12.2" id="reachpostproc-0122">reach.postproc 0.12.2<a class="anchor" aria-label="anchor" href="#reachpostproc-0122"></a></h2>
+<div class="section level3">
+<h3 id="documentation-0-12-2">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-12-2"></a></h3>
+<ul><li>Added a red “In development” banner (matching the <code>#D4351C</code> unstable-root colour <code><a href="../reference/plot_ar.html">plot_ar()</a></code> already uses) at the top of “Event Triggered and Time Jumped AR” and directly above the ET-AR option in “Setting AR Parameters for a New Model”, so the status from 0.12.1 is visible before reading, not just stated in prose partway through. Deliberately not added to “AR and ARMA for Flood Forecasting” or “Characteristic Roots for Novice Flood Forecast Modellers”: ET-AR is a single passing mention in each, and a page-width banner there would misrepresent the rest of those vignettes’ content as being “in development” too.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.12.1" id="reachpostproc-0121">reach.postproc 0.12.1<a class="anchor" aria-label="anchor" href="#reachpostproc-0121"></a></h2>
+<div class="section level3">
+<h3 id="documentation-0-12-1">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-12-1"></a></h3>
+<ul><li>ET-AR’s status was previously inconsistent across the docs: clearly flagged as “currently untested and not deployable in IMFS” in “Setting AR Parameters for a New Model”, but only vaguely gestured at (“marks trigger choice… as experimental”) in its own dedicated vignette, and unflagged entirely in the roxygen docs for <code><a href="../reference/et_ar_configuration.html">et_ar_configuration()</a></code>, <code><a href="../reference/event_ar_parameters.html">event_ar_parameters()</a></code>, <code><a href="../reference/forecast_et_ar.html">forecast_et_ar()</a></code> and <code><a href="../reference/forecast_et_tj_ar.html">forecast_et_tj_ar()</a></code>. All of these, plus the README vignette list, the pkgdown “Advanced methods” article group, and the passing mentions in “AR and ARMA for Flood Forecasting” and “Characteristic Roots for Novice Flood Forecast Modellers”, now state consistently: ET-AR is in development, untested and not yet applied operationally (not currently deployable in IMFS). TJ-AR’s narrower, separate caveat (trigger and jump-size selection not yet site-independent) is kept distinct rather than merged into this, since it is not the same claim and isn’t established to the same degree. No code or function behaviour changed.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.12.0" id="reachpostproc-0120">reach.postproc 0.12.0<a class="anchor" aria-label="anchor" href="#reachpostproc-0120"></a></h2>
+<div class="section level3">
+<h3 id="new-functions-0-12-0">New functions<a class="anchor" aria-label="anchor" href="#new-functions-0-12-0"></a></h3>
+<ul><li>
+<code><a href="../reference/feh_time_to_peak.html">feh_time_to_peak()</a></code> and <code><a href="../reference/feh_lag.html">feh_lag()</a></code>: estimate FEH (Flood Estimation Handbook) time-to-peak and lag from standard catchment descriptors (<code>PROPWET</code>, <code>DPLBAR</code>, <code>DPSBAR</code>, <code>URBEXT</code>). Ported from a team member’s standalone analysis script. This is the “proper FEH… time-to-peak calculation” <code><a href="../reference/response_time_steps_from_tp.html">response_time_steps_from_tp()</a></code>’s own documentation has flagged as missing since that function was written; <code><a href="../reference/response_time_steps_from_tp.html">response_time_steps_from_tp()</a></code> itself is unchanged, and its time-to-peak/AR-decay-time approximation is exactly as provisional as before – this only gives its input a traceable source instead of a guess.</li>
+<li>
+<code><a href="../reference/single_origin_ar_update.html">single_origin_ar_update()</a></code> and <code><a href="../reference/plot_single_origin_update.html">plot_single_origin_update()</a></code>: project one AR update forward from a single forecast origin to the end of an aligned series, and plot it against the observed and simulated hydrograph. Deliberately not a replacement for <code><a href="../reference/fixed_lead_ar.html">fixed_lead_ar()</a></code>: <code><a href="../reference/fixed_lead_ar.html">fixed_lead_ar()</a></code> reconstructs what a fixed-lead update would have said at <em>every</em> timestep, retrospectively, for scoring; this issues exactly <em>one</em> forecast, from <em>one</em> origin, projected forward uninterrupted – closer to what an operational forecaster sees at a single point in time. Also ported from a team member’s script, which pulled its own series directly from the WISKI API; that part is out of scope here (see README “Scope”) and stays in <code>reach.io</code> – this covers only the part downstream of that pull, starting from an already-aligned series.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-0-12-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-12-0"></a></h3>
+<ul><li>“Using reach.postproc” gains a worked “Project a single update from one forecast origin” section using <code><a href="../reference/single_origin_ar_update.html">single_origin_ar_update()</a></code>, and the top-of-vignette task-flow diagram now includes that path alongside <code><a href="../reference/fixed_lead_ar.html">fixed_lead_ar()</a></code>.</li>
+<li>“Setting AR Parameters for a New Model” now points to <code><a href="../reference/feh_lag.html">feh_lag()</a></code> where it already named FEH lag as example evidence for option 3.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.11.2" id="reachpostproc-0112">reach.postproc 0.11.2<a class="anchor" aria-label="anchor" href="#reachpostproc-0112"></a></h2>
+<div class="section level3">
+<h3 id="documentation-0-11-2">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-11-2"></a></h3>
+<ul><li>“Selecting a Default-Family Parameter Set” gains a plain-English walkthrough alongside the formal maths, a fully worked nine-hour example showing every intermediate number by hand (matched against the package’s own output), and a new “Where does 1.765 come from?” section. That section is deliberately honest rather than invented: <code>1.765</code> is not derived anywhere in this package; it is the first AR coefficient both the EA’s 2024 default and the steady ET-AR default already independently publish, and this family’s construction was reverse-engineered from noticing that agreement, not the other way round. The underlying calibration that originally produced <code>1.765</code> is not recorded in this repository; flagged as a documentation gap to close if that provenance exists in EA governance material.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.11.1" id="reachpostproc-0111">reach.postproc 0.11.1<a class="anchor" aria-label="anchor" href="#reachpostproc-0111"></a></h2>
+<div class="section level3">
+<h3 id="changes-0-11-1">Changes<a class="anchor" aria-label="anchor" href="#changes-0-11-1"></a></h3>
+<ul><li>
+<code><a href="../reference/fit_ar_from_events.html">fit_ar_from_events()</a></code> gains two guardrails against an estimator that could otherwise hand back an unstable or ill-conditioned fit without complaint. <code>minimum_rows_per_parameter</code> (default <code>10</code>, always enforced) rejects a pooled fit with too few regression rows relative to <code>order</code>, the same category of guard as the existing per-event length check, just applied to the pooled total. <code>strict</code> (default <code>FALSE</code>, opt-in) runs <code><a href="../reference/assess.html">assess()</a></code> internally and errors rather than returning a fit that fails it, reusing the package’s single root-acceptance criteria rather than duplicating any of its thresholds inside the estimator. <code>strict</code> defaults to <code>FALSE</code>, not <code>TRUE</code>, to keep this function’s contract consistent with every other construction path, where <code><a href="../reference/assess.html">assess()</a></code> is always a separate, explicit step. Extra arguments are forwarded to <code><a href="../reference/assess.html">assess()</a></code> via <code>...</code> when <code>strict = TRUE</code>, and ignored (with a warning) otherwise.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.11.0" id="reachpostproc-0110">reach.postproc 0.11.0<a class="anchor" aria-label="anchor" href="#reachpostproc-0110"></a></h2>
+<div class="section level3">
+<h3 id="new-functions-0-11-0">New functions<a class="anchor" aria-label="anchor" href="#new-functions-0-11-0"></a></h3>
+<ul><li>
+<code><a href="../reference/fit_ar_from_events.html">fit_ar_from_events()</a></code>: fits AR coefficients directly from a set of event windows, by weighted least squares across all of them at once, with event boundaries respected by construction (each event builds its own lagged design matrix in isolation; no regression row is ever formed across an event boundary, unlike naively concatenating events into one series first). This is a deliberate, narrow exception to <code>reach.postproc</code> otherwise having no AR estimator of its own: everywhere else, coefficients come from published defaults, a default-family construction, or Performance Testing (PT), which fits across a model’s whole residual record with no way to restrict to events. Defaults to <code>weighting = "variance"</code> (each event’s rows weighted by <code>1 / (n_rows * variance)</code>) rather than the more obvious-looking <code>weighting = "equal_event"</code> (<code>1 / n_rows</code>), because a stress test run before this function was written showed row-count weighting alone barely protects a pooled fit from being dominated by one atypical, much-larger-magnitude event, while variance weighting does. Returns an ordinary <code>ARParameterSet</code> with per-event fit diagnostics attached (<code>fit_weighting</code>, <code>fit_total_rows</code>, <code>fit_n_events</code>, <code>fit_residual_se</code>, <code>fit_per_event</code>), so a fit dominated by one event is visible rather than silently trusted.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-0-11-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-11-0"></a></h3>
+<ul><li>Two new vignettes: “Event-Pooled AR Fitting: Mathematics and Validation” (the weighted least squares derivation and the executable stress test behind the default weighting scheme) and “Event-Pooled AR Fitting for Novice Flood Forecast Modellers” (the same material in plain English).</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.10.2" id="reachpostproc-0102">reach.postproc 0.10.2<a class="anchor" aria-label="anchor" href="#reachpostproc-0102"></a></h2>
 <div class="section level3">

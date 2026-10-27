@@ -1,5 +1,165 @@
 # Changelog
 
+## reach.postproc 0.12.2
+
+### Documentation
+
+- Added a red “In development” banner (matching the `#D4351C`
+  unstable-root colour
+  [`plot_ar()`](https://jonpayneea.github.io/reach.postproc/reference/plot_ar.md)
+  already uses) at the top of “Event Triggered and Time Jumped AR” and
+  directly above the ET-AR option in “Setting AR Parameters for a New
+  Model”, so the status from 0.12.1 is visible before reading, not just
+  stated in prose partway through. Deliberately not added to “AR and
+  ARMA for Flood Forecasting” or “Characteristic Roots for Novice Flood
+  Forecast Modellers”: ET-AR is a single passing mention in each, and a
+  page-width banner there would misrepresent the rest of those
+  vignettes’ content as being “in development” too.
+
+## reach.postproc 0.12.1
+
+### Documentation
+
+- ET-AR’s status was previously inconsistent across the docs: clearly
+  flagged as “currently untested and not deployable in IMFS” in “Setting
+  AR Parameters for a New Model”, but only vaguely gestured at (“marks
+  trigger choice… as experimental”) in its own dedicated vignette, and
+  unflagged entirely in the roxygen docs for
+  [`et_ar_configuration()`](https://jonpayneea.github.io/reach.postproc/reference/et_ar_configuration.md),
+  [`event_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/event_ar_parameters.md),
+  [`forecast_et_ar()`](https://jonpayneea.github.io/reach.postproc/reference/forecast_et_ar.md)
+  and
+  [`forecast_et_tj_ar()`](https://jonpayneea.github.io/reach.postproc/reference/forecast_et_tj_ar.md).
+  All of these, plus the README vignette list, the pkgdown “Advanced
+  methods” article group, and the passing mentions in “AR and ARMA for
+  Flood Forecasting” and “Characteristic Roots for Novice Flood Forecast
+  Modellers”, now state consistently: ET-AR is in development, untested
+  and not yet applied operationally (not currently deployable in IMFS).
+  TJ-AR’s narrower, separate caveat (trigger and jump-size selection not
+  yet site-independent) is kept distinct rather than merged into this,
+  since it is not the same claim and isn’t established to the same
+  degree. No code or function behaviour changed.
+
+## reach.postproc 0.12.0
+
+### New functions
+
+- [`feh_time_to_peak()`](https://jonpayneea.github.io/reach.postproc/reference/feh_time_to_peak.md)
+  and
+  [`feh_lag()`](https://jonpayneea.github.io/reach.postproc/reference/feh_lag.md):
+  estimate FEH (Flood Estimation Handbook) time-to-peak and lag from
+  standard catchment descriptors (`PROPWET`, `DPLBAR`, `DPSBAR`,
+  `URBEXT`). Ported from a team member’s standalone analysis script.
+  This is the “proper FEH… time-to-peak calculation”
+  [`response_time_steps_from_tp()`](https://jonpayneea.github.io/reach.postproc/reference/response_time_steps_from_tp.md)’s
+  own documentation has flagged as missing since that function was
+  written;
+  [`response_time_steps_from_tp()`](https://jonpayneea.github.io/reach.postproc/reference/response_time_steps_from_tp.md)
+  itself is unchanged, and its time-to-peak/AR-decay-time approximation
+  is exactly as provisional as before – this only gives its input a
+  traceable source instead of a guess.
+- [`single_origin_ar_update()`](https://jonpayneea.github.io/reach.postproc/reference/single_origin_ar_update.md)
+  and
+  [`plot_single_origin_update()`](https://jonpayneea.github.io/reach.postproc/reference/plot_single_origin_update.md):
+  project one AR update forward from a single forecast origin to the end
+  of an aligned series, and plot it against the observed and simulated
+  hydrograph. Deliberately not a replacement for
+  [`fixed_lead_ar()`](https://jonpayneea.github.io/reach.postproc/reference/fixed_lead_ar.md):
+  [`fixed_lead_ar()`](https://jonpayneea.github.io/reach.postproc/reference/fixed_lead_ar.md)
+  reconstructs what a fixed-lead update would have said at *every*
+  timestep, retrospectively, for scoring; this issues exactly *one*
+  forecast, from *one* origin, projected forward uninterrupted – closer
+  to what an operational forecaster sees at a single point in time. Also
+  ported from a team member’s script, which pulled its own series
+  directly from the WISKI API; that part is out of scope here (see
+  README “Scope”) and stays in `reach.io` – this covers only the part
+  downstream of that pull, starting from an already-aligned series.
+
+### Documentation
+
+- “Using reach.postproc” gains a worked “Project a single update from
+  one forecast origin” section using
+  [`single_origin_ar_update()`](https://jonpayneea.github.io/reach.postproc/reference/single_origin_ar_update.md),
+  and the top-of-vignette task-flow diagram now includes that path
+  alongside
+  [`fixed_lead_ar()`](https://jonpayneea.github.io/reach.postproc/reference/fixed_lead_ar.md).
+- “Setting AR Parameters for a New Model” now points to
+  [`feh_lag()`](https://jonpayneea.github.io/reach.postproc/reference/feh_lag.md)
+  where it already named FEH lag as example evidence for option 3.
+
+## reach.postproc 0.11.2
+
+### Documentation
+
+- “Selecting a Default-Family Parameter Set” gains a plain-English
+  walkthrough alongside the formal maths, a fully worked nine-hour
+  example showing every intermediate number by hand (matched against the
+  package’s own output), and a new “Where does 1.765 come from?”
+  section. That section is deliberately honest rather than invented:
+  `1.765` is not derived anywhere in this package; it is the first AR
+  coefficient both the EA’s 2024 default and the steady ET-AR default
+  already independently publish, and this family’s construction was
+  reverse-engineered from noticing that agreement, not the other way
+  round. The underlying calibration that originally produced `1.765` is
+  not recorded in this repository; flagged as a documentation gap to
+  close if that provenance exists in EA governance material.
+
+## reach.postproc 0.11.1
+
+### Changes
+
+- [`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md)
+  gains two guardrails against an estimator that could otherwise hand
+  back an unstable or ill-conditioned fit without complaint.
+  `minimum_rows_per_parameter` (default `10`, always enforced) rejects a
+  pooled fit with too few regression rows relative to `order`, the same
+  category of guard as the existing per-event length check, just applied
+  to the pooled total. `strict` (default `FALSE`, opt-in) runs
+  [`assess()`](https://jonpayneea.github.io/reach.postproc/reference/assess.md)
+  internally and errors rather than returning a fit that fails it,
+  reusing the package’s single root-acceptance criteria rather than
+  duplicating any of its thresholds inside the estimator. `strict`
+  defaults to `FALSE`, not `TRUE`, to keep this function’s contract
+  consistent with every other construction path, where
+  [`assess()`](https://jonpayneea.github.io/reach.postproc/reference/assess.md)
+  is always a separate, explicit step. Extra arguments are forwarded to
+  [`assess()`](https://jonpayneea.github.io/reach.postproc/reference/assess.md)
+  via `...` when `strict = TRUE`, and ignored (with a warning)
+  otherwise.
+
+## reach.postproc 0.11.0
+
+### New functions
+
+- [`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md):
+  fits AR coefficients directly from a set of event windows, by weighted
+  least squares across all of them at once, with event boundaries
+  respected by construction (each event builds its own lagged design
+  matrix in isolation; no regression row is ever formed across an event
+  boundary, unlike naively concatenating events into one series first).
+  This is a deliberate, narrow exception to `reach.postproc` otherwise
+  having no AR estimator of its own: everywhere else, coefficients come
+  from published defaults, a default-family construction, or Performance
+  Testing (PT), which fits across a model’s whole residual record with
+  no way to restrict to events. Defaults to `weighting = "variance"`
+  (each event’s rows weighted by `1 / (n_rows * variance)`) rather than
+  the more obvious-looking `weighting = "equal_event"` (`1 / n_rows`),
+  because a stress test run before this function was written showed
+  row-count weighting alone barely protects a pooled fit from being
+  dominated by one atypical, much-larger-magnitude event, while variance
+  weighting does. Returns an ordinary `ARParameterSet` with per-event
+  fit diagnostics attached (`fit_weighting`, `fit_total_rows`,
+  `fit_n_events`, `fit_residual_se`, `fit_per_event`), so a fit
+  dominated by one event is visible rather than silently trusted.
+
+### Documentation
+
+- Two new vignettes: “Event-Pooled AR Fitting: Mathematics and
+  Validation” (the weighted least squares derivation and the executable
+  stress test behind the default weighting scheme) and “Event-Pooled AR
+  Fitting for Novice Flood Forecast Modellers” (the same material in
+  plain English).
+
 ## reach.postproc 0.10.2
 
 ### Documentation

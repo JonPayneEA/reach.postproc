@@ -29,6 +29,13 @@ An AR(3) parameter object.
 Retain the standard middle and fast roots while setting the principal decay
 time from a catchment response estimate.
 }
+\section{Status}{
+ in development. This constructs one half of an Event
+Triggered AR configuration, which has not been tested or validated
+against real events and is not currently deployable in IMFS -- see
+\code{\link[=et_ar_configuration]{et_ar_configuration()}}.
+}
+
 \examples{
 event <- event_ar_parameters(response_time_steps = 48)
 root_table(roots(event, time_step_minutes = 15))

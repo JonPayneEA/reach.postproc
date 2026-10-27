@@ -48,6 +48,12 @@
   : Extract an ET-AR forecast series
 - [`event_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/event_ar_parameters.md)
   : Construct ET-AR event parameters from catchment response time
+- [`feh_lag()`](https://jonpayneea.github.io/reach.postproc/reference/feh_lag.md)
+  : Estimate FEH lag from time-to-peak
+- [`feh_time_to_peak()`](https://jonpayneea.github.io/reach.postproc/reference/feh_time_to_peak.md)
+  : Estimate FEH time-to-peak from catchment descriptors
+- [`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md)
+  : Fit AR coefficients by pooling weighted least squares across events
 - [`fixed_lead_ar()`](https://jonpayneea.github.io/reach.postproc/reference/fixed_lead_ar.md)
   : Calculate fixed lead-time AR updates
 - [`forecast_ar()`](https://jonpayneea.github.io/reach.postproc/reference/forecast_ar.md)
@@ -72,6 +78,8 @@
   : Compare TJ-AR sensitivity across jump sizes
 - [`plot_lead_times()`](https://jonpayneea.github.io/reach.postproc/reference/plot_lead_times.md)
   : Plot fixed lead-time observations, simulations and updates
+- [`plot_single_origin_update()`](https://jonpayneea.github.io/reach.postproc/reference/plot_single_origin_update.md)
+  : Plot a single-origin AR update against observed and simulated series
 - [`rainfall_accumulation_trigger()`](https://jonpayneea.github.io/reach.postproc/reference/rainfall_accumulation_trigger.md)
   : Construct a rainfall-accumulation ET-AR trigger
 - [`response()`](https://jonpayneea.github.io/reach.postproc/reference/response.md)
@@ -90,6 +98,8 @@
   : Root table
 - [`score_lead_times()`](https://jonpayneea.github.io/reach.postproc/reference/score_lead_times.md)
   : Score fixed lead-time AR forecasts
+- [`single_origin_ar_update()`](https://jonpayneea.github.io/reach.postproc/reference/single_origin_ar_update.md)
+  : Project a single AR update forward from one forecast origin
 - [`standard_family_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/standard_family_ar_parameters.md)
   : Return a published standard default-family AR parameter set
 - [`standard_family_ar_table()`](https://jonpayneea.github.io/reach.postproc/reference/standard_family_ar_table.md)

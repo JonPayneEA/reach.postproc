@@ -18,3 +18,7 @@ Useful links:
 ## Author
 
 **Maintainer**: Jonathan Payne <jonathan.payne@example.org>
+
+Authors:
+
+- Jonathan Payne <jonathan.payne@example.org>

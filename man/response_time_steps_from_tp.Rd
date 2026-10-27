@@ -39,7 +39,12 @@ place to live, rather than being re-implemented ad hoc in calibration
 scripts for individual gauges. It belongs in \code{reach.hydro} once that
 module has a proper FEH or unit-hydrograph time-to-peak calculation to
 draw on, and it should move there rather than be extended in place.
-Whatever it returns is a starting estimate, not a validated parameter:
+\code{\link[=feh_time_to_peak]{feh_time_to_peak()}} is now available as that calculation, so
+\code{time_to_peak} no longer has to be a guess -- but it does not make the
+approximation this function itself makes any less of one: supplying a
+proper FEH time-to-peak only improves the input, not the physical
+assumption that an AR decay root should match it. Whatever this
+function returns is a starting estimate, not a validated parameter:
 check it with \code{\link[=assess]{assess()}} and against historic events with
 \code{\link[=fixed_lead_ar]{fixed_lead_ar()}} / \code{\link[=score_lead_times]{score_lead_times()}} before operational use.
 }
@@ -49,4 +54,14 @@ response_time_steps_from_tp(time_to_peak = 12, time_step_minutes = 15)
 event_ar_parameters(
   response_time_steps = response_time_steps_from_tp(12, time_step_minutes = 15)
 )
+
+# From FEH catchment descriptors, rather than a guessed time-to-peak:
+catchment_tp <- feh_time_to_peak(
+  propwet = 0.54, dplbar = 6.46, dpsbar = 213.5, urbext = 0.0003
+)
+response_time_steps_from_tp(catchment_tp, time_step_minutes = 15)
+}
+\seealso{
+\code{\link[=feh_time_to_peak]{feh_time_to_peak()}} for a defensible \code{time_to_peak} source,
+\code{\link[=event_ar_parameters]{event_ar_parameters()}}
 }

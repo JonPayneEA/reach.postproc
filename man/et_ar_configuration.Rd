@@ -39,6 +39,17 @@ trigger definition. Forecasts begin with \code{steady_parameters} and switch onc
 to \code{event_parameters} when the trigger first becomes true. They do not switch
 back within the same forecast.
 }
+\section{Status}{
+ in development. Event Triggered AR (ET-AR) has not been
+tested or validated against real events, and it is not currently
+deployable in IMFS. Site-independent trigger-selection procedures have
+not yet been established either. Treat this, and everything built on
+it (\code{\link[=forecast_et_ar]{forecast_et_ar()}}, \code{\link[=forecast_et_tj_ar]{forecast_et_tj_ar()}}), as a prototype for
+review, not an approved method -- see
+\code{vignette("event-triggered-and-time-jumped-ar")} and
+\code{vignette("setting-parameters-for-a-new-model")}.
+}
+
 \examples{
 steady <- ar_parameters_from_timescales(
   decay_times = c(Inf, 5.203171, 1 / 3),

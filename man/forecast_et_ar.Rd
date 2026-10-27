@@ -36,6 +36,13 @@ Begin with steady-condition parameters and switch once to event-condition
 parameters when the configured trigger is met. The recurrence state is
 retained across the switch, so the error series remains continuous.
 }
+\section{Status}{
+ in development. Event Triggered AR (ET-AR) has not been
+tested or validated against real events, and it is not currently
+deployable in IMFS -- see \code{\link[=et_ar_configuration]{et_ar_configuration()}} and
+\code{vignette("event-triggered-and-time-jumped-ar")}.
+}
+
 \examples{
 config <- et_ar_configuration(
   default_et_ar_steady_parameters(), event_ar_parameters(48),

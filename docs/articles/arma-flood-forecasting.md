@@ -545,7 +545,10 @@ observation noise. Their output depends on both forecast origin and
 recent error history.
 
 These limitations define where judgement remains necessary. They also
-motivate event-triggered and alternative updating approaches.
+motivate event-triggered and alternative updating approaches, of which
+ET-AR is the package’s own candidate – in development, untested and not
+yet applied operationally (see [“Event Triggered and Time Jumped
+AR”](https://jonpayneea.github.io/reach.postproc/articles/event-triggered-and-time-jumped-ar.md)).
 
 ## Summary
 

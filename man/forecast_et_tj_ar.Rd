@@ -30,6 +30,13 @@ An \code{et_ar_forecast} with TJ-AR initialisation details attached.
 Use TJ-AR to infer a noise-resistant recent consecutive state, then continue
 with the ET-AR recurrence and its one-way parameter switch.
 }
+\section{Status}{
+ in development. This runs the Event Triggered AR (ET-AR)
+recurrence, which has not been tested or validated against real
+events and is not currently deployable in IMFS -- see
+\code{\link[=et_ar_configuration]{et_ar_configuration()}}.
+}
+
 \examples{
 history <- seq(0.2, 0.05, length.out = 20)
 config <- et_ar_configuration(

@@ -75,7 +75,7 @@
 
     <a class="navbar-brand me-2" href="index.html">reach.postproc</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -428,6 +428,10 @@ flowchart TD
 <code><a href="reference/standard_family_ar_parameters.html">standard_family_ar_parameters()</a></code> returns a published standard point on that family.</li>
 <li>
 <code><a href="reference/standard_family_ar_table.html">standard_family_ar_table()</a></code> lists the full published standard catalogue.</li>
+<li>
+<code><a href="reference/fit_ar_from_events.html">fit_ar_from_events()</a></code> fits AR coefficients by pooled weighted least squares across event windows only.</li>
+<li>
+<code><a href="reference/feh_time_to_peak.html">feh_time_to_peak()</a></code> and <code><a href="reference/feh_lag.html">feh_lag()</a></code> estimate FEH catchment response timescales from standard descriptors.</li>
 </ul>
 </div>
 <div class="section level3">
@@ -458,6 +462,10 @@ flowchart TD
 <code><a href="reference/score_lead_times.html">score_lead_times()</a></code> calculates forecast-performance metrics.</li>
 <li>
 <code><a href="reference/plot_lead_times.html">plot_lead_times()</a></code> plots observations, simulations and updates.</li>
+<li>
+<code><a href="reference/single_origin_ar_update.html">single_origin_ar_update()</a></code> projects one AR update forward from a single forecast origin.</li>
+<li>
+<code><a href="reference/plot_single_origin_update.html">plot_single_origin_update()</a></code> plots that single-origin update against the observed and simulated series.</li>
 </ul>
 </div>
 <div class="section level3">
@@ -482,7 +490,7 @@ flowchart TD
 <div class="section level2">
 <h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
 </h2>
-<p>The package contains eight vignettes:</p>
+<p>The package contains ten vignettes:</p>
 <ul>
 <li>
 <strong>ARMA for Novice Flood Forecast Modellers</strong> provides a plain-English introduction and glossary.</li>
@@ -493,13 +501,17 @@ flowchart TD
 <li>
 <strong>Using reach.postproc</strong> provides a practical package workflow.</li>
 <li>
-<strong>Setting AR Parameters for a New Model</strong> is a decision guide for choosing between PT-fitted coefficients, the default-family constructions and ET-AR when a model has no existing calibration.</li>
+<strong>Setting AR Parameters for a New Model</strong> is a decision guide for choosing between PT-fitted coefficients, the default-family constructions and ET-AR (flagged there as in development, untested and not deployable in IMFS) when a model has no existing calibration.</li>
+<li>
+<strong>Event-Pooled AR Fitting for Novice Flood Forecast Modellers</strong> is a plain-English explanation of fitting AR coefficients from flood events alone, rather than a model’s whole history.</li>
 <li>
 <strong>Mathematical and Developer Validation</strong> explains numerical equivalence tests and indexing conventions.</li>
 <li>
 <strong>Selecting a Default-Family Parameter Set</strong> explains the continuous analytical family the published default parameter sets are drawn from.</li>
 <li>
-<strong>Event Triggered and Time Jumped AR</strong> covers the experimental ET-AR and TJ-AR methods.</li>
+<strong>Event-Pooled AR Fitting: Mathematics and Validation</strong> covers the weighted least squares construction behind <code><a href="reference/fit_ar_from_events.html">fit_ar_from_events()</a></code> and the numerical evidence behind its default weighting scheme.</li>
+<li>
+<strong>Event Triggered and Time Jumped AR</strong> covers ET-AR and TJ-AR. <strong>ET-AR is in development: untested and not yet applied operationally</strong> (not currently deployable in IMFS); TJ-AR’s trigger and jump-size selection are separately experimental.</li>
 </ul>
 <p>Build and open the vignettes with:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">

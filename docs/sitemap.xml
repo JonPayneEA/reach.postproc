@@ -4,6 +4,8 @@
 <url><loc>https://jonpayneea.github.io/reach.postproc/articles/arma-for-novices.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/articles/default-parameter-family-section.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/articles/developer-mathematics.html</loc></url>
+<url><loc>https://jonpayneea.github.io/reach.postproc/articles/event-pooled-ar-fitting-for-novices.html</loc></url>
+<url><loc>https://jonpayneea.github.io/reach.postproc/articles/event-pooled-ar-fitting.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/articles/event-triggered-and-time-jumped-ar.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/articles/index.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/articles/roots-for-novices.html</loc></url>
@@ -36,6 +38,9 @@
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/et_ar_configuration.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/et_ar_series.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/event_ar_parameters.html</loc></url>
+<url><loc>https://jonpayneea.github.io/reach.postproc/reference/feh_lag.html</loc></url>
+<url><loc>https://jonpayneea.github.io/reach.postproc/reference/feh_time_to_peak.html</loc></url>
+<url><loc>https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/fixed_lead_ar.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/forecast_ar.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/forecast_arma.html</loc></url>
@@ -49,6 +54,7 @@
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/plot_ar.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/plot_jump_sensitivity.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/plot_lead_times.html</loc></url>
+<url><loc>https://jonpayneea.github.io/reach.postproc/reference/plot_single_origin_update.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/rainfall_accumulation_trigger.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/reach.postproc-package.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/response.html</loc></url>
@@ -59,6 +65,7 @@
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/root_from_timescale.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/root_table.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/score_lead_times.html</loc></url>
+<url><loc>https://jonpayneea.github.io/reach.postproc/reference/single_origin_ar_update.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/standard_family_ar_parameters.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/standard_family_ar_table.html</loc></url>
 <url><loc>https://jonpayneea.github.io/reach.postproc/reference/tj_ar_series.html</loc></url>

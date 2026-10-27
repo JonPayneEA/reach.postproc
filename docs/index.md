@@ -364,6 +364,13 @@ Keep these limitations in view:
   returns a published standard point on that family.
 - [`standard_family_ar_table()`](https://jonpayneea.github.io/reach.postproc/reference/standard_family_ar_table.md)
   lists the full published standard catalogue.
+- [`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md)
+  fits AR coefficients by pooled weighted least squares across event
+  windows only.
+- [`feh_time_to_peak()`](https://jonpayneea.github.io/reach.postproc/reference/feh_time_to_peak.md)
+  and
+  [`feh_lag()`](https://jonpayneea.github.io/reach.postproc/reference/feh_lag.md)
+  estimate FEH catchment response timescales from standard descriptors.
 
 ### Analysis and assessment
 
@@ -388,6 +395,11 @@ Keep these limitations in view:
   calculates forecast-performance metrics.
 - [`plot_lead_times()`](https://jonpayneea.github.io/reach.postproc/reference/plot_lead_times.md)
   plots observations, simulations and updates.
+- [`single_origin_ar_update()`](https://jonpayneea.github.io/reach.postproc/reference/single_origin_ar_update.md)
+  projects one AR update forward from a single forecast origin.
+- [`plot_single_origin_update()`](https://jonpayneea.github.io/reach.postproc/reference/plot_single_origin_update.md)
+  plots that single-origin update against the observed and simulated
+  series.
 
 ### Result accessors
 
@@ -406,7 +418,7 @@ Keep these limitations in view:
 
 ## Documentation
 
-The package contains eight vignettes:
+The package contains ten vignettes:
 
 - **ARMA for Novice Flood Forecast Modellers** provides a plain-English
   introduction and glossary.
@@ -418,13 +430,23 @@ The package contains eight vignettes:
 - **Using reach.postproc** provides a practical package workflow.
 - **Setting AR Parameters for a New Model** is a decision guide for
   choosing between PT-fitted coefficients, the default-family
-  constructions and ET-AR when a model has no existing calibration.
+  constructions and ET-AR (flagged there as in development, untested and
+  not deployable in IMFS) when a model has no existing calibration.
+- **Event-Pooled AR Fitting for Novice Flood Forecast Modellers** is a
+  plain-English explanation of fitting AR coefficients from flood events
+  alone, rather than a model’s whole history.
 - **Mathematical and Developer Validation** explains numerical
   equivalence tests and indexing conventions.
 - **Selecting a Default-Family Parameter Set** explains the continuous
   analytical family the published default parameter sets are drawn from.
-- **Event Triggered and Time Jumped AR** covers the experimental ET-AR
-  and TJ-AR methods.
+- **Event-Pooled AR Fitting: Mathematics and Validation** covers the
+  weighted least squares construction behind
+  [`fit_ar_from_events()`](https://jonpayneea.github.io/reach.postproc/reference/fit_ar_from_events.md)
+  and the numerical evidence behind its default weighting scheme.
+- **Event Triggered and Time Jumped AR** covers ET-AR and TJ-AR. **ET-AR
+  is in development: untested and not yet applied operationally** (not
+  currently deployable in IMFS); TJ-AR’s trigger and jump-size selection
+  are separately experimental.
 
 Build and open the vignettes with:
 
