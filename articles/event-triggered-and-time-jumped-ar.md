@@ -4,9 +4,24 @@
 
 Event Triggered AR (ET-AR) and Time Jumped AR (TJ-AR) were developed in
 2025–2026 to address limitations of fixed-parameter AR updating without
-introducing a high-order model. The package marks trigger choice and CWI
-adjustment as experimental because site-independent trigger-selection
-procedures have not yet been established.
+introducing a high-order model.
+
+**ET-AR is in development: untested and not yet applied operationally.**
+It has not been tested or validated against real events, and it is not
+currently deployable in IMFS. Everything below demonstrates the
+mechanism on synthetic data so the maths can be reviewed; none of it is
+evidence that ET-AR performs well on a real catchment, and none of it
+should be read as a sign ET-AR is ready to configure for a live model.
+See [“Setting AR Parameters for a New
+Model”](https://jonpayneea.github.io/reach.postproc/articles/setting-parameters-for-a-new-model.md)
+for how this status fits into the wider decision about where to get AR
+parameters from.
+
+TJ-AR is at an earlier, narrower stage of the same caution: the package
+marks trigger choice and CWI adjustment as experimental because
+site-independent trigger-selection procedures have not yet been
+established. The combined ET-TJ-AR method below inherits both sets of
+caveats.
 
 ## Event Triggered AR
 
@@ -613,7 +628,10 @@ et_ar_series(combined)
 
 ## Operational assurance
 
-Before operational use, document:
+This checklist describes what a future operational readiness review
+would need, not a sign that ET-AR is ready for one now – see “Status and
+scope” above. Before any operational use could even be considered,
+document:
 
 - steady and event parameter provenance;
 - catchment response-time source;

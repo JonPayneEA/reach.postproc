@@ -26,5 +26,9 @@
 
 ### Advanced methods
 
+ET-AR is in development: untested and not yet applied operationally (not
+currently deployable in IMFS). See the vignette’s “Status and scope”
+section before reading further.
+
 - [Event Triggered and Time Jumped
   AR](https://jonpayneea.github.io/reach.postproc/articles/event-triggered-and-time-jumped-ar.md):

@@ -237,7 +237,9 @@ sensible. If that territory is new to you, see the [“Event Triggered and
 Time Jumped
 AR”](https://jonpayneea.github.io/reach.postproc/articles/event-triggered-and-time-jumped-ar.md)
 vignette once you’re comfortable with the material here — the same
-unit-circle thinking carries straight over.
+unit-circle thinking carries straight over. Note before you do: ET-AR
+specifically is in development, untested and not yet applied
+operationally.
 
 ## What stability means for your forecast
 

@@ -109,15 +109,15 @@ each timescale chosen. Needs the most scrutiny at the assessment and
 scoring stage of anything here, because nothing about it is
 pre-validated the way the default family is.
 
-### 5. ET-AR (event-triggered) — not yet available
+### 5. ET-AR (event-triggered) — in development, not yet available
 
 [`et_ar_configuration()`](https://jonpayneea.github.io/reach.postproc/reference/et_ar_configuration.md)
 pairing steady and event parameter sets with a trigger. Conceptually the
 right answer for a catchment where behaviour genuinely differs between
 steady and event conditions, rather than one fixed AR set trying to
-cover both. **Currently untested and not deployable in IMFS.** Worth
-knowing about and revisiting, not worth building a new model’s go-live
-around today.
+cover both. **In development: untested and not yet applied
+operationally, and not deployable in IMFS.** Worth knowing about and
+revisiting, not worth building a new model’s go-live around today.
 
 ## How the paths relate: a lifecycle, not a menu
 
