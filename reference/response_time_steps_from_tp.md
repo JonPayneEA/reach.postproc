@@ -46,14 +46,26 @@ function exists so that approximation has one place to live, rather than
 being re-implemented ad hoc in calibration scripts for individual
 gauges. It belongs in `reach.hydro` once that module has a proper FEH or
 unit-hydrograph time-to-peak calculation to draw on, and it should move
-there rather than be extended in place. Whatever it returns is a
-starting estimate, not a validated parameter: check it with
+there rather than be extended in place.
+[`feh_time_to_peak()`](https://jonpayneea.github.io/reach.postproc/reference/feh_time_to_peak.md)
+is now available as that calculation, so `time_to_peak` no longer has to
+be a guess – but it does not make the approximation this function itself
+makes any less of one: supplying a proper FEH time-to-peak only improves
+the input, not the physical assumption that an AR decay root should
+match it. Whatever this function returns is a starting estimate, not a
+validated parameter: check it with
 [`assess()`](https://jonpayneea.github.io/reach.postproc/reference/assess.md)
 and against historic events with
 [`fixed_lead_ar()`](https://jonpayneea.github.io/reach.postproc/reference/fixed_lead_ar.md)
 /
 [`score_lead_times()`](https://jonpayneea.github.io/reach.postproc/reference/score_lead_times.md)
 before operational use.
+
+## See also
+
+[`feh_time_to_peak()`](https://jonpayneea.github.io/reach.postproc/reference/feh_time_to_peak.md)
+for a defensible `time_to_peak` source,
+[`event_ar_parameters()`](https://jonpayneea.github.io/reach.postproc/reference/event_ar_parameters.md)
 
 ## Examples
 
@@ -70,4 +82,11 @@ event_ar_parameters(
 #>  @ sign_convention: chr "Deltares"
 #>  @ order_tolerance: num 1e-10
 #>  @ label          : chr "ET-AR event parameters"
+
+# From FEH catchment descriptors, rather than a guessed time-to-peak:
+catchment_tp <- feh_time_to_peak(
+  propwet = 0.54, dplbar = 6.46, dpsbar = 213.5, urbext = 0.0003
+)
+response_time_steps_from_tp(catchment_tp, time_step_minutes = 15)
+#> [1] 8.340321
 ```

@@ -52,6 +52,15 @@ An object of class `et_ar_forecast`. Use
 [`et_ar_series()`](https://jonpayneea.github.io/reach.postproc/reference/et_ar_series.md)
 to extract its auditable row-level table.
 
+## Status
+
+in development. Event Triggered AR (ET-AR) has not been tested or
+validated against real events, and it is not currently deployable in
+IMFS – see
+[`et_ar_configuration()`](https://jonpayneea.github.io/reach.postproc/reference/et_ar_configuration.md)
+and
+[`vignette("event-triggered-and-time-jumped-ar")`](https://jonpayneea.github.io/reach.postproc/articles/event-triggered-and-time-jumped-ar.md).
+
 ## Examples
 
 ``` r

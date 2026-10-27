@@ -40,6 +40,13 @@ event_ar_parameters(
 
 An AR(3) parameter object.
 
+## Status
+
+in development. This constructs one half of an Event Triggered AR
+configuration, which has not been tested or validated against real
+events and is not currently deployable in IMFS – see
+[`et_ar_configuration()`](https://jonpayneea.github.io/reach.postproc/reference/et_ar_configuration.md).
+
 ## Examples
 
 ``` r

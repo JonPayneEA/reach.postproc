@@ -142,9 +142,19 @@ place to live, rather than being re-implemented ad hoc in calibration
 scripts for individual gauges. It belongs in <code>reach.hydro</code> once that
 module has a proper FEH or unit-hydrograph time-to-peak calculation to
 draw on, and it should move there rather than be extended in place.
-Whatever it returns is a starting estimate, not a validated parameter:
+<code><a href="feh_time_to_peak.html">feh_time_to_peak()</a></code> is now available as that calculation, so
+<code>time_to_peak</code> no longer has to be a guess – but it does not make the
+approximation this function itself makes any less of one: supplying a
+proper FEH time-to-peak only improves the input, not the physical
+assumption that an AR decay root should match it. Whatever this
+function returns is a starting estimate, not a validated parameter:
 check it with <code><a href="assess.html">assess()</a></code> and against historic events with
 <code><a href="fixed_lead_ar.html">fixed_lead_ar()</a></code> / <code><a href="score_lead_times.html">score_lead_times()</a></code> before operational use.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="feh_time_to_peak.html">feh_time_to_peak()</a></code> for a defensible <code>time_to_peak</code> source,
+<code><a href="event_ar_parameters.html">event_ar_parameters()</a></code></p></div>
     </div>
 
     <div class="section level2">
@@ -161,6 +171,13 @@ check it with <code><a href="assess.html">assess()</a></code> and against histor
 <span class="r-out co"><span class="r-pr">#&gt;</span>  @ sign_convention: chr "Deltares"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  @ order_tolerance: num 1e-10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  @ label          : chr "ET-AR event parameters"</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># From FEH catchment descriptors, rather than a guessed time-to-peak:</span></span></span>
+<span class="r-in"><span><span class="va">catchment_tp</span> <span class="op">&lt;-</span> <span class="fu"><a href="feh_time_to_peak.html">feh_time_to_peak</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  propwet <span class="op">=</span> <span class="fl">0.54</span>, dplbar <span class="op">=</span> <span class="fl">6.46</span>, dpsbar <span class="op">=</span> <span class="fl">213.5</span>, urbext <span class="op">=</span> <span class="fl">0.0003</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">response_time_steps_from_tp</span><span class="op">(</span><span class="va">catchment_tp</span>, time_step_minutes <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 8.340321</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

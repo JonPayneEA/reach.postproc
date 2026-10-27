@@ -144,11 +144,11 @@ flowchart TD
     A --&gt; J --&gt; G --&gt; K
 </pre>
 <p><code><a href="../reference/fixed_lead_ar.html">fixed_lead_ar()</a></code> and
-<code>single_origin_ar_update()</code> both start from an aligned
+<code><a href="../reference/single_origin_ar_update.html">single_origin_ar_update()</a></code> both start from an aligned
 series, but answer different questions: <code><a href="../reference/fixed_lead_ar.html">fixed_lead_ar()</a></code>
 reconstructs what a fixed-lead update would have said at <em>every</em>
 timestep, for scoring against history;
-<code>single_origin_ar_update()</code> issues <em>one</em> forecast,
+<code><a href="../reference/single_origin_ar_update.html">single_origin_ar_update()</a></code> issues <em>one</em> forecast,
 from <em>one</em> origin, projected forward to the end of the data —
 closer to what an operational forecaster sees at a single point in
 time.</p>
@@ -641,12 +641,12 @@ zero as well as sign.</p>
 had one always been issued.” Sometimes the question is narrower: “if I
 issue one update right now, from this point, how does it look projected
 forward to the end of what I have.”
-<code>single_origin_ar_update()</code> answers that question instead,
+<code><a href="../reference/single_origin_ar_update.html">single_origin_ar_update()</a></code> answers that question instead,
 reusing the same <code>aligned</code> series:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">origin_row</span> <span class="op">&lt;-</span> <span class="fl">145L</span> <span class="co"># the same peak used to build the synthetic event above</span></span>
 <span></span>
-<span><span class="va">single_update</span> <span class="op">&lt;-</span> <span class="fu">single_origin_ar_update</span><span class="op">(</span></span>
+<span><span class="va">single_update</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/single_origin_ar_update.html">single_origin_ar_update</a></span><span class="op">(</span></span>
 <span>  <span class="va">parameters</span>,</span>
 <span>  <span class="va">aligned</span>,</span>
 <span>  origin <span class="op">=</span> <span class="va">origin_row</span>,</span>
@@ -671,7 +671,7 @@ reusing the same <code>aligned</code> series:</p>
 <span><span class="co">#&gt; 4: 0.5742375</span></span>
 <span><span class="co">#&gt; 5: 0.5739858</span></span>
 <span><span class="co">#&gt; 6: 0.5737367</span></span>
-<span><span class="fu">plot_single_origin_update</span><span class="op">(</span><span class="va">single_update</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/plot_single_origin_update.html">plot_single_origin_update</a></span><span class="op">(</span><span class="va">single_update</span><span class="op">)</span></span></code></pre></div>
 <p><img src="using-reach-postproc_files/figure-html/workflow-single-origin-1.png" class="r-plt" alt="" width="864"></p>
 <p>Rows before <code>origin_row</code> carry <code>NA</code> in
 <code>updated</code>: nothing is reconstructed for them, unlike
@@ -753,7 +753,7 @@ workflow requests it.</p>
 <li>Construct parameters with the correct sign convention.</li>
 <li>Inspect roots and assess quality.</li>
 <li>Calculate fixed lead-time updates, or project a single update from
-one forecast origin with <code>single_origin_ar_update()</code> if that
+one forecast origin with <code><a href="../reference/single_origin_ar_update.html">single_origin_ar_update()</a></code> if that
 narrower question is what is actually being asked.</li>
 <li>Score and plot performance.</li>
 <li>Compare methods during validation.</li>

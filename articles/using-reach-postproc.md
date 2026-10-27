@@ -31,11 +31,13 @@ flowchart TD
 ```
 
 [`fixed_lead_ar()`](https://jonpayneea.github.io/reach.postproc/reference/fixed_lead_ar.md)
-and `single_origin_ar_update()` both start from an aligned series, but
-answer different questions:
+and
+[`single_origin_ar_update()`](https://jonpayneea.github.io/reach.postproc/reference/single_origin_ar_update.md)
+both start from an aligned series, but answer different questions:
 [`fixed_lead_ar()`](https://jonpayneea.github.io/reach.postproc/reference/fixed_lead_ar.md)
 reconstructs what a fixed-lead update would have said at *every*
-timestep, for scoring against history; `single_origin_ar_update()`
+timestep, for scoring against history;
+[`single_origin_ar_update()`](https://jonpayneea.github.io/reach.postproc/reference/single_origin_ar_update.md)
 issues *one* forecast, from *one* origin, projected forward to the end
 of the data — closer to what an operational forecaster sees at a single
 point in time.
@@ -559,8 +561,9 @@ is retrospective, by design: it answers “how would a fixed-lead update
 have performed across this whole event, had one always been issued.”
 Sometimes the question is narrower: “if I issue one update right now,
 from this point, how does it look projected forward to the end of what I
-have.” `single_origin_ar_update()` answers that question instead,
-reusing the same `aligned` series:
+have.”
+[`single_origin_ar_update()`](https://jonpayneea.github.io/reach.postproc/reference/single_origin_ar_update.md)
+answers that question instead, reusing the same `aligned` series:
 
 ``` r
 
@@ -680,8 +683,9 @@ ggsave(
 5.  Construct parameters with the correct sign convention.
 6.  Inspect roots and assess quality.
 7.  Calculate fixed lead-time updates, or project a single update from
-    one forecast origin with `single_origin_ar_update()` if that
-    narrower question is what is actually being asked.
+    one forecast origin with
+    [`single_origin_ar_update()`](https://jonpayneea.github.io/reach.postproc/reference/single_origin_ar_update.md)
+    if that narrower question is what is actually being asked.
 8.  Score and plot performance.
 9.  Compare methods during validation.
 10. Export only required outputs.

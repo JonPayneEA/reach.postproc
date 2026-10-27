@@ -56,6 +56,19 @@ et_ar_configuration(
 
 An object of class `et_ar_configuration`.
 
+## Status
+
+in development. Event Triggered AR (ET-AR) has not been tested or
+validated against real events, and it is not currently deployable in
+IMFS. Site-independent trigger-selection procedures have not yet been
+established either. Treat this, and everything built on it
+([`forecast_et_ar()`](https://jonpayneea.github.io/reach.postproc/reference/forecast_et_ar.md),
+[`forecast_et_tj_ar()`](https://jonpayneea.github.io/reach.postproc/reference/forecast_et_tj_ar.md)),
+as a prototype for review, not an approved method – see
+[`vignette("event-triggered-and-time-jumped-ar")`](https://jonpayneea.github.io/reach.postproc/articles/event-triggered-and-time-jumped-ar.md)
+and
+[`vignette("setting-parameters-for-a-new-model")`](https://jonpayneea.github.io/reach.postproc/articles/setting-parameters-for-a-new-model.md).
+
 ## Examples
 
 ``` r

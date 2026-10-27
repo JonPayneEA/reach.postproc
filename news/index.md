@@ -44,11 +44,13 @@
 
 ### New functions
 
-- `feh_time_to_peak()` and `feh_lag()`: estimate FEH (Flood Estimation
-  Handbook) time-to-peak and lag from standard catchment descriptors
-  (`PROPWET`, `DPLBAR`, `DPSBAR`, `URBEXT`). Ported from a team member’s
-  standalone analysis script. This is the “proper FEH… time-to-peak
-  calculation”
+- [`feh_time_to_peak()`](https://jonpayneea.github.io/reach.postproc/reference/feh_time_to_peak.md)
+  and
+  [`feh_lag()`](https://jonpayneea.github.io/reach.postproc/reference/feh_lag.md):
+  estimate FEH (Flood Estimation Handbook) time-to-peak and lag from
+  standard catchment descriptors (`PROPWET`, `DPLBAR`, `DPSBAR`,
+  `URBEXT`). Ported from a team member’s standalone analysis script.
+  This is the “proper FEH… time-to-peak calculation”
   [`response_time_steps_from_tp()`](https://jonpayneea.github.io/reach.postproc/reference/response_time_steps_from_tp.md)’s
   own documentation has flagged as missing since that function was
   written;
@@ -56,9 +58,11 @@
   itself is unchanged, and its time-to-peak/AR-decay-time approximation
   is exactly as provisional as before – this only gives its input a
   traceable source instead of a guess.
-- `single_origin_ar_update()` and `plot_single_origin_update()`: project
-  one AR update forward from a single forecast origin to the end of an
-  aligned series, and plot it against the observed and simulated
+- [`single_origin_ar_update()`](https://jonpayneea.github.io/reach.postproc/reference/single_origin_ar_update.md)
+  and
+  [`plot_single_origin_update()`](https://jonpayneea.github.io/reach.postproc/reference/plot_single_origin_update.md):
+  project one AR update forward from a single forecast origin to the end
+  of an aligned series, and plot it against the observed and simulated
   hydrograph. Deliberately not a replacement for
   [`fixed_lead_ar()`](https://jonpayneea.github.io/reach.postproc/reference/fixed_lead_ar.md):
   [`fixed_lead_ar()`](https://jonpayneea.github.io/reach.postproc/reference/fixed_lead_ar.md)
@@ -74,10 +78,13 @@
 ### Documentation
 
 - “Using reach.postproc” gains a worked “Project a single update from
-  one forecast origin” section using `single_origin_ar_update()`, and
-  the top-of-vignette task-flow diagram now includes that path alongside
+  one forecast origin” section using
+  [`single_origin_ar_update()`](https://jonpayneea.github.io/reach.postproc/reference/single_origin_ar_update.md),
+  and the top-of-vignette task-flow diagram now includes that path
+  alongside
   [`fixed_lead_ar()`](https://jonpayneea.github.io/reach.postproc/reference/fixed_lead_ar.md).
-- “Setting AR Parameters for a New Model” now points to `feh_lag()`
+- “Setting AR Parameters for a New Model” now points to
+  [`feh_lag()`](https://jonpayneea.github.io/reach.postproc/reference/feh_lag.md)
   where it already named FEH lag as example evidence for option 3.
 
 ## reach.postproc 0.11.2

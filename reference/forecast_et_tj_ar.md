@@ -40,6 +40,13 @@ forecast_et_tj_ar(
 
 An `et_ar_forecast` with TJ-AR initialisation details attached.
 
+## Status
+
+in development. This runs the Event Triggered AR (ET-AR) recurrence,
+which has not been tested or validated against real events and is not
+currently deployable in IMFS – see
+[`et_ar_configuration()`](https://jonpayneea.github.io/reach.postproc/reference/et_ar_configuration.md).
+
 ## Examples
 
 ``` r
