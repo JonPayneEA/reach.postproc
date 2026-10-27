@@ -1,3 +1,16 @@
+# reach.postproc 0.12.2
+
+## Documentation
+- Added a red "In development" banner (matching the `#D4351C` unstable-root
+  colour `plot_ar()` already uses) at the top of "Event Triggered and Time
+  Jumped AR" and directly above the ET-AR option in "Setting AR Parameters
+  for a New Model", so the status from 0.12.1 is visible before reading,
+  not just stated in prose partway through. Deliberately not added to
+  "AR and ARMA for Flood Forecasting" or "Characteristic Roots for Novice
+  Flood Forecast Modellers": ET-AR is a single passing mention in each,
+  and a page-width banner there would misrepresent the rest of those
+  vignettes' content as being "in development" too.
+
 # reach.postproc 0.12.1
 
 ## Documentation

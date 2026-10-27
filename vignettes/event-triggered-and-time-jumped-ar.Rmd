@@ -14,6 +14,10 @@ library(data.table)
 library(ggplot2)
 ```
 
+<div style="background-color:#D4351C;color:#ffffff;padding:14px 18px;border-radius:4px;margin-bottom:1.5em;">
+<strong>In development.</strong> ET-AR has not been tested or validated against real events and is not currently deployable in IMFS. Everything in this vignette is a prototype for review, not an approved method.
+</div>
+
 # Status and scope
 
 Event Triggered AR (ET-AR) and Time Jumped AR (TJ-AR) were developed in 2025–2026 to address limitations of fixed-parameter AR updating without introducing a high-order model.

@@ -101,6 +101,10 @@ PT looks at the model's residual (observed-minus-simulated) series and statistic
 
 ## 5. ET-AR (event-triggered) — in development, not yet available
 
+<div style="background-color:#D4351C;color:#ffffff;padding:14px 18px;border-radius:4px;margin-bottom:1.5em;">
+<strong>In development.</strong> ET-AR has not been tested or validated against real events and is not currently deployable in IMFS.
+</div>
+
 `et_ar_configuration()` pairing steady and event parameter sets with a trigger. Conceptually the right answer for a catchment where behaviour genuinely differs between steady and event conditions, rather than one fixed AR set trying to cover both. **In development: untested and not yet applied operationally, and not deployable in IMFS.** Worth knowing about and revisiting, not worth building a new model's go-live around today.
 
 # How the paths relate: a lifecycle, not a menu
